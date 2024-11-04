@@ -1,0 +1,291 @@
+.ajax-cart-remove{
+    display: flex;
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #474747;
+    font-size: 1.1rem;
+    line-height: 1;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 20%);
+}
+.inactiveLink {
+   pointer-events: none;
+   cursor: default;
+}
+.menu-user{
+    font-size: 28px;
+}
+.lg-btn{
+    background: #4db7b3 !important;
+    border: none !important;
+}
+.error{
+    color: #dc3545;
+}
+.page-header {
+    padding-top: 2rem !important;
+    padding-bottom: 5rem !important;
+}
+.footer{
+    margin-top: 5rem;
+}
+.footer-contact li{
+    text-align: left;
+}
+.footer-bottom {
+    padding: 1rem 0 !important;
+}
+.modal form .form-group {
+    max-width: 100% !important;
+}
+.modal-open {
+    overflow: hidden;
+}
+
+#registerModal .modal-body {
+    max-height: 100%;
+}
+
+#registerModal{
+    overflow-y: auto;
+}
+.product_widget {
+    padding-bottom: 1.5rem !important;
+}
+.cursor-pointer:hover {
+  cursor: pointer;
+}
+.h-100{
+    min-height: 100px !important;
+}
+.product_widget label {
+    cursor: pointer;
+}
+.product-qv-content{
+    margin-bottom: 0px;
+}
+.qv-single-image{
+    max-height: 400px;
+}
+
+/*category mega menu css start*/
+.megamenu
+{
+    max-height: 400px;
+    overflow-x: hidden;
+}
+
+.menu li a
+{
+    white-space:normal !important;
+}
+
+.megamenu::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #F5F5F5;
+}
+
+.megamenu::-webkit-scrollbar {
+  width: 5px;
+  background-color: #F5F5F5;
+}
+
+.megamenu::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px #4db7b3;
+  background-color: #4db7b3;
+}
+/*End mega menu css*/
+
+@media screen and (min-width: 676px) {
+    #registerModal .modal-dialog {
+        max-width: 80%; /* New width for default modal */
+    }
+}
+.loading{
+    display: none;
+}
+
+/* Absolute Center Spinner */
+.loading {
+    position: fixed;
+    z-index: 999;
+    height: 2em;
+    width: 2em;
+    overflow: visible;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+    /* hide "loading..." text */
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+
+.loading:not(:required):after {
+    content: '';
+    display: block;
+    font-size: 10px;
+    width: 1em;
+    height: 1em;
+    margin-top: -0.5em;
+    -webkit-animation: spinner 1500ms infinite linear;
+    -moz-animation: spinner 1500ms infinite linear;
+    -ms-animation: spinner 1500ms infinite linear;
+    -o-animation: spinner 1500ms infinite linear;
+    animation: spinner 1500ms infinite linear;
+    border-radius: 0.5em;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+    box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+}
+
+/* Animation */
+
+@-webkit-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+
+.modal{
+    z-index: 1041;
+}
+/*.header-login-icon {
+    font-size: 28px;
+    margin-right: 2.2rem;
+    color: black;
+    display: inline-block;
+}*/
+
+/*Media Queries*/
+@media only screen and (max-width: 600px) {
+    .header-search {
+        margin-right: 0rem;
+    }
+    .porto-icon {
+        margin-right: 0.5rem;
+    }
+    .cart-dropdown .dropdown-toggle {
+        padding-right: 0.5rem;
+    }
+    [class*=' icon-']:before {
+        margin-right: 0.1em;
+        margin-left: 0.1em;
+    }
+    .mobile-menu-toggler{
+        margin-right: 0rem;
+    }
+    .logo{
+        margin-right: 0rem;
+    }
+    .alert.animated.fadeInDown{
+        max-width: 90%;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    .header-right i{
+        font-size: 20px;
+    }
+    .header-search .search-toggle i {
+        font-size: 20px;
+    }
+    .minicart-icon {
+        width: 20px;
+        height: 16px;
+    }
+    /*.carts-count {
+        right: none;
+    }*/
+}
+
