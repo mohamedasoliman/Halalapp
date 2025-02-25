@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\JsondataController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\FatwaContactMessageController;
+use App\Http\Controllers\EventsContactMessageController;
 use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 
@@ -35,6 +36,7 @@ Route::middleware('api_key')->group(function(){
     Route::post('listingcode', [ApiController::class, 'allListingBarcode']);
     Route::post('/contact-us', [ContactMessageController::class, 'send']);
     Route::post('/fatwa-contact-us', [FatwaContactMessageController::class, 'send']);
+    Route::post('/events-contact-us', [EventsContactMessageController::class, 'send']);
 });
 
 Route::post('masjid', [MasjidManagementController::class, 'apishow']);
