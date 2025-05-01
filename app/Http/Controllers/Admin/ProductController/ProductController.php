@@ -13,6 +13,7 @@ use App\Models\ProductModel\Product;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
+use League\Csv\Reader;
 
 
 class ProductController extends Controller
@@ -34,37 +35,42 @@ class ProductController extends Controller
 
     public function import(Request $request)
     {
-        $request->validate([
-            'csv_file' => 'required|mimes:csv,txt',
-        ]);
+        try {
+            $request->validate([
+                'csv_file' => 'required|mimes:csv,txt',
+            ]);
 
-        if ($request->hasFile('csv_file')) {
-            $file = $request->file('csv_file');
-            $fileHandle = fopen($file->getPathname(), 'r');
-            $csvData = array();
-            $isFirstLine = true;
-            while (($data = fgetcsv($fileHandle)) !== false) {
-                if ($isFirstLine) {
-                    $isFirstLine = false;
-                    continue;
+            if ($request->hasFile('csv_file')) {
+                $file = $request->file('csv_file');
+                $path = $file->getRealPath();
+                
+                // Use League\CSV like the Masjid importer
+                $csv = Reader::createFromPath($path);
+                $csv->setHeaderOffset(0);
+
+                foreach ($csv->getRecords() as $record) {
+                    Product::create([
+                        'product_name' => $record['Product Name'] ?? 'Unnamed Product',
+                        'Barcode' => !empty($record['Barcode']) ? $record['Barcode'] : '0',
+                        'product_image' => $record['Product Image'] ?? null,
+                        'halal_status' => !empty($record['Halal Status']) ? $record['Halal Status'] : 2,
+                        'Certification_Status' => !empty($record['Certification Status']) ? $record['Certification Status'] : '',
+                        'category' => $record['Category'] ?? null,
+                        'notes' => $record['Notes'] ?? null,
+                        'ingredient' => $record['Ingredients'] ?? null,
+                    ]);
                 }
-                $csvData[] = $data;
-                Product::create([
-                    'product_name' => $data[0],
-                    'Barcode' => $data[1],
-                    'product_image' => $data[2],
-                    'halal_status' => $data[3],
-                    'Certification_Status' => $data[4],
-                    'category' => $data[5],
-                    'notes' => $data[6],
-                    'ingredient' => $data[7],
-                ]);
+                
+                return redirect()->back()->with('success', 'CSV file imported successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Please select a valid CSV file.');
             }
-            fclose($fileHandle);
-            return redirect()->back()->with('success', 'CSV file imported successfully.');
-        } else {
-
-            return redirect()->back()->with('error', 'Please select a valid CSV file.');
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('CSV import error: ' . $e->getMessage());
+            
+            // Return a user-friendly error message
+            return redirect()->back()->with('error', 'An error occurred while importing the CSV file: ' . $e->getMessage());
         }
     }
 
