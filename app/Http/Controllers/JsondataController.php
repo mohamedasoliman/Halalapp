@@ -55,9 +55,9 @@ class JsondataController extends Controller
 
             // Loop through each json2 record
             foreach ($jsondata->json2 as $json2) {
-                // Create an array for this json2 entry, showing json2_id
+                // Create an array for this json2 entry, showing id
                 $rowData = [
-                    'json2_id' => $json2->id, // Add json2 ID here
+                    'id' => $json2->id, // Add json2 ID here
                 ];
 
                 // Loop through related jsonmeta records to fill in the row data
@@ -208,6 +208,142 @@ class JsondataController extends Controller
             return response()->json(['success' => 'Inserted Successfully'], 200);
         } catch (\Exception $e) {
             return response()->json($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Edit existing JSON data record via API
+     * 
+     * @param Request $request
+     * @param int $json2_id - The ID of the json2 record to edit
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editJsonDataApi(Request $request, $json2_id)
+    {
+        try {
+            // Check if the request has any data
+            if (empty($request->all())) {
+                return response()->json(['message' => 'No data provided'], 400);
+            }
+
+            // Validate API key
+            $apikey = $request->header('X-API-Key');
+            $appkey = config('app.key');
+
+            if ($apikey != $appkey) {
+                return response()->json(['message' => 'You are Unauthorized'], 400);
+            }
+
+            // Find the json2 record
+            $json2 = json2::with('jsonmeta')->find($json2_id);
+            
+            if (!$json2) {
+                return response()->json(['message' => 'JSON record not found'], 404);
+            }
+
+            // Validate the incoming data
+            $validatedData = $request->validate([
+                '*' => 'required',
+            ]);
+
+            // Delete existing jsonmeta records for this json2
+            foreach ($json2->jsonmeta as $meta) {
+                $meta->delete();
+            }
+
+            // Insert new jsonmeta records with updated data
+            foreach ($validatedData as $key => $value) {
+                jsonmeta::create([
+                    'json2_id' => $json2->id,
+                    'meta_key' => $key,
+                    'meta_value' => $value,
+                ]);
+            }
+
+            return response()->json(['success' => 'Updated Successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get specific JSON record for editing
+     * 
+     * @param Request $request
+     * @param int $json2_id - The ID of the json2 record to retrieve
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getJsonDataForEdit(Request $request, $json2_id)
+    {
+        try {
+            // Validate API key
+            $apikey = $request->header('X-API-Key');
+            $appkey = config('app.key');
+
+            if ($apikey != $appkey) {
+                return response()->json(['message' => 'You are Unauthorized'], 400);
+            }
+
+            // Find the json2 record with its metadata
+            $json2 = json2::with('jsonmeta')->find($json2_id);
+            
+            if (!$json2) {
+                return response()->json(['message' => 'JSON record not found'], 404);
+            }
+
+            // Build the response data
+            $responseData = [
+                'id' => $json2->id,
+                'jsondata_id' => $json2->jsondata_id,
+            ];
+
+            // Add all meta key-value pairs
+            foreach ($json2->jsonmeta as $meta) {
+                $responseData[$meta->meta_key] = $meta->meta_value;
+            }
+
+            return response()->json(['success' => true, 'data' => $responseData], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Delete specific JSON record via API
+     * 
+     * @param Request $request
+     * @param int $record_id - The ID of the json2 record to delete
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteJsonDataApi(Request $request, $record_id)
+    {
+        try {
+            // Validate API key
+            $apikey = $request->header('X-API-Key');
+            $appkey = config('app.key');
+
+            if ($apikey != $appkey) {
+                return response()->json(['message' => 'You are Unauthorized'], 400);
+            }
+
+            // Find the json2 record with its metadata
+            $json2 = json2::with('jsonmeta')->find($record_id);
+            
+            if (!$json2) {
+                return response()->json(['message' => 'JSON record not found'], 404);
+            }
+
+            // Delete all related jsonmeta records first
+            foreach ($json2->jsonmeta as $meta) {
+                $meta->delete();
+            }
+
+            // Delete the json2 record
+            $json2->delete();
+
+            return response()->json(['success' => 'Record deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

@@ -43,3 +43,6 @@ Route::post('masjid', [MasjidManagementController::class, 'apishow']);
 Route::get('resturant',[ResturantManagementController::class, 'api']);
 Route::get('/jsondata/{id}', [JsondataController::class, 'allJsonData']);
 Route::post('/addjsondata/{id}', [JsondataController::class, 'allJsonDataApi']);
+Route::get('/editjsondata/{json2_id}', [JsondataController::class, 'getJsonDataForEdit']);
+Route::put('/editjsondata/{json2_id}', [JsondataController::class, 'editJsonDataApi']);
+Route::delete('/deletejsondata/{record_id}', [JsondataController::class, 'deleteJsonDataApi']);

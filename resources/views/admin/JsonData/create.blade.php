@@ -109,9 +109,30 @@
                                 if (row && row.id) { // Check if data exists and row.id is valid
                                     var getUrl = `https://halalapp.info/api/jsondata/${row.id}`;
                                     var postUrl = `https://halalapp.info/api/addjsondata/${row.id}`;
+                                    var getEditUrl = `https://halalapp.info/api/editjsondata/{record_id}`;
+                                    var putEditUrl = `https://halalapp.info/api/editjsondata/{record_id}`;
+                                    var deleteUrl = `https://halalapp.info/api/deletejsondata/{record_id}`;
                                     return `
-                                <strong>GET Data endpoint(api):</strong> <a href="${getUrl}" target="_blank">${getUrl}</a><br>
-                                <strong>SAVE Data endpoint(api):</strong> <a href="${postUrl}">${postUrl}</a>
+                                <div style="font-size: 12px; line-height: 1.4;">
+                                    <strong>GET Data endpoint:</strong><br>
+                                    <a href="${getUrl}" target="_blank" style="color: #007bff; word-break: break-all;">${getUrl}</a><br><br>
+                                    
+                                    <strong>ADD Data endpoint:</strong><br>
+                                    <code style="background: #f8f9fa; padding: 2px 4px; border-radius: 3px; word-break: break-all;">POST ${postUrl}</code><br><br>
+                                    
+                                    <strong>GET Record for Edit:</strong><br>
+                                    <code style="background: #f8f9fa; padding: 2px 4px; border-radius: 3px; word-break: break-all;">GET ${getEditUrl}</code><br><br>
+                                    
+                                    <strong>UPDATE Record:</strong><br>
+                                    <code style="background: #f8f9fa; padding: 2px 4px; border-radius: 3px; word-break: break-all;">PUT ${putEditUrl}</code><br><br>
+                                    
+                                    <strong>DELETE Record:</strong><br>
+                                    <code style="background: #f8f9fa; padding: 2px 4px; border-radius: 3px; word-break: break-all;">DELETE ${deleteUrl}</code><br>
+                                    
+                                    <small style="color: #6c757d; font-style: italic;">
+                                        <br>Note: Replace {record_id} with actual record ID for edit/delete operations
+                                    </small>
+                                </div>
                             `;
                                 } else {
                                     return 'No API routes available'; // Message when no data
