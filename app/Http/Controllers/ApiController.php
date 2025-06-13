@@ -22,23 +22,50 @@ class ApiController extends Controller
             $halalOnly = $request->get('halal_only');
 
             if (!empty($request->search)) {
-                $searchTerm = $request->search;
+                $searchTerm = trim($request->search);
                 
-                // Implement fuzzy search with relevance scoring for product name only
+                // Fuzzy search implementation with multiple matching strategies
                 $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                     ->selectRaw('
                         (CASE 
-                            WHEN product_name LIKE ? THEN 100
+                            WHEN product_name = ? THEN 100
+                            WHEN product_name LIKE ? THEN 95
                             WHEN product_name LIKE ? THEN 90
-                            WHEN product_name LIKE ? THEN 80
+                            WHEN product_name LIKE ? THEN 85
+                            WHEN SOUNDEX(product_name) = SOUNDEX(?) THEN 80
+                            WHEN Barcode = ? THEN 75
+                            WHEN Barcode LIKE ? THEN 70
+                            WHEN category LIKE ? THEN 65
+                            WHEN ingredient LIKE ? THEN 60
+                            WHEN notes LIKE ? THEN 55
+                            WHEN SOUNDEX(category) = SOUNDEX(?) THEN 50
+                            WHEN SOUNDEX(ingredient) = SOUNDEX(?) THEN 45
                             ELSE 0
                         END) as relevance_score
                     ', [
                         $searchTerm,                    // Exact match
                         $searchTerm . '%',              // Starts with
-                        '%' . $searchTerm . '%'         // Contains
+                        '%' . $searchTerm . '%',        // Contains
+                        '%' . $searchTerm,              // Ends with
+                        $searchTerm,                    // Sounds like (SOUNDEX)
+                        $searchTerm,                    // Exact barcode
+                        '%' . $searchTerm . '%',        // Barcode contains
+                        '%' . $searchTerm . '%',        // Category contains
+                        '%' . $searchTerm . '%',        // Ingredient contains
+                        '%' . $searchTerm . '%',        // Notes contains
+                        $searchTerm,                    // Category sounds like
+                        $searchTerm                     // Ingredient sounds like
                     ])
-                    ->where('product_name', 'LIKE', '%' . $searchTerm . '%')
+                    ->where(function($q) use ($searchTerm) {
+                        $q->where('product_name', 'LIKE', '%' . $searchTerm . '%')
+                          ->orWhere('Barcode', 'LIKE', '%' . $searchTerm . '%')
+                          ->orWhere('category', 'LIKE', '%' . $searchTerm . '%')
+                          ->orWhere('ingredient', 'LIKE', '%' . $searchTerm . '%')
+                          ->orWhere('notes', 'LIKE', '%' . $searchTerm . '%')
+                          ->orWhereRaw('SOUNDEX(product_name) = SOUNDEX(?)', [$searchTerm])
+                          ->orWhereRaw('SOUNDEX(category) = SOUNDEX(?)', [$searchTerm])
+                          ->orWhereRaw('SOUNDEX(ingredient) = SOUNDEX(?)', [$searchTerm]);
+                    })
                     ->where('status', 1);
                     
                 // Add halal filter if requested
@@ -46,6 +73,7 @@ class ApiController extends Controller
                     $query->where('halal_status', 0);
                 }
                 
+                // Order by relevance score first, then alphabetically
                 $query->orderByDesc('relevance_score')
                       ->orderBy('product_name');
             } else {
@@ -81,8 +109,14 @@ class ApiController extends Controller
             }
 
             // Add URL to each item
-            foreach ($products as $key => $value) {
-                $products[$key]['url'] = asset('public/upload/product_images/' . $value->product_image);
+            if ($perPage) {
+                foreach ($data['alldata'] as $key => $value) {
+                    $data['alldata'][$key]['url'] = asset('public/upload/product_images/' . $value['product_image']);
+                }
+            } else {
+                foreach ($products as $key => $value) {
+                    $products[$key]['url'] = asset('public/upload/product_images/' . $value->product_image);
+                }
             }
 
             return response()->json($data);
@@ -98,10 +132,16 @@ class ApiController extends Controller
             $perPage = $request->get('per_page');
 
             if (!empty($request->search)) {
-                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')->
-                where('Barcode', 'LIKE', "%{$request->search}%")->where('status', 1);
+                $searchTerm = trim($request->search);
+                
+                // Exact barcode match only - no fuzzy search for barcodes
+                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
+                    ->where('Barcode', $searchTerm)
+                    ->where('status', 1)
+                    ->orderBy('product_name');
             } else {
-                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')->where('status', 1);
+                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
+                    ->where('status', 1);
             }
 
             // Fetch results
@@ -127,13 +167,19 @@ class ApiController extends Controller
             }
 
             // Add URL to each item
-            foreach ($products as $key => $value) {
-                $products[$key]['url'] = asset('public/upload/product_images/' . $value->product_image);
+            if ($perPage) {
+                foreach ($data['alldata'] as $key => $value) {
+                    $data['alldata'][$key]['url'] = asset('public/upload/product_images/' . $value['product_image']);
+                }
+            } else {
+                foreach ($products as $key => $value) {
+                    $products[$key]['url'] = asset('public/upload/product_images/' . $value->product_image);
+                }
             }
 
             return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 }
