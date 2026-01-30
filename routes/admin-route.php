@@ -11,7 +11,9 @@ use App\Http\Controllers\Admin\ProductController\ProductController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 use App\Http\Controllers\JsondataController;
 
-Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+Route::get('/login', function() {
+    return redirect()->route('admin.login');
+});
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login'])->name('admin.login.submit');
@@ -39,11 +41,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('/admin.user.create', [AdminController::class, 'adminUserCreate'])->name('admin.user.create');
 
     /// Resource Routes
-
-    Route::resources([
-        'users'       => 'UsersController',
-        'ajaxmodule'  => 'Admin\AjaxModule\AjaxModuleController',
-    ]);
+    Route::resource('users', UsersController::class)->except(['edit', 'destroy']);
+    Route::resource('ajaxmodule', 'Admin\AjaxModule\AjaxModuleController');
 
     /// User Management
     Route::post('users/get', [UsersTableController::class])->name('users.get');
@@ -87,7 +86,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     Route::get('main-food/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
     Route::post('food/update', [ProductController::class, 'update'])->name('product.update');
-    Route::get('food/{id}', [ProductController::class, 'destroy'])->name('product.delete');
+    Route::get('food/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::get('foodstatusupdate/{id}', [ProductController::class, 'statusUpdate'])->name('product.status.update');
     Route::post('food/checkfood', [ProductController::class, 'checkUniqueproductName'])->name('product.checkproduct');
 
