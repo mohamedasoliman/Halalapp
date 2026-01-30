@@ -34,19 +34,6 @@
                                 <div class="card">
                                     <div class="card-header table-card-header">
                                         <div class="float-right">
-                                            <div class="form-group" style="display:inline; margin-inline: 50px">
-                                                <!-- <label for="categoryFilter">Select Category:</label> -->
-                                                <select name="category" id="categoryFilter">
-                                                    <option value="">Select a Category</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category }}">{{ $category }}</option>
-                                                    @endforeach
-                                                </select>
-
-                                                <button type="button" id="deleteByCategory" class="btn btn-warning">
-                                                    Delete by Category
-                                                </button>
-                                            </div>
                                             <a href="javascript:;" class="btn btn-primary" id="add-main-category"><i
                                                     class="fa fa-plus"></i>Add Product</a>
                                             <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal"
@@ -477,35 +464,6 @@
             $('#editModal').modal('hide');
         });
 
-
-        // Handle category filter and deletion
-        $('#deleteByCategory').click(function() {
-            var selectedCategory = $('#categoryFilter').val();
-            if (selectedCategory) {
-                if (confirm('Are you sure you want to delete products in the selected category?')) {
-                    $.ajax({
-                        type: "POST",
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: "{{ route('product.deleteByCategory') }}",
-                        data: {
-                            category: selectedCategory
-                        },
-                        success: function(data) {
-                            if (data.status == 1) {
-                                message('Products deleted successfully', 'success');
-                                oTable.ajax.reload(); // Reload the DataTable with updated data
-                            } else {
-                                message('Failed to delete products', 'danger');
-                            }
-                        }
-                    });
-                }
-            } else {
-                alert('Please select a category to delete products.');
-            }
-        });
 
         $('#deleteAllProducts').click(function() {
             if (confirm('Are you sure you want to delete all products?')) {
