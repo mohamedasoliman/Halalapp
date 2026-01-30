@@ -14,6 +14,7 @@
 
     <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{{asset('assets/bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
@@ -26,6 +27,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
     <!-- color .css -->
     <link rel="stylesheet" type="text/css" href="{{asset('assets/css/color/color-1.css')}}" id="color"/>
+    <!-- Modern Admin Theme -->
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/css/modern-admin.css')}}">
     <script type="text/javascript" src="{{asset('assets/bower_components/jquery/dist/jquery.min.js')}}"></script>
     <!-- Validation js -->
     <script src="{{asset('assets/js/jquery-validate/jquery.validate.min.js')}}"></script>

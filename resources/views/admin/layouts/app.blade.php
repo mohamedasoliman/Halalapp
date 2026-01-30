@@ -15,6 +15,7 @@
   <!-- Favicon icon -->
   <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
   <!-- Google font-->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
   <!-- Required Fremwork -->
 
@@ -57,6 +58,9 @@
   <link rel="stylesheet" type="text/css" href="{{asset('assets/css/general.css')}}">
     <link rel="stylesheet" href="{{asset('assets/bower_components/jquery-ui/jquery-ui.min.css')}}"/>
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <!-- Modern Admin Theme - Must be last to override all styles -->
+  <link rel="stylesheet" type="text/css" href="{{asset('assets/css/modern-admin.css')}}">
 
   <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 

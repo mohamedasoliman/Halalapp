@@ -19,3 +19,11 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+
+# Local development only (not for production)
+/database/database.sqlite
+/database/migrations/2024_10_15_000001_create_admins_table.php
+/database/migrations/2024_10_15_000002_create_general_settings_table.php
+/database/migrations/2024_10_15_000003_create_masjids_table.php
+/database/migrations/2024_10_15_000004_create_resturants_table.php
+/database/migrations/2024_10_15_000005_add_deleted_at_to_roles_table.php

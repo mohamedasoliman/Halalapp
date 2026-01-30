@@ -25,10 +25,18 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        $gs = GS::first();
-        $admin = Admin::first();
-
-        View::share('gs', $gs);
-        View::share('admin', $admin);
+        // Only query database if tables exist (prevents errors during migrations/setup)
+        try {
+            if (Schema::hasTable('general_settings')) {
+                $gs = GS::first();
+                View::share('gs', $gs);
+            }
+            if (Schema::hasTable('admins')) {
+                $admin = Admin::first();
+                View::share('admin', $admin);
+            }
+        } catch (\Exception $e) {
+            // Database not ready yet, skip sharing
+        }
     }
 }
