@@ -18,7 +18,7 @@
                                         <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="img-fluid mb-4">
                                         <div class="welcome-text">
                                             <h1>Welcome Back!</h1>
-                                            <p class="lead">You are logged in as an Admin. Enjoy managing Halal Kiwi</p>
+                                            <p class="lead">Welcome to the Halal Kiwi Admin Dashboard. Let's make a difference together!</p>
                                         </div>
                                     </div>
                                 </div>
