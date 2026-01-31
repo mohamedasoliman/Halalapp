@@ -14,7 +14,18 @@
     	<input type="file" name="product_image" id="editFileUploader" class="form-control">
     </div>
     <div class="col-sm-10">
-        <img style="height: 100px; width: 100px;" id="edit_display_image" class="img-thumbnail" src="{{ $mode == 'Edit' ? asset("public/upload/product_images/".$Product->product_image) : old('product_image') }}">
+        @php
+            $imageUrl = '';
+            if ($mode == 'Edit' && $Product->product_image) {
+                // Support both local filenames and external URLs
+                if (str_starts_with($Product->product_image, 'http://') || str_starts_with($Product->product_image, 'https://')) {
+                    $imageUrl = $Product->product_image;
+                } else {
+                    $imageUrl = asset("public/upload/product_images/".$Product->product_image);
+                }
+            }
+        @endphp
+        <img style="height: 100px; width: 100px;" id="edit_display_image" class="img-thumbnail" src="{{ $imageUrl }}">
     </div>
 </div>
 <div class="form-group row">

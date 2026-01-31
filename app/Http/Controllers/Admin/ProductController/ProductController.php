@@ -134,7 +134,13 @@ class ProductController extends Controller
                     }
                 })
                 ->editColumn('product_image', function ($row) {
-                    $url = asset('public/upload/product_images/' . $row->product_image);
+                    // Support both local filenames and external URLs
+                    $image = $row->product_image;
+                    if (!empty($image) && (str_starts_with($image, 'http://') || str_starts_with($image, 'https://'))) {
+                        $url = $image;
+                    } else {
+                        $url = asset('public/upload/product_images/' . $image);
+                    }
                     return '<img src="' . $url . '" border="0" width="40" class="img-rounded" align="center" />';
                 })
                 ->addColumn('action', function ($user) {

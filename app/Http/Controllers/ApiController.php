@@ -8,6 +8,28 @@ use App\Models\ProductModel\Product;
 class ApiController extends Controller
 {
     /**
+     * Get the full URL for a product image.
+     * Supports both local filenames and external URLs.
+     *
+     * @param string|null $image
+     * @return string
+     */
+    private function getProductImageUrl($image)
+    {
+        if (empty($image)) {
+            return asset('public/upload/product_images/default.png');
+        }
+
+        // If it's already a full URL, return as-is
+        if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://')) {
+            return $image;
+        }
+
+        // Otherwise, it's a local filename - prepend the local path
+        return asset('public/upload/product_images/' . $image);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -108,14 +130,14 @@ class ApiController extends Controller
                 ];
             }
 
-            // Add URL to each item
+            // Add URL to each item (supports both local filenames and external URLs)
             if ($perPage) {
                 foreach ($data['alldata'] as $key => $value) {
-                    $data['alldata'][$key]['url'] = asset('public/upload/product_images/' . $value['product_image']);
+                    $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
                 }
             } else {
                 foreach ($products as $key => $value) {
-                    $products[$key]['url'] = asset('public/upload/product_images/' . $value->product_image);
+                    $products[$key]['url'] = $this->getProductImageUrl($value->product_image);
                 }
             }
 
@@ -166,14 +188,14 @@ class ApiController extends Controller
                 ];
             }
 
-            // Add URL to each item
+            // Add URL to each item (supports both local filenames and external URLs)
             if ($perPage) {
                 foreach ($data['alldata'] as $key => $value) {
-                    $data['alldata'][$key]['url'] = asset('public/upload/product_images/' . $value['product_image']);
+                    $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
                 }
             } else {
                 foreach ($products as $key => $value) {
-                    $products[$key]['url'] = asset('public/upload/product_images/' . $value->product_image);
+                    $products[$key]['url'] = $this->getProductImageUrl($value->product_image);
                 }
             }
 

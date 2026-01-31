@@ -114,22 +114,55 @@ Custom helpers are autoloaded from `app/Helpers/`:
 - `intervention/image-laravel` - Image processing
 - `league/csv` - CSV import/export
 
+### Admin Panel Views
+
+Blade templates in `resources/views/admin/`:
+- `layouts/app.blade.php` - Main layout (includes sidebar and header)
+- `layouts/loginapp.blade.php` - Auth pages layout
+- `include/sidebar.blade.php` - Navigation sidebar
+- `include/menuheader.blade.php` - Top header bar
+- `products/index.blade.php` - Products DataTable with modals
+- `masjid/masjid_index.blade.php` - Mosques management
+- `JsonData/create.blade.php` - Dynamic directory builder
+
 ## Server Deployment
 
 Production server: HostGator shared hosting at `halalapp@108.167.141.140`
+Live URL: https://halalapp.info
 
 ```bash
+# One-command deploy
+./deploy.sh
+
 # SSH into server
 ssh halalapp@108.167.141.140
 
 # Server app path
 /home5/halalapp/halalapp
 
-# Server composer (older version)
+# Server composer (older version required)
 php ~/.composer/2022-10-27_14-39-29-2.4.4-old.phar install
 ```
 
-See `DEPLOYMENT.md` for full deployment instructions.
+See `DEPLOYMENT.md` for full deployment instructions including troubleshooting and rollback procedures.
+
+## Known Issues and Gotchas
+
+### Route Naming
+The codebase uses both `Route::resource()` and explicit routes. Some resource actions are excluded to avoid duplicate route names:
+```php
+Route::resource('users', UsersController::class)->except(['edit', 'destroy']);
+```
+Custom implementations exist at `users/edit/{id}` and `user/delete/{id}`.
+
+### Local vs Production Database
+- Local development uses SQLite (`database/database.sqlite`)
+- Production uses MySQL on HostGator
+- Some migrations have `Schema::hasTable()` checks to handle existing tables gracefully
+
+### PSR-4 Autoloading Warnings
+Several controllers don't follow PSR-4 naming (class name doesn't match file path). These warnings appear during `composer dump-autoload` but don't affect functionality:
+- `CsvImportController`, `BackgroundImageController`, `UsersController`, `UsersTableController`, `ApiController`
 
 ## Important Notes
 
@@ -138,3 +171,5 @@ See `DEPLOYMENT.md` for full deployment instructions.
 - `halal_status = 0` means halal, `halal_status = 1` means not halal (inverted logic)
 - Admin authentication uses a separate `admin` guard defined in `config/auth.php`
 - User uploads are stored in `public/upload/` and are not tracked in git
+- The admin panel UI uses `public/assets/css/modern-admin.css` for styling (Outfit font, glass-morphic design, dark sidebar)
+- GitHub repository: https://github.com/mohamedasoliman/Halalapp (branch: `main`)
