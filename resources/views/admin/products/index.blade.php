@@ -492,7 +492,7 @@
         $(document).on('click', '.delete_btn', function() {
             $.ajax({
                 type: "get",
-                url: "{{ route('product.delete', '') }}/" + $('#deleteid').val(),
+                url: "{{ route('product.destroy', '') }}/" + $('#deleteid').val(),
                 data: {},
                 success: function(data) {
                     if (data.status == 1) {
