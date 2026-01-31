@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
 use League\Csv\Reader;
+use League\Csv\Writer;
 
 
 class ProductController extends Controller
@@ -71,6 +72,58 @@ class ProductController extends Controller
             
             // Return a user-friendly error message
             return redirect()->back()->with('error', 'An error occurred while importing the CSV file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export all products to CSV file.
+     * Uses the same column format as import for easy round-trip editing.
+     */
+    public function export()
+    {
+        try {
+            $products = Product::orderBy('id', 'ASC')->get();
+
+            // Create CSV writer
+            $csv = Writer::createFromString('');
+
+            // Add header row (matching import format)
+            $csv->insertOne([
+                'Product Name',
+                'Product Image',
+                'Barcode',
+                'Halal Status',
+                'Certification Status',
+                'Category',
+                'Notes',
+                'Ingredients'
+            ]);
+
+            // Add product rows
+            foreach ($products as $product) {
+                $csv->insertOne([
+                    $product->product_name,
+                    $product->product_image,
+                    $product->Barcode,
+                    $product->halal_status,
+                    $product->Certification_Status,
+                    $product->category,
+                    $product->notes,
+                    $product->ingredient
+                ]);
+            }
+
+            // Generate filename with date
+            $filename = 'products_export_' . date('Y-m-d_His') . '.csv';
+
+            // Return CSV download
+            return response($csv->toString(), 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to export CSV: ' . $e->getMessage());
         }
     }
 

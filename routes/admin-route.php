@@ -93,6 +93,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     Route::get('/import-csv', [ProductController::class, 'showform'])->name('import.form');
     Route::post('/import-csv-product', [ProductController::class, 'import'])->name('import.process');
+    Route::get('/export-csv-products', [ProductController::class, 'export'])->name('product.export');
     ///// food route ends /////
 
 

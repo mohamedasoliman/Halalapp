@@ -37,8 +37,10 @@
                                             <a href="javascript:;" class="btn btn-primary" id="add-main-category"><i
                                                     class="fa fa-plus"></i>Add Product</a>
                                             <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal" id="add-main-category"><i
+                                                data-bs-target="#exampleModal"><i
                                                     class="fa fa-plus"></i>Import CSV</a>
+                                            <a href="{{ route('product.export') }}" class="btn btn-success"><i
+                                                    class="fa fa-download"></i> Export CSV</a>
                                             <button type="button" id="deleteAllProducts" class="btn btn-danger">Delete All
                                                 Products</button>
                                         </div>
