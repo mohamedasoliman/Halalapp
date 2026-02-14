@@ -207,7 +207,7 @@
             $(document).on('click', '.status-update', function() {
                 $.ajax({
                     type: "get",
-                    url: "{{ route('product.status.update', '') }}/" + $(this).data('id'),
+                    url: "{{ url('admin/foodstatusupdate') }}/" + $(this).data('id'),
                     data: {},
                     success: function(res) {
                         if (res.status) {
@@ -492,7 +492,7 @@
         $(document).on('click', '.delete_btn', function() {
             $.ajax({
                 type: "get",
-                url: "{{ route('product.destroy', '') }}/" + $('#deleteid').val(),
+                url: "{{ url('admin/food') }}/" + $('#deleteid').val(),
                 data: {},
                 success: function(data) {
                     if (data.status == 1) {

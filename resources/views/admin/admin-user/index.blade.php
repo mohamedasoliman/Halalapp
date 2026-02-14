@@ -141,7 +141,7 @@
         $(document).on('click', '.status-update', function() {
             $.ajax({
                 type: "get",
-                url: "{{ route('admin.status.update', '') }}/"+$(this).data('id'),
+                url: "{{ url('admin/admin/status/update') }}/"+$(this).data('id'),
                 data: {},
                 success: function(res) {
                     if (res.status) {

@@ -91,7 +91,7 @@
 		$(document).on('click', '.status-update', function() {
 			$.ajax({
 				type: "get",
-				url: "{{ route('city.status.update', '') }}/"+$(this).data('id'),
+				url: "{{ url('admin/foodstatusupdate') }}/"+$(this).data('id'),
 				data: {},
 				success: function(res) {
 					if (res.status) {
