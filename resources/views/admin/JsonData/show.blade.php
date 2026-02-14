@@ -243,7 +243,10 @@
                 if (confirm("Do You Really want to Delete This JSON Record ?")) {
                     $.ajax({
                         url: '/admin/delete-jsondata/' + id,
-                        type: 'GET',
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
                         success: function(response) {
                             if (response.success) {
                                 // Reload the DataTablepagination

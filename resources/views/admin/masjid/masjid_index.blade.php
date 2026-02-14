@@ -203,9 +203,9 @@
 
                 $.ajax({
                     url : '{{route('masjid.deleteall')}}',
-                    type : 'GET',
-                    data: {
-                        _token: '{{ csrf_token() }}',
+                    type : 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     success: function (response) {
                         //if returns true
@@ -237,7 +237,10 @@
                 // console.log(id);
                 $.ajax({
                     url : '/admin/masjid/delete/' + id,
-                    type : 'GET',
+                    type : 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
                     success: function (response) {
                         //if returns true
                     if (response.success) {

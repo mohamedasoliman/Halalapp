@@ -7,6 +7,9 @@ use DataTables;
 use Nette\Utils\Image;
 use Illuminate\Http\Request;
 use App\Models\Role\CustomRole;
+use App\Models\ProductModel\Product;
+use App\Models\MasjidModel\Masjid;
+use App\Models\ResturantModel\Resturant;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
@@ -37,7 +40,22 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin.admin');
+        $stats = [];
+
+        try {
+            $stats['total_products'] = Product::count();
+            $stats['active_products'] = Product::where('status', 1)->count();
+            $stats['halal_products'] = Product::where('halal_status', 0)->count();
+            $stats['not_halal_products'] = Product::where('halal_status', 1)->count();
+            $stats['not_sure_products'] = Product::where('halal_status', 2)->count();
+            $stats['total_mosques'] = Masjid::count();
+            $stats['total_restaurants'] = Resturant::count();
+            $stats['total_admins'] = Admin::count();
+        } catch (\Exception $e) {
+            // Tables may not exist yet during setup
+        }
+
+        return view('admin.admin', compact('stats'));
     }
 
 

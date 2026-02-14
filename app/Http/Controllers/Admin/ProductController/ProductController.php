@@ -7,6 +7,7 @@ use Session;
 use App\User;
 use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\ProductModel\Product;
@@ -62,6 +63,7 @@ class ProductController extends Controller
                     ]);
                 }
                 
+                Cache::increment('products_cache_version');
                 return redirect()->back()->with('success', 'CSV file imported successfully.');
             } else {
                 return redirect()->back()->with('error', 'Please select a valid CSV file.');
@@ -134,7 +136,8 @@ class ProductController extends Controller
         // Add your logic here to delete products in the selected category
         Product::where('category', $category)->delete();
 
-        // Return a response indicating the success or failure of the operation
+        Cache::increment('products_cache_version');
+
         return response()->json(['status' => 1, 'message' => 'Products deleted successfully']);
     }
 
@@ -142,6 +145,8 @@ class ProductController extends Controller
     {
         // Delete all products
         Product::truncate();
+
+        Cache::increment('products_cache_version');
 
         return response()->json(['status' => 1, 'message' => 'All products have been deleted.']);
     }
@@ -271,6 +276,8 @@ class ProductController extends Controller
             'ingredient' => $request->ingredient,
         ]);
 
+        Cache::increment('products_cache_version');
+
         return json_encode([
             'status' => 1
         ]);
@@ -346,6 +353,8 @@ class ProductController extends Controller
         // Update the product in the database
         Product::where('id', $categoryId)->update($updateData);
 
+        Cache::increment('products_cache_version');
+
         return json_encode(['status' => 1]);
     }
 
@@ -360,6 +369,8 @@ class ProductController extends Controller
     {
         $Product = Product::find($id);
         $Product->delete();
+
+        Cache::increment('products_cache_version');
 
         return response()->json(['status' => 1, 'messages' => 'Product deleted successfully']);
     }
@@ -415,6 +426,8 @@ class ProductController extends Controller
         Product::where('id', $id)->update([
             'status' => $status,
         ]);
+
+        Cache::increment('products_cache_version');
 
         return response()->json(['status' => TRUE, 'message' => 'Product status change successfully.']);
     }

@@ -14,10 +14,13 @@ use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementControlle
 Route::middleware('api_key')->group(function(){
     Route::post('listing', [ApiController::class, 'allListing']);
     Route::post('listingcode', [ApiController::class, 'allListingBarcode']);
-    Route::post('/contact-us', [ContactMessageController::class, 'send']);
-    Route::post('/fatwa-contact-us', [FatwaContactMessageController::class, 'send']);
-    Route::post('/events-contact-us', [EventsContactMessageController::class, 'send']);
-    Route::post('/kiwisaver-contact', [KiwiSaverContactMessageController::class, 'send']);
+
+    Route::middleware('throttle:contact')->group(function(){
+        Route::post('/contact-us', [ContactMessageController::class, 'send']);
+        Route::post('/fatwa-contact-us', [FatwaContactMessageController::class, 'send']);
+        Route::post('/events-contact-us', [EventsContactMessageController::class, 'send']);
+        Route::post('/kiwisaver-contact', [KiwiSaverContactMessageController::class, 'send']);
+    });
 });
 
 Route::post('masjid', [MasjidManagementController::class, 'apishow']);

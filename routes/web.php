@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-Auth::routes();
+Auth::routes(['register' => false, 'verify' => false, 'confirm' => false, 'reset' => false]);
 
 Route::get('/', function() {
     return redirect()->route('admin.login');

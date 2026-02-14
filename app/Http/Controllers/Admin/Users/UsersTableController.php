@@ -46,14 +46,14 @@ class UsersTableController extends Controller
 		})
 		->addColumn('actions', function ($user) {
 			$data ='<a href="'.route('users.edit',$user->id).'" class="btn btn-outline-warning" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Edit User"><i class="icofont icofont-edit"></i></a>
-			<a href="'.route('users.view',$user->id).'" class="btn btn-outline-primary" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="View User"><i class="icofont icofont-eye-alt"></i></a>
-
+			<a href="'.route('users.view',$user->id).'" class="btn btn-outline-primary" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="View User"><i class="icofont icofont-eye-alt"></i></a> 
+			
 			<button type="button" class="btn btn-outline-danger" onclick="deleteUserModel('.$user->id.')" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Delete User"><i class="icofont icofont-trash"></i>
 			</button> ';
 
 			// if($user->email_verified_at == ""){
 			// 	$data .='<a href="javascript:;" class="btn btn-outline-warning" onclick="UserVerifyModal('.$user->id.')" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Verify Member"> <i class="fa fa-check"></i></a> ';
-			// }else{
+			// }else{	
 			// 	$data .='<a href="javascript:;" class="btn btn-success" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Email Verifed"><i class="fa fa-thumbs-up"></i></a> ';
 			// }
 			if($user->status != "0"){

@@ -3,30 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\Api\ContactRequest;
 use App\Mail\ContactUsEmail;
 use Illuminate\Support\Facades\Mail;
 
 class ContactMessageController extends Controller
 {
 
-    public function send(Request $request)
+    public function send(ContactRequest $request)
     {
         try {
-            $request->validate([
-                'subject' => 'required|string|max:255',
-                'email' => 'required|email',
-                'name' => 'required|string|max:255',
-                'body' => 'required|string',
-                'attachment' => 'nullable|file',
-            ]);
-
-            $apiKey = $request->header('X-API-Key');
-            $appKey = config('app.key');
-
-            // Check if the API key matches the APP_KEY
-            if ($apiKey !== $appKey) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
 
             $attachmentPath = null;
             if ($request->hasFile('attachment')) {

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin\Users;
 
-use App\User;
-use DataTables;
-use Nette\Utils\Image;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\User;
+use Session;
+use Validator;
+use DB;
+use DataTables;
+use Image;
+use Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
@@ -59,8 +60,8 @@ class UsersController extends Controller
                 ->addColumn('actions', function ($user) {
                     $data ='<a href="javascript:;" onclick="editMainCategoryModel('.$user->id.')" class="btn btn-outline-warning" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Edit User"><i class="icofont icofont-edit"></i></a>
 
-                        <a href="'.route('users.view',$user->id).'" class="btn btn-outline-primary" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="View User"><i class="icofont icofont-eye-alt"></i></a>
-
+                        <a href="'.route('users.view',$user->id).'" class="btn btn-outline-primary" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="View User"><i class="icofont icofont-eye-alt"></i></a> 
+            
                         <button type="button" class="btn btn-outline-danger" onclick="deleteUserModel('.$user->id.')" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Delete User"><i class="icofont icofont-trash"></i>
                         </button> ';
 
@@ -118,7 +119,7 @@ class UsersController extends Controller
             'created_by' => Auth::user()->id,
             'password'   => Hash::make($request->password),
         ]);
-
+        
         return json_encode([
             'status' => 1,
             'messages' => 'User add successfully',
@@ -145,7 +146,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $data['users'] = User::find($id);
-
+        
         $editData = view('admin.users.edit', $data)->render();
 
         return json_encode([
@@ -192,7 +193,7 @@ class UsersController extends Controller
     public function UserBlock(Request $request){
 
         $user = User::find($request->id);
-
+        
         User::where('id', $request->id)->update(['status' => 0]);
 
         return response()->json(['status' => 1, 'messages' => 'User Deactive successfully!']);
@@ -211,7 +212,7 @@ class UsersController extends Controller
     public function UserView($id){
 
         $data['user'] = User::where('id', $id)->first();
-        if(!empty($data['user'])) {
+        if(!empty($data['user'])) {    
             return view('admin.users.userview',$data);
         } else {
             return view('admin.404');
@@ -234,10 +235,10 @@ class UsersController extends Controller
         $user->save();
 
         return response()->json(['status' => 1, 'message' => 'Password changed successfully!']);
-
+        
     }
 
-    public function userProfileUpdate(Request $request,$id)
+    public function userProfileUpdate(Request $request,$id) 
     {
         $request->validate([
             'avatar_location' => 'bail|required|file|max:5000kb|mimes:jpeg,png,jpg',
@@ -255,7 +256,7 @@ class UsersController extends Controller
         }
 
         $url = '/assets/frontend/profiles/'.''.$imageName;
-
+        
         User::where('id', $id)->update(['avatar_location' => $imageName]);
 
         return response()->json(['status' => 1, 'message' => 'Profile image update successfully.','url'=>$url]);
@@ -282,9 +283,9 @@ class UsersController extends Controller
     }
 
     public function Useredit($id)
-    {
+    {   
         $data['users'] = User::find($id);
-
+        
         $editData = view('admin.users.edit', $data)->render();
 
         return json_encode([
@@ -319,7 +320,7 @@ class UsersController extends Controller
             'created_by' => Auth::user()->id,
             'gender'     => $request->gender,
         ]);
-
+        
         return json_encode([
             'status'=>1,
             'messages'=> 'Users update successfully'
@@ -345,7 +346,7 @@ class UsersController extends Controller
     {
         $email = $request->email;
         $id = $request->update_id;
-
+        
         if(!empty($id)) {
             $emailcount = User::where('id','!=',$id)->where('email', $email)->get();
             if($emailcount->count()) {

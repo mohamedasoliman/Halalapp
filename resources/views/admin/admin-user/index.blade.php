@@ -140,9 +140,11 @@
 
         $(document).on('click', '.status-update', function() {
             $.ajax({
-                type: "get",
+                type: "post",
                 url: "{{ url('admin/admin/status/update') }}/"+$(this).data('id'),
-                data: {},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 success: function(res) {
                     if (res.status) {
                     	message(res.messages, 'success');
@@ -452,9 +454,11 @@
 
 	$(document).on('click','.delete_btn', function() {
         $.ajax({
-            type: "get",
-            url: "{{ route('admins.destroy','') }}/"+$('#deleteid').val(),
-            data: {},
+            type: "delete",
+            url: "{{ url('admin/admin/delete') }}/"+$('#deleteid').val(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(data) {
             	if(data.status==1){
 					$('#delete_modal').modal('hide');

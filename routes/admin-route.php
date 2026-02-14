@@ -76,8 +76,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     Route::get('main-food/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
     Route::post('food/update', [ProductController::class, 'update'])->name('product.update');
-    Route::get('food/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
-    Route::get('foodstatusupdate/{id}', [ProductController::class, 'statusUpdate'])->name('product.status.update');
+    Route::delete('food/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::post('foodstatusupdate/{id}', [ProductController::class, 'statusUpdate'])->name('product.status.update');
     Route::post('food/checkfood', [ProductController::class, 'checkUniqueproductName'])->name('product.checkproduct');
 
 
@@ -92,8 +92,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('masjid', [MasjidManagementController::class, 'store'])->name('masjid.store');
     Route::get('masjid/edit/{id}', [MasjidManagementController::class, 'edit'])->name('masjid.edit');
     Route::post('masjid/update/{id}', [MasjidManagementController::class, 'update'])->name('masjid.update');
-    Route::get('masjid/delete/{id}', [MasjidManagementController::class, 'delete'])->name('masjid.delete');
-    Route::get('masjid/deleteall', [MasjidManagementController::class, 'deleteall'])->name('masjid.deleteall');
+    Route::delete('masjid/delete/{id}', [MasjidManagementController::class, 'delete'])->name('masjid.delete');
+    Route::delete('masjid/deleteall', [MasjidManagementController::class, 'deleteall'])->name('masjid.deleteall');
     Route::post('import-csv-masjid', [MasjidManagementController::class, 'import'])->name('import.csv');
     ///// masjid routes end/////
 
@@ -106,8 +106,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     Route::post('resturant/update/{id}', [ResturantManagementController::class, 'update'])->name('resturant.update');
 
-    Route::get('resturant/delete/{id}', [ResturantManagementController::class, 'delete'])->name('resturant.delete');
-    Route::get('resturant/deleteall', [ResturantManagementController::class, 'deleteall'])->name('resturant.deleteall');
+    Route::delete('resturant/delete/{id}', [ResturantManagementController::class, 'delete'])->name('resturant.delete');
+    Route::delete('resturant/deleteall', [ResturantManagementController::class, 'deleteall'])->name('resturant.deleteall');
     Route::post('import-csv-resturant', [ResturantManagementController::class, 'import'])->name('resturant.csv');
     // resturant routes end///
 
@@ -116,13 +116,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('/add-json-data', [JsondataController::class, 'store'])->name('jsonAdd.index');
     Route::get('/json-data', [JsondataController::class, 'show'])->name('jsonData.index');
     Route::get('/jsondata/{id}', [JsondataController::class, 'allJsonDataAdmin'])->name('jsondata.show');
-    Route::get('/delete-all-jsondata/{id}', [JsondataController::class, 'DeleteallJsonDataAdmin'])->name('jsondata.deleteall');
-    Route::get('/delete-jsondata/{id}', [JsondataController::class, 'DeleteJsonDataAdmin'])->name('jsondata.delete');
+    Route::delete('/delete-all-jsondata/{id}', [JsondataController::class, 'DeleteallJsonDataAdmin'])->name('jsondata.deleteall');
+    Route::delete('/delete-jsondata/{id}', [JsondataController::class, 'DeleteJsonDataAdmin'])->name('jsondata.delete');
 
     // User Routes
     Route::post('user/store', [UsersController::class, 'store'])->name('user.store');
-    Route::get('user/delete/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
-    Route::get('user/status/update/{id}', [UsersController::class, 'statusUpdate'])->name('users.status.update');
+    Route::delete('user/delete/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
+    Route::post('user/status/update/{id}', [UsersController::class, 'statusUpdate'])->name('users.status.update');
     Route::post('user/checkemail', [UsersController::class, 'checkUniqueEmail'])->name('user.email');
     Route::post('user/checkmobileno', [UsersController::class, 'checkUniqueMobileNo'])->name('user.mobileno');
 
@@ -131,7 +131,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::get('/admin-users/edit/{id}', [AdminController::class, 'adminUserEdit'])->name('admin.users.edit');
     Route::post('updatePassword/{id}', [AdminController::class, 'updatePassword'])->name('admin.user.changepassword');
     Route::post('/adminprofileimage/{id}', [AdminController::class, 'updateprofile'])->name('admin.profilesimage.update');
-    Route::get('admin/status/update/{id}', [AdminController::class, 'statusUpdate'])->name('admin.status.update');
-    Route::get('admin/delete/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
+    Route::post('admin/status/update/{id}', [AdminController::class, 'statusUpdate'])->name('admin.status.update');
+    Route::delete('admin/delete/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
     Route::post('admin/checkemail', [AdminController::class, 'checkUniqueEmail'])->name('admin.email');
 });

@@ -11,10 +11,8 @@
                     <div class="page-wrapper">
                         <div class="page-body">
                             <div class="row">
-                                <!-- Add a welcome message with styling -->
                                 <div class="col-md-12">
                                     <div class="welcome-box text-center">
-                                        <!-- Logo Image -->
                                         <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="img-fluid mb-4">
                                         <div class="welcome-text">
                                             <h1>Welcome Back!</h1>
@@ -23,59 +21,63 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if(!empty($stats))
                             <div class="row mt-4">
-                                <!-- Sidebar for Buttons -->
-                                {{-- <div class="col-12 col-md-3">
-                                    <div class="list-group">
-                                        <!-- Product Management with toggle functionality -->
-                                        <a href="#productManagementSubLinks" class="list-group-item list-group-item-action btn-lg" data-bs-toggle="collapse">
-                                            Product Management
-                                        </a>
-                                        <div class="collapse" id="productManagementSubLinks">
-                                            <a href="{{ route('city.index') }}" class="list-group-item list-group-item-action ps-4">
-                                                Products
-                                            </a>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #2ecc71;">
+                                            <i class="icofont icofont-food-basket"></i>
                                         </div>
-
-                                        <!-- Masjid Management with toggle functionality -->
-                                        <a href="#masjidManagementSubLinks" class="list-group-item list-group-item-action btn-lg" data-bs-toggle="collapse">
-                                            Masjid Management
-                                        </a>
-                                        <div class="collapse" id="masjidManagementSubLinks">
-                                            <a href="{{ route('masjid.index') }}" class="list-group-item list-group-item-action ps-4">
-                                                Masjid List
-                                            </a>
+                                        <div class="stat-info">
+                                            <h3>{{ number_format($stats['total_products'] ?? 0) }}</h3>
+                                            <p>Total Products</p>
+                                            <small>{{ $stats['active_products'] ?? 0 }} active</small>
                                         </div>
-
-                                        <!-- Create JSON Data with toggle functionality -->
-                                        <a href="#jsonManagementSubLinks" class="list-group-item list-group-item-action btn-lg" data-bs-toggle="collapse">
-                                            Create JSON Data
-                                        </a>
-                                        <div class="collapse" id="jsonManagementSubLinks">
-                                            <a href="{{ route('json.index') }}" class="list-group-item list-group-item-action ps-4">
-                                                Generate JSON
-                                            </a>
-                                        </div>
-
-                                        <!-- Logout Button (No sublinks) -->
-                                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action btn-lg text-danger"
-                                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
-                                        <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
-                                            @csrf
-                                        </form>
                                     </div>
-                                </div> --}}
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #004644;">
+                                            <i class="icofont icofont-check-circled"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <h3>{{ number_format($stats['halal_products'] ?? 0) }}</h3>
+                                            <p>Halal</p>
+                                            <small>{{ $stats['not_halal_products'] ?? 0 }} not halal &middot; {{ $stats['not_sure_products'] ?? 0 }} unsure</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #3498db;">
+                                            <i class="icofont icofont-mosque"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <h3>{{ $stats['total_mosques'] ?? 0 }}</h3>
+                                            <p>Mosques</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="stat-card">
+                                        <div class="stat-icon" style="background: #e67e22;">
+                                            <i class="icofont icofont-restaurant"></i>
+                                        </div>
+                                        <div class="stat-info">
+                                            <h3>{{ $stats['total_restaurants'] ?? 0 }}</h3>
+                                            <p>Restaurants</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- For otp -->
 
 @endsection
 
@@ -104,14 +106,53 @@
             font-size: 1.25rem;
         }
 
-        .btn-lg {
-            padding: 10px 20px;
-            font-size: 1.25rem;
-        }
-
         .welcome-box img {
             max-width: 200px;
             height: auto;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon i {
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .stat-info h3 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .stat-info small {
+            color: #999;
+            font-size: 0.75rem;
         }
     </style>
 @endpush

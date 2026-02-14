@@ -183,7 +183,10 @@
                 if (confirm("Do You Really want to Delete All JSON Data")) {
                     $.ajax({
                         url: '/admin/delete-all-jsondata/' + id,
-                        type: 'GET',
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
                         success: function(response) {
                             if (response.success) {
                                 $("#jsonDataTable").DataTable().ajax.reload();

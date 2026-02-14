@@ -90,9 +90,11 @@
 
 		$(document).on('click', '.status-update', function() {
 			$.ajax({
-				type: "get",
+				type: "post",
 				url: "{{ url('admin/foodstatusupdate') }}/"+$(this).data('id'),
-				data: {},
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
 				success: function(res) {
 					if (res.status) {
 						message(res.message, 'success');

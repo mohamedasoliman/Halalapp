@@ -257,7 +257,10 @@
         if (confirm("Are you sure to delete all records?")) {
             $.ajax({
             url : "{{route('resturant.deleteall')}}",
-            type: "GET",
+            type: "DELETE",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
             success: function(response){
                 if(response.success){
                     $("#resturant-table").DataTable().ajax.reload();
@@ -286,7 +289,10 @@
                 // console.log(id);
                 $.ajax({
                     url : '/admin/resturant/delete/' + id,
-                    type : 'GET',
+                    type : 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
                     success: function (response) {
                         //if returns true
                     if (response.success) {

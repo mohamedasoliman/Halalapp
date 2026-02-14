@@ -4,10 +4,11 @@ namespace App\Models\ResturantModel;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Resturant extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     public $skipValidation = true;
     protected $fillable = [
         'Resturant_name',

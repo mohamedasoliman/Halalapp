@@ -206,9 +206,11 @@
 
             $(document).on('click', '.status-update', function() {
                 $.ajax({
-                    type: "get",
+                    type: "post",
                     url: "{{ url('admin/foodstatusupdate') }}/" + $(this).data('id'),
-                    data: {},
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(res) {
                         if (res.status) {
                             message(res.message, 'success');
@@ -491,9 +493,11 @@
 
         $(document).on('click', '.delete_btn', function() {
             $.ajax({
-                type: "get",
+                type: "delete",
                 url: "{{ url('admin/food') }}/" + $('#deleteid').val(),
-                data: {},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 success: function(data) {
                     if (data.status == 1) {
                         $('#delete_modal').modal('hide');
