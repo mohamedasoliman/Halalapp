@@ -45,13 +45,16 @@ class ContactUsEmail extends Mailable
         if ($this->attachmentPath) {
             $attachmentName = pathinfo($this->attachmentPath, PATHINFO_BASENAME);
 
-            // Make sure the file exists before attaching
-            if (file_exists(storage_path("app/$this->attachmentPath"))) {
-                $message->attach(storage_path("app/$this->attachmentPath"), [
+            $filePath = storage_path("app/private/$this->attachmentPath");
+            if (!file_exists($filePath)) {
+                $filePath = storage_path("app/$this->attachmentPath");
+            }
+
+            if (file_exists($filePath)) {
+                $message->attach($filePath, [
                     'as' => $attachmentName,
                 ]);
             } else {
-                // Log or handle the case where the file is not found
                 \Illuminate\Support\Facades\Log::error("Attachment not found: $this->attachmentPath");
             }
         }
