@@ -11,27 +11,6 @@ use App\Http\Controllers\KiwiSaverContactMessageController;
 use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-// Route::name('mobile.')->prefix('mobile')->group(function () {
-//     /*Route::get('/foods', function () {
-//         // Matches The "/admin/users" URL
-//     });*/
-//     Route::get('/foods', [MobileAppFoodController::class,'index'])->name('foods');
-//     Route::get('/foods/{id}', [MobileAppFoodController::class,'show'])->name('get-food');
-//     Route::post('/foods/{id}', [MobileAppFoodController::class,'update'])->name('update-food');
-//     Route::post('/foods', [MobileAppFoodController::class,'store'])->name('store-foods');
-//     Route::post('/foods/{id}/delete', [MobileAppFoodController::class,'destroy'])->name('delete-foods');
-// });
-
-
-//api key middleware
 Route::middleware('api_key')->group(function(){
     Route::post('listing', [ApiController::class, 'allListing']);
     Route::post('listingcode', [ApiController::class, 'allListingBarcode']);

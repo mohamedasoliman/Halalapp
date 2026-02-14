@@ -42,8 +42,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     /// Resource Routes
     Route::resource('users', UsersController::class)->except(['edit', 'destroy']);
-    Route::resource('ajaxmodule', 'Admin\AjaxModule\AjaxModuleController');
-
     /// User Management
     Route::post('users/get', [UsersTableController::class])->name('users.get');
     Route::post('users/delete', [UsersController::class, 'UserDelete'])->name('users.delete');
@@ -58,20 +56,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('users/update', [UsersController::class, 'userUpdate'])->name('user.detail.update');
 
 
-    // Role Management
-    Route::resource('role', 'RoleController', ['except' => ['show']]);
-    // Permission Management
-    Route::resource('permission', 'PermissionController', ['except' => ['show']]);
-
-
     // Admin Profiles Routes
     Route::get('profile/{id}', [AdminController::class, 'adminProfile'])->name('admin.adminProfile');
     Route::post('editprofile', [AdminController::class, 'updateAdminProfile'])->name('admin.profile.update');
     Route::post('updatePassword', [AdminController::class, 'updatePassword'])->name('admin.changepassword');
     Route::post('/configurations/adminprofile/update', [AdminController::class, 'updateprofile'])->name('admin.logoIcon.update');
 
-    // Route::get('subscribers', [SubscriberController::class,'index'])->name('admin.subscriber.get');
-    // Route::post('send/broadcastmail', [SubscriberController::class,'mailtosubsc'])->name('admin.sendmail');
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () {
