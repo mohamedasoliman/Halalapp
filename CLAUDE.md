@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-HalalApp is a Laravel 11 backend API and admin panel for the HalalKiwi mobile app (Flutter). It manages halal products, restaurants, mosques, and community directories for the Muslim community in New Zealand.
+HalalApp is a Laravel 12 backend API and admin panel for the HalalKiwi mobile app (Flutter). It manages halal products, restaurants, mosques, and community directories for the Muslim community in New Zealand.
 
 ## Local Development Setup
 
@@ -155,10 +155,29 @@ Route::resource('users', UsersController::class)->except(['edit', 'destroy']);
 ```
 Custom implementations exist at `users/edit/{id}` and `user/delete/{id}`.
 
+**Product routes have two delete endpoints:**
+- `product.delete` (POST) - expects ID in request body
+- `product.destroy` (GET `food/{id}`) - expects ID in URL
+
+The admin JavaScript uses `product.destroy` for delete operations.
+
 ### Local vs Production Database
 - Local development uses SQLite (`database/database.sqlite`)
-- Production uses MySQL on HostGator
+- Production uses MySQL on HostGator (PHP 8.3.30)
 - Some migrations have `Schema::hasTable()` checks to handle existing tables gracefully
+- `composer.json` has `config.platform.php` set to `8.3.30` to match the server — prevents pulling packages requiring PHP 8.4+
+- **Production requires `cache` and `cache_locks` tables** for rate limiting (throttle middleware). If missing, API returns 500 errors. Create with:
+  ```sql
+  CREATE TABLE cache (`key` VARCHAR(255) PRIMARY KEY, value MEDIUMTEXT NOT NULL, expiration INT NOT NULL);
+  CREATE TABLE cache_locks (`key` VARCHAR(255) PRIMARY KEY, owner VARCHAR(255) NOT NULL, expiration INT NOT NULL);
+  ```
+
+### Laravel 12 Upgrade Notes
+- Upgraded from Laravel 11 to 12 on Feb 2026
+- `route('name', '')` pattern for JS URL building no longer works — use `url('path')` instead
+- `$dates` property is deprecated — use `$casts` with `'datetime'` values instead
+- Laravel default local disk root changed from `storage/app` to `storage/app/private` — Mailables check both paths
+- Product images are stored in `public_html/public/upload/product_images/` (NOT in halalapp/public/) — do NOT delete public_html
 
 ### PSR-4 Autoloading Warnings
 Several controllers don't follow PSR-4 naming (class name doesn't match file path). These warnings appear during `composer dump-autoload` but don't affect functionality:
@@ -173,3 +192,14 @@ Several controllers don't follow PSR-4 naming (class name doesn't match file pat
 - User uploads are stored in `public/upload/` and are not tracked in git
 - The admin panel UI uses `public/assets/css/modern-admin.css` for styling (Outfit font, glass-morphic design, dark sidebar)
 - GitHub repository: https://github.com/mohamedasoliman/Halalapp (branch: `main`)
+
+### Product Images (Hybrid URL Support)
+Product images support both local filenames and external URLs:
+- Local: `product_image = "5007023.jpg"` → served from `/public/upload/product_images/`
+- External: `product_image = "https://example.com/image.jpg"` → passed through as-is
+
+The `ApiController::getProductImageUrl()` helper detects which type and constructs the appropriate URL. CSV import accepts both formats.
+
+### CSV Import/Export
+- **Import:** Upload CSV via admin panel; headers must match: `Product Name, Product Image, Barcode, Halal Status, Certification Status, Category, Notes, Ingredients`
+- **Export:** Downloads all products as CSV with same format for round-trip editing
