@@ -159,12 +159,6 @@ class ApiController extends Controller
             // Force pagination: default 50, max 100
             $perPage = min((int) ($request->get('per_page', 50)), 100);
 
-            \Log::info('Barcode search', [
-                'search' => $request->search,
-                'all_input' => $request->all(),
-                'content_type' => $request->header('Content-Type'),
-            ]);
-
             if (!empty($request->search)) {
                 $searchTerm = trim($request->search);
 
