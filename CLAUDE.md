@@ -36,6 +36,8 @@ npm run build        # Production build
 php artisan migrate                    # Run migrations
 php artisan migrate:rollback           # Rollback last migration
 php artisan db:seed                    # Seed database
+php artisan db:backup                  # Manual database backup (daily auto at 3 AM)
+php artisan db:backup --keep=14        # Backup with custom rotation count
 
 # Cache management
 php artisan config:cache               # Cache configuration
@@ -62,11 +64,12 @@ php artisan test                       # Run PHPUnit tests
 Routes are split across multiple files in `routes/`:
 - `api.php` - Mobile app API endpoints (protected by `api_key` middleware)
 - `admin-route.php` - Admin panel routes (protected by `auth:admin` middleware)
-- `web.php` - Public web routes (includes admin-route.php and ravi-route.php)
+- `web.php` - Public web routes (includes admin-route.php)
+- `console.php` - Scheduled tasks (daily db:backup at 3:00 AM)
 
 ### API Authentication
 
-Mobile API uses a custom `api_key` middleware (`app/Http/Middleware/apimiddleware.php`) that validates `X-API-Key` header against the app's `APP_KEY` from `.env`.
+Mobile API uses a custom `api_key` middleware (`app/Http/Middleware/apimiddleware.php`) that validates `X-API-Key` header against `API_KEY` from `.env` (falls back to `APP_KEY` if `API_KEY` not set). Contact form endpoints have additional rate limiting (5 requests/min per IP).
 
 ### Key API Endpoints
 
@@ -86,20 +89,33 @@ Mobile API uses a custom `api_key` middleware (`app/Http/Middleware/apimiddlewar
 
 Located in `app/Models/`:
 - `ProductModel/Product` - Halal products with barcode, category, halal_status
-- `MasjidModel/Masjid` - Mosque information
-- `ResturantModel/Resturant` - Restaurant/vendor data
+- `MasjidModel/Masjid` - Mosque information (soft deletes enabled)
+- `ResturantModel/Resturant` - Restaurant/vendor data (soft deletes enabled)
 - `Role/CustomRole` - User roles for RBAC
 - `jsondata`, `jsonmeta`, `json2` - Dynamic directory data
 - `User` - Admin/user accounts
 
 ### Controllers
 
-- `ApiController` - Main mobile API with fuzzy search implementation
-- `Admin/ProductController/ProductController` - Product CRUD + CSV import
+- `ApiController` - Main mobile API with fuzzy search implementation + cached product listings
+- `Admin/ProductController/ProductController` - Product CRUD + CSV import (invalidates product cache on mutations)
+- `Admin/AdminController` - Dashboard with stats (product counts, mosques, restaurants, admins)
 - `Admin/MasjidControllers/MasjidManagementController` - Mosque management
 - `Admin/ResturantControllers/ResturantManagementController` - Restaurant management
+- `Admin/Users/UsersController` - User CRUD management
+- `Admin/Configurations/BackgroundImageController` - Background image management
 - `JsondataController` - Dynamic directory CRUD (both admin and API)
-- `*ContactMessageController` - Various contact form handlers that send emails
+- `*ContactMessageController` - Contact form handlers with FormRequest validation
+
+### FormRequest Validation (API)
+
+Located in `app/Http/Requests/Api/`:
+- `ProductSearchRequest` - Validates search, per_page, page, halal_only params
+- `ContactRequest` - Validates contact form (subject, email, name, body, attachment)
+- `FatwaContactRequest` - Validates fatwa inquiry form
+- `EventsContactRequest` - Validates events inquiry form (includes URL validation on link field)
+
+All return JSON 422 responses on validation failure (overridden `failedValidation`).
 
 ### Global Helpers
 
@@ -157,9 +173,12 @@ Custom implementations exist at `users/edit/{id}` and `user/delete/{id}`.
 
 **Product routes have two delete endpoints:**
 - `product.delete` (POST) - expects ID in request body
-- `product.destroy` (GET `food/{id}`) - expects ID in URL
+- `product.destroy` (DELETE `food/{id}`) - expects ID in URL
 
-The admin JavaScript uses `product.destroy` for delete operations.
+The admin JavaScript uses `product.destroy` for delete operations via AJAX with `method: 'DELETE'` and CSRF header.
+
+### Destructive Admin Routes Use Proper HTTP Methods
+All destructive admin operations use DELETE (for deletes) or POST (for status toggles) instead of GET. The Blade views send these via AJAX with the `X-CSRF-TOKEN` header. This applies to: product delete/status, masjid delete/deleteall, restaurant delete/deleteall, jsondata delete, user delete/status, admin delete/status.
 
 ### Local vs Production Database
 - Local development uses SQLite (`database/database.sqlite`)
@@ -180,17 +199,26 @@ The admin JavaScript uses `product.destroy` for delete operations.
 - Product images are stored in `public_html/public/upload/product_images/` (NOT in halalapp/public/) — do NOT delete public_html
 
 ### PSR-4 Autoloading Warnings
-Several controllers don't follow PSR-4 naming (class name doesn't match file path). These warnings appear during `composer dump-autoload` but don't affect functionality:
-- `CsvImportController`, `BackgroundImageController`, `UsersController`, `UsersTableController`, `ApiController`
+Two controllers don't follow PSR-4 naming (class name doesn't match file path). These warnings appear during `composer dump-autoload` but don't affect functionality:
+- `CsvImportController`, `ApiController`
+
+### Product Listing Cache
+Non-search product listings are cached for 10 minutes using version-based keys (`products:v{ver}:list:{filter}:{perPage}:{page}`). The cache version is incremented on any product mutation (create, update, delete, import, status change) in `ProductController`. Search queries are not cached.
+
+### Database Backup
+Custom `db:backup` artisan command (`app/Console/Commands/BackupDatabase.php`) supports MySQL (mysqldump) and SQLite (file copy). Runs daily at 3:00 AM via Laravel scheduler. Backups stored in `storage/app/backups/` with `--keep=7` rotation by default.
 
 ## Important Notes
 
 - The `.env` file on the server contains production database credentials - never overwrite it
+- `API_KEY` in `.env` is used for mobile API auth (separate from `APP_KEY`); falls back to `APP_KEY` if not set
 - Product search uses MySQL SOUNDEX for fuzzy matching (see `ApiController::allListing`)
 - `halal_status = 0` means halal, `halal_status = 1` means not halal (inverted logic)
 - Admin authentication uses a separate `admin` guard defined in `config/auth.php`
 - User uploads are stored in `public/upload/` and are not tracked in git
 - The admin panel UI uses `public/assets/css/modern-admin.css` for styling (Outfit font, glass-morphic design, dark sidebar)
+- Masjid and Resturant models use soft deletes (`deleted_at` column) — records are hidden, not destroyed
+- `Auth::routes()` has register, verify, confirm, and reset disabled (admin-only app)
 - GitHub repository: https://github.com/mohamedasoliman/Halalapp (branch: `main`)
 
 ### Product Images (Hybrid URL Support)

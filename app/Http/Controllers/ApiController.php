@@ -39,19 +39,19 @@ class ApiController extends Controller
     public function allListing(ProductSearchRequest $request)
     {
         try {
-            // Check if per_page is provided
-            $perPage = $request->get('per_page');
-            
+            // Force pagination: default 50, max 100
+            $perPage = min((int) ($request->get('per_page', 50)), 100);
+
             // Check if halal_only filter is requested
             $halalOnly = $request->get('halal_only');
 
             if (!empty($request->search)) {
                 $searchTerm = trim($request->search);
-                
+
                 // Fuzzy search implementation with multiple matching strategies
                 $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                     ->selectRaw('
-                        (CASE 
+                        (CASE
                             WHEN product_name = ? THEN 100
                             WHEN product_name LIKE ? THEN 95
                             WHEN product_name LIKE ? THEN 90
@@ -91,12 +91,12 @@ class ApiController extends Controller
                           ->orWhereRaw('SOUNDEX(ingredient) = SOUNDEX(?)', [$searchTerm]);
                     })
                     ->where('status', 1);
-                    
+
                 // Add halal filter if requested
                 if ($halalOnly == '1' || $halalOnly == 'true') {
                     $query->where('halal_status', 0);
                 }
-                
+
                 // Order by relevance score first, then alphabetically
                 $query->orderByDesc('relevance_score')
                       ->orderBy('product_name');
@@ -104,7 +104,7 @@ class ApiController extends Controller
                 // No search term — cacheable listing
                 $halalFilter = ($halalOnly == '1' || $halalOnly == 'true') ? 1 : 0;
                 $ver = Cache::get('products_cache_version', 1);
-                $cacheKey = "products:v{$ver}:list:{$halalFilter}:" . ($perPage ?: 'all') . ':' . ($request->get('page', 1));
+                $cacheKey = "products:v{$ver}:list:{$halalFilter}:{$perPage}:" . ($request->get('page', 1));
 
                 $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $perPage) {
                     $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
@@ -114,65 +114,37 @@ class ApiController extends Controller
                         $query->where('halal_status', 0);
                     }
 
-                    if ($perPage) {
-                        $products = $query->paginate($perPage);
-                        $items = $products->items();
-                        foreach ($items as $key => $value) {
-                            $items[$key]['url'] = $this->getProductImageUrl($value['product_image']);
-                        }
-                        return [
-                            'status' => 'success',
-                            'alldata' => $items,
-                            'current_page' => $products->currentPage(),
-                            'last_page' => $products->lastPage(),
-                            'per_page' => $products->perPage(),
-                            'total' => $products->total()
-                        ];
-                    } else {
-                        $products = $query->get();
-                        foreach ($products as $key => $value) {
-                            $products[$key]['url'] = $this->getProductImageUrl($value->product_image);
-                        }
-                        return [
-                            'status' => 'success',
-                            'alldata' => $products,
-                            'total' => $products->count()
-                        ];
+                    $products = $query->paginate($perPage);
+                    $items = $products->items();
+                    foreach ($items as $key => $value) {
+                        $items[$key]['url'] = $this->getProductImageUrl($value['product_image']);
                     }
+                    return [
+                        'status' => 'success',
+                        'alldata' => $items,
+                        'current_page' => $products->currentPage(),
+                        'last_page' => $products->lastPage(),
+                        'per_page' => $products->perPage(),
+                        'total' => $products->total()
+                    ];
                 });
 
                 return response()->json($data);
             }
 
             // Fetch search results (not cached — too varied)
-            if ($perPage) {
-                $products = $query->paginate($perPage);
-                $data = [
-                    'status' => 'success',
-                    'alldata' => $products->items(),
-                    'current_page' => $products->currentPage(),
-                    'last_page' => $products->lastPage(),
-                    'per_page' => $products->perPage(),
-                    'total' => $products->total()
-                ];
-            } else {
-                $products = $query->get();
-                $data = [
-                    'status' => 'success',
-                    'alldata' => $products,
-                    'total' => $products->count()
-                ];
-            }
+            $products = $query->paginate($perPage);
+            $data = [
+                'status' => 'success',
+                'alldata' => $products->items(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total()
+            ];
 
-            // Add URL to each item
-            if ($perPage) {
-                foreach ($data['alldata'] as $key => $value) {
-                    $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
-                }
-            } else {
-                foreach ($products as $key => $value) {
-                    $products[$key]['url'] = $this->getProductImageUrl($value->product_image);
-                }
+            foreach ($data['alldata'] as $key => $value) {
+                $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
             }
 
             return response()->json($data);
@@ -184,12 +156,12 @@ class ApiController extends Controller
     public function allListingBarcode(Request $request)
     {
         try {
-            // Check if per_page is provided
-            $perPage = $request->get('per_page');
+            // Force pagination: default 50, max 100
+            $perPage = min((int) ($request->get('per_page', 50)), 100);
 
             if (!empty($request->search)) {
                 $searchTerm = trim($request->search);
-                
+
                 // Exact barcode match only - no fuzzy search for barcodes
                 $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                     ->where('Barcode', $searchTerm)
@@ -200,37 +172,18 @@ class ApiController extends Controller
                     ->where('status', 1);
             }
 
-            // Fetch results
-            if ($perPage) {
-                // Paginate the results
-                $products = $query->paginate($perPage);
-                $data = [
-                    'status' => 'success',
-                    'alldata' => $products->items(),
-                    'current_page' => $products->currentPage(),
-                    'last_page' => $products->lastPage(),
-                    'per_page' => $products->perPage(),
-                    'total' => $products->total()
-                ];
-            } else {
-                // Get all results without pagination
-                $products = $query->get();
-                $data = [
-                    'status' => 'success',
-                    'alldata' => $products,
-                    'total' => $products->count()
-                ];
-            }
+            $products = $query->paginate($perPage);
+            $data = [
+                'status' => 'success',
+                'alldata' => $products->items(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total()
+            ];
 
-            // Add URL to each item (supports both local filenames and external URLs)
-            if ($perPage) {
-                foreach ($data['alldata'] as $key => $value) {
-                    $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
-                }
-            } else {
-                foreach ($products as $key => $value) {
-                    $products[$key]['url'] = $this->getProductImageUrl($value->product_image);
-                }
+            foreach ($data['alldata'] as $key => $value) {
+                $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
             }
 
             return response()->json($data);

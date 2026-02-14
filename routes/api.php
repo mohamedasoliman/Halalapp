@@ -11,7 +11,7 @@ use App\Http\Controllers\KiwiSaverContactMessageController;
 use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 
-Route::middleware('api_key')->group(function(){
+Route::middleware(['api_key', 'throttle:api'])->group(function(){
     Route::post('listing', [ApiController::class, 'allListing']);
     Route::post('listingcode', [ApiController::class, 'allListingBarcode']);
 
