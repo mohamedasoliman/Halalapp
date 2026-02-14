@@ -40,12 +40,6 @@ class User extends Authenticatable
     /**
      * @var array
      */
-    protected $dates = [
-        'last_login_at',
-        'password_changed_at',
-        'deleted_at',
-    ];
-
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -66,5 +60,8 @@ class User extends Authenticatable
         'confirmed' => 'boolean',
         'to_be_logged_out' => 'boolean',
         'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'password_changed_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 }
