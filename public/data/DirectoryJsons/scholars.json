@@ -1,0 +1,192 @@
+[
+  {
+    "name": "Mufti Ahmed Sidat",
+    "title": "Mufti",
+    "phone": "022 501 4002",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Mufti Irshad Motara",
+    "title": "Mufti",
+    "phone": "021 135 9800",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Mufti Ishaq Koshya",
+    "title": "Mufti",
+    "phone": "09 833 9072",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Mufti Dr Mohammed Farid Ali Al Fijawi",
+    "title": "Mufti",
+    "phone": "0275194434",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Hafiz Junaid",
+    "title": "Sheikh",
+    "phone": "0211283220",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Sheikh Kalim Hussain",
+    "title": "Sheikh",
+    "phone": "021 663 842",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Sheikh Mohammad Amir",
+    "title": "Sheikh",
+    "phone": "021 242 4560",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Sheikh Mohammed Patel",
+    "title": "Sheikh",
+    "phone": "021 025 32786",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Shaykh Abed",
+    "title": "Sheikh",
+    "phone": "+64223716198",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Sheikh Rafat Najam",
+    "title": "Sheikh",
+    "phone": "021 134 0501",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Auckland",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Abdul Lateef",
+    "title": "Sheikh",
+    "phone": "021 051 5767",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Christchurch",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Gamal Albanna",
+    "title": "Sheikh",
+    "phone": "0220440718",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Christchurch",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Mohd Idris bin Osman",
+    "title": "Sheikh",
+    "phone": "0220262846",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Christchurch",
+    "languages": ["English", "Malay"]
+  },
+  {
+    "name": "Sheikh Abdul Khadir",
+    "title": "Sheikh",
+    "phone": "0220470656",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Hamilton",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Ahmed Abdelkader Ghoneim",
+    "title": "Sheikh",
+    "phone": "021 1542470",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Tauranga",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Abdullah",
+    "title": "Sheikh",
+    "phone": "210345139",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Te Kuiti",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Asraarul Haq",
+    "title": "Sheikh",
+    "phone": "021 1041146",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Timaru",
+    "languages": ["English", "Urdu"]
+  },
+  {
+    "name": "Sheikh Abdul Jabbar",
+    "title": "Sheikh",
+    "phone": "021 170 0850",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Wellington",
+    "languages": ["English", "Arabic"]
+  },
+  {
+    "name": "Sheikh Khaled Said",
+    "title": "Sheikh",
+    "phone": "021 1239745",
+    "email": "",
+    "website": "",
+    "specialization": "Islamic Scholar",
+    "region": "Wellington",
+    "languages": ["English", "Arabic"]
+  }
+]

@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Al Madinah School",
+    "type": "School",
+    "address": "8 Westney Road, Mangere, Auckland",
+    "phone": "09 275 5195",
+    "website": "al-madinah.school.nz",
+    "email": "",
+    "description": "State Integrated/Contributing Muslim School - Year 1-13",
+    "region": "Auckland"
+  },
+  {
+    "name": "Safura International Learning Academy",
+    "type": "School",
+    "address": "27 Forbes Road, Favona, Auckland 2024",
+    "phone": "+64223716198",
+    "website": "www.safuraacademy.org.nz",
+    "email": "admin@safuraacademy.org.nz",
+    "description": "A dedicated institution founded with the vision of providing high-quality Islamic education",
+    "region": "Auckland"
+  },
+  {
+    "name": "Iqra School",
+    "type": "School",
+    "address": "5-9 Hugh Brown Drive, New Lynn, Auckland",
+    "phone": "09-825 0041",
+    "website": "iqra.school.nz",
+    "email": "",
+    "description": "State Integrated/Contributing Muslim School - Year 1-6",
+    "region": "Auckland"
+  },
+  {
+    "name": "Zayed College for Girls",
+    "type": "School",
+    "address": "44 Westney Road, Mangere, Auckland",
+    "phone": "09 255 0904",
+    "website": "zayedcollege.school.nz",
+    "email": "",
+    "description": "State Integrated/Contributing Muslim School - Year 7-13",
+    "region": "Auckland"
+  },
+  {
+    "name": "Holistic Learning",
+    "type": "Tuition Centre",
+    "address": "137A May Road, Mt Roskill, Auckland",
+    "phone": "022 450 3656",
+    "website": "holisticlearningnz.com",
+    "email": "",
+    "description": "A tuition centre and creative space that provides a unique learning environment for students of all ages and backgrounds",
+    "region": "Auckland"
+  },
+  {
+    "name": "NZ Nejashi Trust Homework Centre",
+    "type": "Homework Centre",
+    "address": "Top floor 166 Stoddard road, Mt. Roskill",
+    "phone": "021803134",
+    "website": "",
+    "email": "",
+    "description": "Every Mondays and Wednesdays 6pm to 8pm. Contact person - Jibril Mussa",
+    "region": "Auckland"
+  },
+  {
+    "name": "Al Hoda Islamic School North Shore",
+    "type": "Madrasah",
+    "address": "North Shore",
+    "phone": "0212668187",
+    "website": "tamrah.co.nz/listing/al-hoda-islamic-school",
+    "email": "",
+    "description": "Contact: Sr. Hoda",
+    "region": "Auckland"
+  },
+  {
+    "name": "Al Noor Educational Trust",
+    "type": "Madrasah",
+    "address": "Papatoetoe",
+    "phone": "0211283220",
+    "website": "",
+    "email": "hafiz.junaid@hotmail.com",
+    "description": "Madrasah Classes at Papatoetoe - Contact: Hafiz Junaid",
+    "region": "Auckland"
+  },
+  {
+    "name": "Ar Rahmah",
+    "type": "Madrasah",
+    "address": "Avondale Islamic Centre, Blockhouse Bay Road",
+    "phone": "0210424113",
+    "website": "",
+    "email": "",
+    "description": "Sunday class at Avondale Islamic Centre, Every Sunday 2.30-4.00pm (since 23 yrs). Children/youth classes in English",
+    "region": "Auckland"
+  },
+  {
+    "name": "Auckland Islamic Trust",
+    "type": "Madrasah",
+    "address": "2/36, Stoddard Road, Mt Roskill, Auckland",
+    "phone": "022 354 8741",
+    "website": "fb.com/auckland.islamic",
+    "email": "",
+    "description": "Contact Mufti Muhammad Irshad Motara",
+    "region": "Auckland"
+  },
+  {
+    "name": "Boys and Girls Madarsha",
+    "type": "Madrasah",
+    "address": "Mangere East",
+    "phone": "09-2767485/0210540794",
+    "website": "",
+    "email": "",
+    "description": "Contact: Moulana Abid",
+    "region": "Auckland"
+  },
+  {
+    "name": "Dar Al-Quran Auckland",
+    "type": "Madrasah",
+    "address": "44a Westney Road, Auckland 2022",
+    "phone": "",
+    "website": "daralquran.nz",
+    "email": "info@daralquran.nz",
+    "description": "",
+    "region": "Auckland"
+  },
+  {
+    "name": "Darul Hidayah",
+    "type": "Madrasah",
+    "address": "New North Road, Mt Albert Auckland",
+    "phone": "020 414 03600",
+    "website": "darulhidayah.co.nz",
+    "email": "",
+    "description": "",
+    "region": "Auckland"
+  },
+  {
+    "name": "Darul Uloom Auckland Trust",
+    "type": "Madrasah",
+    "address": "Auckland",
+    "phone": "021 62 47 86",
+    "website": "",
+    "email": "",
+    "description": "Contact: Shaikh Amjad Ali Al-Madani",
+    "region": "Auckland"
+  },
+  {
+    "name": "Darul Uloom Ihyaa ud Deen",
+    "type": "Madrasah",
+    "address": "7 Razorback Road, Bombay, Auckland",
+    "phone": "+64 22 103 5814",
+    "website": "",
+    "email": "",
+    "description": "Contact: Mufti Musayyab Sahib (Trustee)",
+    "region": "Auckland"
+  },
+  {
+    "name": "The Ethnic Playgroup (HAWO TAAKO)",
+    "type": "Playgroup",
+    "address": "Wesley Community Centre, 740 Sandringham Rd, Mt Roskill",
+    "phone": "09-8157373",
+    "website": "nzethnicwomen.org/playgroups.html",
+    "email": "",
+    "description": "Monday to Friday during term time, 12:30pm-3:30pm",
+    "region": "Auckland"
+  },
+  {
+    "name": "Iqra Educare",
+    "type": "Childcare",
+    "address": "921 Heaphy Tce, Claudelands, Hamilton 3204",
+    "phone": "07-855 0568",
+    "website": "iqraeducare.org.nz",
+    "email": "info@iqraeducare.org.nz",
+    "description": "Childcare services",
+    "region": "Hamilton"
+  },
+  {
+    "name": "An-Nur Childcare Centre",
+    "type": "Childcare",
+    "address": "48 Springs Rd, Hornby, Christchurch",
+    "phone": "03-3493223",
+    "website": "fb.com/AnNurEarly Childhood Education AndCareCentre",
+    "email": "an_nur_childcare@hotmail.com",
+    "description": "Childcare services",
+    "region": "Christchurch"
+  },
+  {
+    "name": "An-Nur Childcare Centre Dunedin",
+    "type": "Childcare",
+    "address": "110 Melbourne St, South Dunedin",
+    "phone": "03 456 1988",
+    "website": "fb.com/annurdunedin",
+    "email": "",
+    "description": "Childcare services",
+    "region": "Dunedin"
+  },
+  {
+    "name": "Haleema Kindergarten",
+    "type": "Childcare",
+    "address": "16-20 Hunter St, Lower Hutt",
+    "phone": "04-5672788",
+    "website": "haleema.org.nz",
+    "email": "",
+    "description": "Next to the Islamic Centre",
+    "region": "Wellington"
+  },
+  {
+    "name": "Muslim Kids Holiday Program",
+    "type": "Holiday Program",
+    "address": "",
+    "phone": "",
+    "website": "fb.com/MuslimKidsNz",
+    "email": "muslim.kids.nz@gmail.com",
+    "description": "Holiday activities for Muslim children",
+    "region": "Auckland"
+  },
+  {
+    "name": "NZ Nejashi Holiday Programme",
+    "type": "Holiday Program",
+    "address": "",
+    "phone": "021803134",
+    "website": "",
+    "email": "",
+    "description": "Contact: Jibril Mussa",
+    "region": "Auckland"
+  },
+  {
+    "name": "The Fatimah Foundation",
+    "type": "Support Organization",
+    "address": "",
+    "phone": "0800 222 432",
+    "website": "",
+    "email": "",
+    "description": "Support services for Muslim children",
+    "region": "Auckland"
+  },
+  {
+    "name": "Umma Trust",
+    "type": "Support Organization",
+    "address": "Ferndale House, Auckland",
+    "phone": "09 815 0153",
+    "website": "",
+    "email": "",
+    "description": "Support services for Muslim children",
+    "region": "Auckland"
+  }
+]

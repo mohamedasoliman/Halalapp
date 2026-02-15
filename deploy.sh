@@ -67,6 +67,11 @@ ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
 
     echo "Setting permissions..."
     chmod -R 775 storage bootstrap/cache
+
+    echo "Syncing JSON data files to public_html..."
+    mkdir -p /home5/halalapp/public_html/data/DirectoryJsons
+    cp -f public/data/*.json /home5/halalapp/public_html/data/
+    cp -f public/data/DirectoryJsons/*.json /home5/halalapp/public_html/data/DirectoryJsons/
 ENDSSH
 
 # Step 4: Verify deployment

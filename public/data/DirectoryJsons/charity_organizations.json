@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Al Manar Trust",
+    "type": "Charitable Trust",
+    "address": "",
+    "phone": "022 041 8491",
+    "website": "almanarrelief.co.nz",
+    "email": "",
+    "charityServices": ["Syria Relief", "Ramadan Food Pack", "Sadaqah & Projects", "Zakaat"],
+    "region": "Auckland"
+  },
+  {
+    "name": "Auckland Muslim Students Association",
+    "type": "Student Association",
+    "address": "",
+    "phone": "",
+    "website": "",
+    "email": "",
+    "charityServices": ["Student Support"],
+    "region": "Auckland"
+  },
+  {
+    "name": "Baitul Maal NZ Trust",
+    "type": "Charitable Trust",
+    "address": "463 Porchester Road, Randwick Park, Auckland",
+    "phone": "09 973 4970",
+    "website": "baitulmaal.nz",
+    "email": "info@baitulmaal.nz",
+    "charityServices": ["Zakah", "Waqf", "Fitr", "Fidiya", "Sadaqa"],
+    "region": "Auckland"
+  },
+  {
+    "name": "Fatimah Foundation",
+    "type": "Charitable Foundation",
+    "address": "",
+    "phone": "0800 222 432",
+    "website": "fatimahfoundation.org.nz",
+    "email": "",
+    "charityServices": ["Food Drive", "Community Support"],
+    "region": "Auckland"
+  },
+  {
+    "name": "FIANZ",
+    "type": "National Body",
+    "address": "Wellington",
+    "phone": "04-3878023",
+    "website": "fianz.com",
+    "email": "",
+    "charityServices": ["Various Fundraising Appeals"],
+    "region": "National"
+  },
+  {
+    "name": "Gift A Smile",
+    "type": "Charitable Organization",
+    "address": "",
+    "phone": "0210 255 1075",
+    "website": "fb.com/giftasmilenz",
+    "email": "",
+    "charityServices": ["Helping Those in Need"],
+    "region": "Auckland"
+  },
+  {
+    "name": "Human Care NZ",
+    "type": "Charitable Organization",
+    "address": "",
+    "phone": "021781227",
+    "website": "humancare.org.nz",
+    "email": "",
+    "charityServices": ["Food Support", "Basic Amenities Support"],
+    "region": "National"
+  },
+  {
+    "name": "Humanity Fund New Zealand",
+    "type": "Charitable Fund",
+    "address": "",
+    "phone": "027 706 4366",
+    "website": "humanityfund.org.nz",
+    "email": "",
+    "charityServices": ["Humanitarian Aid"],
+    "region": "National"
+  },
+  {
+    "name": "ICC Charitable Trust",
+    "type": "Charitable Trust",
+    "address": "",
+    "phone": "",
+    "website": "iccct.org/donate-now",
+    "email": "icccharity@gmail.com",
+    "charityServices": ["Child Sponsorship"],
+    "region": "National"
+  },
+  {
+    "name": "National Zakat Foundation New Zealand",
+    "type": "Zakat Organization",
+    "address": "",
+    "phone": "0800 492 528",
+    "website": "zakat.org.nz",
+    "email": "info@zakat.org.nz",
+    "charityServices": ["Zakat Collection", "Zakat Distribution", "Sadaqah"],
+    "region": "National"
+  },
+  {
+    "name": "New Zealand Zakat Foundation",
+    "type": "Zakat Organization",
+    "address": "",
+    "phone": "",
+    "website": "zakatfoundation.nz",
+    "email": "",
+    "charityServices": ["Zakat Collection", "Zakat Distribution"],
+    "region": "National"
+  }
+]

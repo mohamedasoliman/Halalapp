@@ -1,0 +1,62 @@
+{
+    "adjustmentDate": 0,
+    "message": "",
+    "notificationText": "Thank you for your support! We reached 20K downloads!",
+    "notificationButton": "",
+    "notificationButtonText": "",
+    "ads": [
+        {
+            "adImageUrl": "https://halalapp.info/data/images/fcpmate-main-screen.png",
+            "adLinkUrl": "https://fcpmate.com/"
+        },
+        {
+            "adImageUrl": "https://halalapp.info/data/images/promo_home_page.png",
+            "adLinkUrl": "https://halalkiwi.com/"
+        },
+        {
+            "adImageUrl": "https://halalapp.info/data/images/Bawarachi_Main_Screen.webp",
+            "adLinkUrl": "https://www.bawarchi.co.nz/"
+        },
+        {
+            "adImageUrl": "https://halalapp.info/data/images/Waffle-Cafe-Main-Screen.webp",
+            "adLinkUrl": "https://www.facebook.com/share/18CXw89g3j/?mibextid=LQQJ4d"
+        },
+        {
+            "adImageUrl": "https://halalapp.info/data/images/Firangi-Fusion-Main-Screen.webp",
+            "adLinkUrl": "https://www.firangifusion.nz/"
+        }
+    ],
+    "discounts": [
+        {
+            "discountName": "Pizza Haven",
+            "discountAddress": "70 Carr Road, Mount Roskill, Auckland 1041",
+            "discountImageUrl": "https://halalapp.info/data/images/discounts/Pizza_Haven.webp"
+        },
+        {
+            "discountName": "Charcoal Chicken Takanini",
+            "discountAddress": "2 Periko Way, Takanini, Auckland 2112",
+            "discountImageUrl": "https://halalapp.info/data/images/discounts/Charcoal_Chicken_Takanini.webp"
+        },
+        {
+            "discountName": "Kebabs Sensation",
+            "discountAddress": "103/22 Stoddard Road, Wesley, Auckland 1041",
+            "discountImageUrl": "https://halalapp.info/data/images/discounts/Kebabs_Sensation.webp"
+        },
+        {
+            "discountName": "Sahara Grill",
+            "discountAddress": "51 Carr Road, Three Kings, Auckland 1042",
+            "discountImageUrl": "https://halalapp.info/data/images/discounts/Sahara_Grill.webp"
+        },
+        {
+            "discountName": "Makassar Corner",
+            "discountAddress": "193 Dominion Road, Mount Eden, Auckland, 1024",
+            "discountImageUrl": "https://halalapp.info/data/images/discounts/Makassar_Corner.webp"
+        },
+        {
+            "discountName": "Ice Cool",
+            "discountAddress": "Hendon Avenue, Mount Albert",
+            "discountImageUrl": "https://halalapp.info/data/images/discounts/Ice_Cool.webp"
+        }
+    ],
+    "users": "20,000"
+}

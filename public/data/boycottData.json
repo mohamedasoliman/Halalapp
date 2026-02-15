@@ -1,0 +1,3493 @@
+ [
+  {
+    "id": 1,
+    "logo": "https://assets.woolworths.com.au/images/2010/48062.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Philadelphia Cream Cheese",
+    "reason": "Owned by Mondelez, who is a big supporter of Israel",
+    "source": "https://www.foodbusinessnews.net/articles/17261-mondelez-invests-in-israel-food-tech-startup",
+    "alternative": "Store branded dairy (i.e Pams, value, etc.)",
+    "category": "Dairy"
+  },
+  {
+    "id": 3,
+    "logo": "https://i.pinimg.com/originals/c5/ed/93/c5ed936031d0577e7e565902b841da68.png",
+    "name": "Sour Patch",
+    "reason": "Owned by Mondelez who is a big supporter of Israel",
+    "source": "https://www.foodbusinessnews.net/articles/17261-mondelez-invests-in-israel-food-tech-startup",
+    "alternative": "Mayceys",
+    "category": "Confectionery"
+  },
+  {
+    "id": 4,
+    "logo": "https://www.logo-designer.co/storage/2020/04/2020-cadbury-and-cadbury-dairy-milk-get-new-logo-designs-by-bulletproof.png",
+    "name": "Cadbury",
+    "reason": "Owned by Mondelez who is a supporter of Israel",
+    "source": "https://www.foodbusinessnews.net/articles/17261-mondelez-invests-in-israel-food-tech-startup",
+    "alternative": "Whittaker's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 4012,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/The-Natural-Confectionery-Company.png/400px-The-Natural-Confectionery-Company.png",
+    "name": "The Natural Confectionery",
+    "reason": "Owned by Mondelez who is a supporter of Israel",
+    "source": "https://www.foodbusinessnews.net/articles/17261-mondelez-invests-in-israel-food-tech-startup",
+    "alternative": "Whittaker's - Mayceys",
+    "category": "Confectionery"
+  },
+  {
+    "id": 5,
+    "logo": "https://cdn.shopify.com/s/files/1/0558/6413/1764/files/Oreo_Logo_Design_History_Evolution_0_1024x1024.jpg?v=1693497278",
+    "name": "Oreo",
+    "reason": "Owned by Mondelez who is a supporter of Israel",
+    "source": "https://ir.mondelezinternational.com/news-releases/news-release-details/mondelez-international-collaborate-israeli-foodtech-incubator",
+    "alternative": "Griffin's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 6,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Mars_Logo.svg/478px-Mars_Logo.svg.png",
+    "name": "Mars",
+    "reason": "Owned by Mars inc who is a supporter of Israel",
+    "source": "https://ire.mars.com/news-and-stories/press-releases/mars-partners-with-jerusalem-venture-partners",
+    "alternative": "Whittaker's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 7,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Snickers_logo_%282000-2005%29.svg/1598px-Snickers_logo_%282000-2005%29.svg.png",
+    "name": "Snickers",
+    "reason": "Owned by Mars inc who is a supporter of Israel",
+    "source": "https://ire.mars.com/news-and-stories/press-releases/mars-partners-with-jerusalem-venture-partners",
+    "alternative": "Whittaker's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 8,
+    "logo": "https://seeklogo.com/images/B/bounty-logo-204F439070-seeklogo.com.png",
+    "name": "Bounty",
+    "reason": "Owned by Mars inc who is a supporter of Israel",
+    "source": "https://ire.mars.com/news-and-stories/press-releases/mars-partners-with-jerusalem-venture-partners",
+    "alternative": "Whittaker's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 9,
+    "logo": "https://cdn.mos.cms.futurecdn.net/S3sGLeiCDsZKZz3bq6bjBY-1200-80.jpg.webp",
+    "name": "Twix",
+    "reason": "Owned by Mars inc who is a supporter of Israel",
+    "source": "https://ire.mars.com/news-and-stories/press-releases/mars-partners-with-jerusalem-venture-partners",
+    "alternative": "Whittaker's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 10,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/M%26M%27s_logo.svg/200px-M%26M%27s_logo.svg.png",
+    "name": "M&Ms",
+    "reason": "Owned by Mars inc who is a supporter of Israel",
+    "source": "https://ire.mars.com/news-and-stories/press-releases/mars-partners-with-jerusalem-venture-partners",
+    "alternative": "Whittaker's",
+    "category": "Confectionery"
+  },
+  {
+    "id": 11,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Kellogg%27s-Logo.svg/1600px-Kellogg%27s-Logo.svg.png",
+    "name": "Kellogg's",
+    "reason": "Helped create business department in Tel Aviv university, where the Israeli army get some courses.",
+    "source": "https://en-coller.tau.ac.il/kr-emba/about_us",
+    "alternative": "Whittaker's - Pams - Value - Hubbards",
+    "category": "Cereal"
+  },
+  {
+    "id": 12,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Pringles_2021.svg/240px-Pringles_2021.svg.png",
+    "name": "Pringles",
+    "reason": "Helped create business department in Tel Aviv university, where the Israeli army get some courses.",
+    "source": "https://en-coller.tau.ac.il/kr-emba/about_us",
+    "alternative": "Heartland - Eta",
+    "category": "Snacks"
+  },
+  {
+    "id": 13,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvBACQN6dJOx2L-0UHm9WGMPRPsrGcYBvMbw&usqp=CAU",
+    "name": "Allen's",
+    "reason": "The owner of Allen's, Nestle, owns a controlling stake in Osem. Osem operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Mayceys",
+    "category": "Confectionery"
+  },
+  {
+    "id": 14,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDQoviZvunKRXInN1sAk5sENLuKayO3NF3aQ&usqp=CAU",
+    "name": "Smarties",
+    "reason": "The owner of Smarties, Nestle, owns a controlling stake in Osem. Osem operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Mayceys",
+    "category": "Confectionery"
+  },
+  {
+    "id": 15,
+    "logo": "https://www.fmcgbusiness.co.nz/wp-content/uploads/2018/10/2-DKSH-PepsiCo.jpg",
+    "name": "Blue Bird",
+    "reason": "Bluebird Foods Ltd is a New Zealand division of the U.S.-based PepsiCo corporation",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland -ETA",
+    "category": "Snacks"
+  },
+  {
+    "id": 16,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQircXpq-HllAOGhPNLAJ1nkQOuI1-YKYwtvA&usqp=CAU",
+    "name": "Lays",
+    "reason": "The owner of Lay's, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA",
+    "category": "Snacks"
+  },
+  {
+    "id": 17,
+    "logo": "https://static.wixstatic.com/media/b0d497_cb3fef71434647d6b7302b583466b484~mv2.png/v1/fill/w_172,h_172,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/L%26P-LOGO.png",
+    "name": "L&P",
+    "reason": "Lemon & Paeroa, most commonly known as L&P, is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": "Drinks"
+  },
+  {
+    "id": 18,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/b/be/Thums_Up_logo.svg/440px-Thums_Up_logo.svg.png",
+    "name": "Thumbs Up",
+    "reason": "Thumbs Up is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": "Drinks"
+  },
+  {
+    "id": 19,
+    "logo": "http://static.ipaustralia.com.au/store3/15/46/1546473.1.high.jpg",
+    "name": "Barista Bros",
+    "reason": "Barista Bros is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Avalanche coffee",
+    "category": "Drinks"
+  },
+  {
+    "id": 20,
+    "logo": "https://www.rainforest-alliance.org/wp-content/uploads/2021/07/fuze-tea-logo-2.png.webp",
+    "name": "Fuze Tea",
+    "reason": "Fuze Tea is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Dilmah Tea",
+    "category": "Drinks"
+  },
+  {
+    "id": 21,
+    "logo": "https://scontent.fakl4-1.fna.fbcdn.net/v/t1.6435-9/87960465_100129984932408_3242573997786791936_n.png?_nc_cat=100&ccb=1-7&_nc_sid=7a1959&_nc_ohc=qrBZTnh1FbIAX_x3i_w&_nc_ht=scontent.fakl4-1.fna&oh=00_AfDJyreVmEpRtIBy8l3tV9wGH9WX-sdjEm35OtFU3UEErQ&oe=65C92A6E",
+    "name": "Nutri Boost",
+    "reason": "Nutri Boost is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Musashi Energy Drink",
+    "category": "Drinks"
+  },
+  {
+    "id": 22,
+    "logo": "https://www.kerijuice.co.nz/bundles/kerinz/images/products/prod_kitchen/bottle-jk-orange.png",
+    "name": "Keri",
+    "reason": "Keri is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": "Drinks"
+  },
+  {
+    "id": 23,
+    "logo": "https://mcdonalds.co.nz/sites/mcdonalds.co.nz/files/product-KiwiBlue_Water-desktop_0.png",
+    "name": "Kiwi Blue",
+    "reason": "Kiwi Blue is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Pure NZ",
+    "category": "Drinks"
+  },
+  {
+    "id": 24,
+    "logo": "https://s3.pricemestatic.com/Images/RetailerProductImages/StRetailer2447/rp_25865516_0044565880_ml.png",
+    "name": "Lift",
+    "reason": "Lift is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": "Drinks"
+  },
+  {
+    "id": 25,
+    "logo": "https://www.mostbeverages.co.nz/bundles/mostbeverages/images/home-hero.webp",
+    "name": "Most Organic Juices",
+    "reason": "Most Organic Juices is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": "Drinks"
+  },
+  {
+    "id": 26,
+    "logo": "https://dtgxwmigmg3gc.cloudfront.net/imagery/assets/derivations/icon_webp/512/512/true/eyJpZCI6ImRhNDM2MGY5ODZjMjE0MzA5NmRiY2VlNDFiNmUzMjExIiwic3RvcmFnZSI6InB1YmxpY19zdG9yZSJ9?signature=9c697fe2968717f27d42e2da70a9e6d3e2c09fc5df377d0a7f9aceffefcf50eb",
+    "name": "e2",
+    "reason": "e2 is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 27,
+    "logo": "https://maxcommerce-cdn.freetls.fastly.net/liquorland/838194_20-1-5-12.png?format=pjpg&optimise=medium&auto=webp&width=800&height=800&fit=bounds&canvas=800,800",
+    "name": "Pure drop",
+    "reason": "Pure drop is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 28,
+    "logo": "https://waitakere.org.nz/wp-content/uploads/2021/11/Schweppes-Sparkling-Duet-Soft-Drink-Lemonade.png",
+    "name": "Sparkling Duet",
+    "reason": "Sparkling Duet is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 29,
+    "logo": "https://officeconnect.net.nz/cdn/shop/products/ScreenShot2022-01-24at2.05.06PM_fe15cff3-6450-4196-b6bc-da4c7a05946a_286x.png?v=1690130292",
+    "name": "Thexton's",
+    "reason": "Thexton's is manufactured by multi-national Coca-Cola.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks - Vimto",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 30,
+    "logo": "https://assets.woolworths.com.au/images/2010/765218.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Obela",
+    "reason": "Israeli owned business in joint venture with PepsiCo. Brand owner is company called Strauss which directly support Israel Army.",
+    "source": "https://english.alarabiya.net/articles/2011%2F01%2F02%2F131872",
+    "alternative": "Turkish Kitchen Hummus",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 3010,
+    "logo": "https://www.bigw.com.au/medias/sys_master/images/images/h80/h2a/28029818961950.jpg",
+    "name": "Red Rock Chips",
+    "reason": "Israeli owned business in joint venture with PepsiCo. Brand owner is company called Strauss which directly support Israel Army.",
+    "source": "https://english.alarabiya.net/articles/2011%2F01%2F02%2F131872",
+    "alternative": "ETA",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 3011,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAlbLrJtopqQkj9ICAva86TNf_TnKKI00tug&s",
+    "name": "copper pot dips",
+    "reason": "Israeli owned business in joint venture with PepsiCo. Brand owner is company called Strauss which directly support Israel Army.",
+    "source": "https://english.alarabiya.net/articles/2011%2F01%2F02%2F131872",
+    "alternative": "Turkish Kitchen Hummus",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 31,
+    "logo": "https://lisas.co.nz/wp-content/uploads/2019/08/Lisas-logo_with-leaf.jpg",
+    "name": "Lisa's",
+    "reason": "Owned by the seventh day adventist church who have built 15 churches in Israel including on occupied land.",
+    "source": "https://www.nzherald.co.nz/business/mideast-foods-prove-the-recipe-for-success/XW64RN2ICA377X3PV3F6V5I2QE/#:~:text=Fast%2Dgrowing%20Lisa's%20Middle%20Eastern,the%20company%20eight%20years%20ago.",
+    "alternative": "Turkish Kitchen Hummus",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 32,
+    "logo": "https://static.wikia.nocookie.net/newzealand/images/4/4f/Sanitarium_logo.png/revision/latest?cb=20220414211313",
+    "name": "Sanitarium (including Up & Go)",
+    "reason": "Owned by the seventh day adventist church who have built 15 churches in Israel including on occupied land.",
+    "source": "https://www.nzherald.co.nz/business/mideast-foods-prove-the-recipe-for-success/XW64RN2ICA377X3PV3F6V5I2QE/#:~:text=Fast%2Dgrowing%20Lisa's%20Middle%20Eastern,the%20company%20eight%20years%20ago.",
+    "alternative": "Hubbards - Homegrown - Store branded dairy (Pams / Value)",
+    "category": [
+      "Food / Drinks / Snacks"
+    ]
+  },
+  {
+    "id": 33,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/smiths_anz_brands.png?sfvrsn=98b92a5f_2",
+    "name": "Smith's",
+    "reason": "Smith's is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 34,
+    "logo": "https://resources.stuff.co.nz/content/dam/images/4/y/u/g/s/6/image.related.StuffLandscapeThreeByTwo.1464x976.234z0x.png/1630104236473.jpg",
+    "name": "Twisties",
+    "reason": "Twisties is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 35,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/sunbites_anz_brands.png?sfvrsn=d78ee4d0_2",
+    "name": "Sunbites",
+    "reason": "Sunbites is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 36,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/nobbys_anz_brands.png?sfvrsn=1384dcfb_2",
+    "name": "Nobby's",
+    "reason": "Nobby's is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 37,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/sakata_anz_brands.png?sfvrsn=115a0a1c_2",
+    "name": "Sakata",
+    "reason": "Sakata is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 38,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/parkers_anz_brands.png?sfvrsn=5554ae76_2",
+    "name": "Parker's",
+    "reason": "Parker's is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 39,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/copperkettle_anz_brands.png?sfvrsn=f2359272_2",
+    "name": "Copper Kettle",
+    "reason": "Copper Kettle is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 40,
+    "logo": "https://www.fmcgbusiness.co.nz/wp-content/uploads/2022/11/Untitled-design-3.jpg?w=1200",
+    "name": "Pop Corners",
+    "reason": "Pop Corners is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 41,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/burgerrings_anz_brands.png?sfvrsn=bb972e8f_2",
+    "name": "Burger Rings",
+    "reason": "Burger Rings is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 42,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/delisico_anz_brands.png?sfvrsn=24a09c0_2",
+    "name": "Delisio",
+    "reason": "Delisio is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 43,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/product-information/tostitos_anz_brands.png?sfvrsn=61ada23a_2",
+    "name": "Tostitos",
+    "reason": "Tostitos is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 44,
+    "logo": "https://www.pepsico.com.au/images/librariesprovider32/default-album/copy-of-untitled-(8).png?sfvrsn=22b85e24_0",
+    "name": "Tasty Toobs",
+    "reason": "Tasty Toobs is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA - Griffin's",
+    "category": [
+      "Snacks"
+    ]
+  },
+  {
+    "id": 45,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/acqua-panna-logo-round.png",
+    "name": "Acqua Panna",
+    "reason": "The owner of the Acqua Panna brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 46,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9RgsEMJNxc2fWss_u_ItKb4dCa6ejirICmQ&usqp=CAU",
+    "name": "Uncle Tobys",
+    "reason": "The owner of the Uncle Tobys brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Hubbards",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 47,
+    "logo": "https://www.coca-cola.com/content/dam/onexp/au/en/brands/pump-brand/au_Large%20product%20shot%20-%20Pump%20Pure%20Water_750x750.jpg",
+    "name": "Pump",
+    "reason": "The owner of the Pump brand, Coca-cola, supports Israel.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 48,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/asset-library/publishingimages/brands/chocolate-confectionery/aero-logo-round.png",
+    "name": "Aero",
+    "reason": "The owner of the Aero brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Whittaker's",
+    "category": [
+      "Confectionery"
+    ]
+  },
+  {
+    "id": 49,
+    "logo": "https://brandlogos.net/wp-content/uploads/2022/05/aesop-logo_brandlogos.net_pedrx.png",
+    "name": "Aesop",
+    "reason": "Aesop is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 50,
+    "logo": "https://cdn10.agoda.net/images/mvc/default/agoda-logo-flat-2019.png",
+    "name": "Agoda",
+    "reason": "Booking.com, whose parent company Booking Holdings owns Agoda, allows listings in occupied Palestinian territory, and after initially deciding to add a label to properties which are in occupied territory, reversed that move under pressure from Israel.",
+    "source": "https://www.aljazeera.com/news/2022/10/5/is-booking-com-reversal-palestine-corporate-hypocrisy",
+    "alternative": "Klook",
+    "category": [
+      "Travel"
+    ]
+  },
+  {
+    "id": 51,
+    "logo": "https://s.yimg.com/uu/api/res/1.2/Bz8iDlw16Zf6PVc.y33xdg--~B/aD0zOTA7dz02MTA7YXBwaWQ9eXRhY2h5b24-/http://globalfinance.zenfs.com/Finance/US_AHTTP_ENTREPRENEUR_H_NEW_LIVE/1405612741-airbnb-why-new-logo_original.jpg",
+    "name": "Airbnb",
+    "reason": "Airbnb allows listings in occupied Palestinian territory, and after announcing it will remove 200 of such listings, it reversed its decision, showing it is knowingly complicit in Israel's occupation.",
+    "source": "https://www.aljazeera.com/news/2022/10/5/is-booking-com-reversal-palestine-corporate-hypocrisy",
+    "alternative": "Klook",
+    "category": [
+      "Travel"
+    ]
+  },
+  {
+    "id": 52,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/072017/untitled-4_4.png",
+    "name": "Aquafina",
+    "reason": "The owner of Aquafina, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 53,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0000/0889/brand.gif",
+    "name": "Biotherm",
+    "reason": "BIOTHERM is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Cosmetics"
+  },
+  {
+    "id": 54,
+    "logo": "https://yt3.googleusercontent.com/ytc/APkrFKYxzT0Ta2tKaKQmlN707g61WXokGqJK1oaGZHFmVw=s900-c-k-c0x00ffffff-no-rj",
+    "name": "Bobbi Brown",
+    "reason": "Bobbi Brown is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist Zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Cosmetics"
+  },
+  {
+    "id": 55,
+    "logo": "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/0f/cb/0f/0fcb0fbc-c93e-3e7c-84a3-a423b40dbce7/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.jpeg/1200x630wa.png",
+    "name": "Booking.com",
+    "reason": "Booking.com allows listings in occupied Palestinian territory, and after announcing it will remove 200 of such listings, it reversed its decision, showing it is knowingly complicit in Israel's occupation.",
+    "source": "https://www.aljazeera.com/news/2022/10/5/is-booking-com-reversal-palestine-corporate-hypocrisy",
+    "alternative": "Klook",
+    "category": "Travel"
+  },
+  {
+    "id": 56,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Burger_King_logo_%281994%29.svg/2111px-Burger_King_logo_%281994%29.svg.png",
+    "name": "Burger King",
+    "reason": "Burger King Israel supports IDF by providing free food and drinks to Israeli militants. See their Instagram post (click translate) for reference.",
+    "source": "https://www.instagram.com/p/CyORRWHIqeH/",
+    "alternative": "Many NZ / Muslim-owned restaurants",
+    "category": "Restaurants"
+  },
+  {
+    "id": 57,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Celine_logo.svg/320px-Celine_logo.svg.png",
+    "name": "Celine",
+    "reason": "The owner of Celine's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "Cotton On - Farmers",
+    "category": "Fashion"
+  },
+  {
+    "id": 58,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/102013/chanel_black.png",
+    "name": "Chanel",
+    "reason": "Alain Wertheimer condemned the attack on Israel but remained silent on the attacks on Gaza, also pledged $4m in Chanel's name.",
+    "source": "https://www.universityoffashion.com/blog/#:~:text=Chanel%20was%20donating%20%244%20million",
+    "alternative": "Cotton On - Farmers - Huda beauty",
+    "category": "Cosmetics"
+  },
+  {
+    "id": 59,
+    "logo": "https://www.cheapflights.co.uk/news/wp-content/uploads/sites/138/2020/03/default-post-thumbnail-1640x1312.png",
+    "name": "Cheapflights",
+    "reason": "Booking.com, whose parent company Booking Holdings owns Cheapflights, allows listings in occupied Palestinian territory, and after initially deciding to add a label to properties that are in occupied territory, reversed that move under pressure from Israel.",
+    "source": "https://www.aljazeera.com/news/2022/10/5/is-booking-com-reversal-palestine-corporate-hypocrisy",
+    "alternative": "Kiwi.com",
+    "category": "Travel"
+  },
+  {
+    "id": 60,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0010/0838/brand.gif",
+    "name": "Cheetos",
+    "reason": "The owner of Cheetos, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra, both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA",
+    "category": "Snacks"
+  },
+  {
+    "id": 61,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/coca-cola-logo.png",
+    "name": "Coca-Cola",
+    "reason": "Coca-Cola operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": "Drinks"
+  },
+  {
+    "id": 62,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/coffee-mate-logo-round_7.png",
+    "name": "Coffee Mate",
+    "reason": "The owner of the Coffee Mate brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer that operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Avalanche coffee",
+    "category": "Drinks"
+  },
+  {
+    "id": 63,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/costa-logo.png",
+    "name": "Costa Coffee",
+    "reason": "Coca-Cola Company, which owns Costa Coffee, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Avalanche coffee",
+    "category": "Drinks"
+  },
+  {
+    "id": 64,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/dasani-logo.png",
+    "name": "Dasani Water",
+    "reason": "Coca-Cola Company which owns Dasani Water, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Pure NZ",
+    "category": "Drinks"
+  },
+  {
+    "id": 65,
+    "logo": "https://dynl.mktgcdn.com/p/KfI5g-nDtylqhtl1RdhWzG0DMJ7sGl0lGfr3EARlPtQ/500x500.jpg",
+    "name": "Dior / Christian Dior",
+    "reason": "The owner of Dior's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Fashion"
+  },
+  {
+    "id": 66,
+    "logo": "https://www.trustedreviews.com/wp-content/uploads/sites/54/2022/02/Disney-Plus-logo-920x518.jpg",
+    "name": "Disney",
+    "reason": "Disney made an official announcement that it will be pledging $2m and further initiatives to support Israel. While the CEO explicitly condemned attacks in Israel, he made no mention of the Palestinian people who are being killed by the Israeli military.",
+    "source": "https://www.yahoo.com/entertainment/disney-pledges-2-million-donation-032004758.html?guccounter=1&guce_referrer=aHR0cHM6Ly9ib3ljb3R0LnRoZXdpdG5lc3MubmV3cy8&guce_referrer_sig=AQAAAKgF9TBtiloJ6WB2k8Yb4vpdYcAbJF4uYdzam_BYV7-MeLSme7jxjxCrDJVXhmRkLXIgKQHkXllmphApHBbp3wDc49pcejY0pMBz0biKTGbNJdEL1paBZtYCqzKEWgG1HRpdyKa7L4jBGja1zxHTqHgWXSyO3SRk1kQcidFaUQ9q",
+    "alternative": "",
+    "category": "Entertainment"
+  },
+  {
+    "id": 67,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0019/5529/brand.gif",
+    "name": "Doritos",
+    "reason": "The owner of Doritos, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra, both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Heartland - ETA",
+    "category": "Snacks"
+  },
+  {
+    "id": 68,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/fanta-logo.png",
+    "name": "Fanta",
+    "reason": "Coca-Cola Company which owns Fanta, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": "Drinks"
+  },
+  {
+    "id": 69,
+    "logo": "https://seeklogo.com/images/F/fenty-logo-C76A749839-seeklogo.com.png",
+    "name": "Fenty Beauty by Rihanna",
+    "reason": "The owner of Fenty's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Fashion"
+  },
+  {
+    "id": 70,
+    "logo": "https://mms.businesswire.com/media/20230510006090/en/827135/22/Fiverr_September_2020_Logo.jpg",
+    "name": "Fiverr",
+    "source": "https://twitter.com/michakaufman",
+    "reason": "CEO, Micha Kaufman, is a staunch Zionist who supports the IDF.",
+    "alternative": "Upwork / islamic-marketplace",
+    "category": "Technology"
+  },
+  {
+    "id": 71,
+    "logo": "https://media.giphy.com/avatars/MTNDEWGAMEFUEL/igP0vcVwmx8u.png",
+    "name": "Game Fuel",
+    "reason": "The owner of Game Fuel, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra, both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": "Drinks"
+  },
+  {
+    "id": 72,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/072019/garnier_logo.jpg?Hc_rMssrG43ZcRMFKa6QdUcGRKyr5oP8&itok=TPiNcSQp",
+    "name": "Garnier",
+    "reason": "Garnier is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Cosmetics"
+  },
+  {
+    "id": 73,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0019/1244/brand.gif",
+    "name": "Gatorade",
+    "reason": "The owner of Gatorade, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra, both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Musashi Energy Drink",
+    "category": "Drinks"
+  },
+  {
+    "id": 74,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTihVZ6h9Are1xzGGeBlltY1uVSlkblolMzowx4AV7hEXFYMawBy7krb_Ut0Tm7w8RfgNw&usqp=CAU",
+    "name": "Giorgio Armani Beauty",
+    "reason": "Giorgio Armani Beauty is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Cotton on - Farmers - Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Cosmetics"
+  },
+  {
+    "id": 75,
+    "logo": "https://i.pinimg.com/originals/3d/a0/35/3da0354353d0d7dc17f95af8ebc3efb8.png",
+    "name": "Givenchy",
+    "reason": "The owner of Givenchy's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": " Cotton on - Farmers - Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": "Fashion"
+  },
+  {
+    "id": 76,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/smartwater-logo.png",
+    "name": "Glaceau Smartwater",
+    "reason": "Coca-Cola Company which owns Glaceau Smartwater, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Pure NZ",
+    "category": "Drinks"
+  },
+  {
+    "id": 78,
+    "logo": "https://spotlightgroup.com/wp-content/uploads/2019/06/SGH-Sub-Image-Highett.jpg",
+    "name": "Anaconda Store",
+    "reason": "Anaconda's owner supports Israel.",
+    "source": "https://www.channelnews.com.au/kogan-along-with-anaconda-targeted-by-pro-palestinian-protesters/",
+    "alternative": "Contact us if you have alternatives :)",
+    "category": [
+      "Outlet"
+    ]
+  },
+  {
+    "id": 79,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HP_logo_2012.svg/240px-HP_logo_2012.svg.png",
+    "name": "HP",
+    "reason": "Hewlett Packard runs the biometric ID system that Israel uses to restrict Palestinian movement as well as other systems for the IDF.",
+    "source": "https://en.wikipedia.org/wiki/Hewlett-Packard_Israel",
+    "alternative": "",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 80,
+    "logo": "https://seeklogo.com/images/H/Hublot-logo-A48632AE5F-seeklogo.com.png",
+    "name": "Hublot",
+    "reason": "The owner of Hublot's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "Contact us if you have alternatives :)",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 81,
+    "logo": "https://pbs.twimg.com/profile_images/821433960639008768/_M06NaeP_400x400.jpg",
+    "name": "Hyundai",
+    "reason": "Hyundai heavy machinery has been used in the demolition of Palestinian neighbourhoods in Jerusalem, benefiting them commercially from the Israeli occupation.",
+    "source": "https://bdsmovement.net/news/boycott-hyundai-end-its-complicity-israel%E2%80%99s-ethnic-cleansing-palestinian-communities-jerusalem",
+    "alternative": "",
+    "category": [
+      "Car"
+    ]
+  },
+  {
+    "id": 82,
+    "logo": "https://crueltyfree.peta.org/wp-content/uploads/it-cosmetics-logo.jpg",
+    "name": "IT Cosmetics",
+    "reason": "IT Cosmetics is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 91900,
+    "logo": "https://yt3.googleusercontent.com/UMGZZMPQkM3kGtyW4jNE1GtpSrydfNJdbG1UyWTp5zeqUYc6-rton70Imm7B11RulRRuK521NQ=s900-c-k-c0x00ffffff-no-rj",
+    "name": "Spotify",
+    "reason": "The CEO Daniel Ek has invested 600 million euros into Helsing, a German military startup that focuses on AI combat drones and software. Helsing has a partnership with Rheinmetall, a German arms manafacturer who has close military relation with Is(not)real such as supplying them with weapons.",
+    "source": "https://mixmag.net/read/spotify-ceo-daniel-ek-pledges-600-million-investment-into-ai-defence-company-news#:~:text=Daniel%20Ek%2C%20the%20CEO%20of,at%20some%20%E2%82%AC12%20billion.",
+    "alternative": "Soundcloud",
+    "category": [
+      "Tech"
+    ]
+  },
+  {
+    "id": 83,
+    "logo": "https://image.isu.pub/170203184809-3d22cddc0d5e27dd1d0ea2ce32b57baf/jpg/page_1.jpg",
+    "name": "Jo Malone",
+    "reason": "Jo Malone is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist Zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 84,
+    "logo": "https://play-lh.googleusercontent.com/os2nMGSSawnCl1UOcgmggZ_Vbbv4-xzw--kaYW6iFs6gj8AEAdsgIrZS8do4ibTQVpY",
+    "name": "Kayak",
+    "reason": "Booking.com, whose parent company Booking Holdings owns Kayak, allows listings in occupied Palestinian territory, and after initially deciding to add a label to properties which are in occupied territory, reversed that move under pressure from Israel.",
+    "source": "https://www.aljazeera.com/news/2022/10/5/is-booking-com-reversal-palestine-corporate-hypocrisy",
+    "alternative": "Klook",
+    "category": [
+      "Travel"
+    ]
+  },
+  {
+    "id": 85,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0023/3652/brand.gif",
+    "name": "Kiehl's",
+    "reason": "Kiehl's is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 86,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/kitkat-logo-square-2023.png",
+    "name": "KitKat",
+    "reason": "The owner of the KitKat brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Whittaker's",
+    "category": [
+      "Confectionery"
+    ]
+  },
+  {
+    "id": 87,
+    "logo": "https://fontmeme.com/images/Lar-Mer-Logo.jpg",
+    "name": "La Mer",
+    "reason": "La Mer is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist Zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 88,
+    "logo": "https://upload.wikimedia.org/wikipedia/it/a/a7/Air_Wick_logo.png",
+    "name": "Air Wic",
+    "reason": "Air Wic is owned by Reckitt Benckiser, who's ownership financially supports Israeli occupation of Palestinian land.",
+    "source": "https://innovationisrael.org.il/en/news/international-health-brand-reckitt-benckiser-rb-sign-cooperation-agreement-israel-innovation",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 89,
+    "logo": "https://www.crackerjack.co.nz/content/products/ajax-spray-n-wipe-trigger-ocean-fresh-500ml-webimage1-1224514.jpg",
+    "name": "Ajax",
+    "reason": "Ajax is owned by Colgate-Palmolive, who's some of the shares of its ownership (blackrock) supports Israeli occupation of Palestinian land.",
+    "source": "https://fintel.io/news/blackrock-inc-increases-ownership-in-cl-colgate-palmolive-company-0.1453039745298259",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 90,
+    "logo": "https://m.media-amazon.com/images/I/81g3xZiyyAL.jpg",
+    "name": "Ariel",
+    "reason": "Ariel is owned by Procter & Gamble, who's ownership supports Israeli occupation of Palestinian land.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 91,
+    "logo": "https://assets.woolworths.com.au/images/2010/624270_3.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Bref",
+    "reason": "Bref owner, Henkel, supports Israeli occupation of Palestinian land.",
+    "source": "https://innovationisrael.org.il/sites/default/files/Henkel%20-%20Israel%20Innovation%20Authority%20CfP%202023%20-%20Final.pdf",
+    "alternative": "Eco Store - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 93,
+    "logo": "https://image.nxp.nz/pi/95/fa5450a02c3574bc4dbb37aa66fd9478469bbb-67757/large.jpg",
+    "name": "Chux",
+    "reason": "Chux is owned by Clorox which has some shareholders (blackrock) that support Israeli occupation of Palestinian land.",
+    "source": "https://money.cnn.com/quote/shareholders/shareholders.html?symb=CLX&subView=institutional",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 94,
+    "logo": "https://www.thecloroxcompany.com/wp-content/uploads/2019/12/Clorox-Bleach-new-logo_64-oz.png",
+    "name": "Clorox",
+    "reason": "Clorox has shareholders (blackrock) that support Israeli occupation of Palestinian land.",
+    "source": "https://money.cnn.com/quote/shareholders/shareholders.html?symb=CLX&subView=institutional",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 95,
+    "logo": "https://assets.woolworths.com.au/images/2010/577660.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Cold Power",
+    "reason": "Cold Power's owner, Colgate-Palmolive has shareholders (blackrock) that supports Israeli occupation of Palestinian land.",
+    "source": "https://fintel.io/news/blackrock-inc-increases-ownership-in-cl-colgate-palmolive-company-0.1453039745298259",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 97,
+    "logo": "https://m.media-amazon.com/images/I/610h+cTerLL._AC_UF894,1000_QL80_.jpg",
+    "name": "Comfort",
+    "reason": "Comfort's owner brand, Unilever, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 98,
+    "logo": "https://www.wigmansvesselsupply.com/wp-content/uploads/2015/03/pACE3-17458961enh-z715.jpg",
+    "name": "Downy",
+    "reason": "Downy is owned by Procter & Gamble, who's ownership supports Israeli occupation of Palestinian land.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 99,
+    "logo": "https://assets.woolworths.com.au/images/2010/36935.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Demestos",
+    "reason": "Demestos's owner brand, Unilever, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 100,
+    "logo": "https://assets.woolworths.com.au/images/2010/30302.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Dettol",
+    "reason": "Dettol, Owned by Reckitt linked to Blackrock, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.blackrock.com/il/individual/en/about-us/about-blackrock",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 101,
+    "logo": "https://assets.woolworths.com.au/images/2010/87803.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Dynamo",
+    "reason": "Dynamo is owned by Henkel which supports Israeli occupation of Palestinian land.",
+    "source": "https://innovationisrael.org.il/sites/default/files/Henkel%20-%20Israel%20Innovation%20Authority%20CfP%202023%20-%20Final.pdf",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 103,
+    "logo": "https://assets.woolworths.com.au/images/2010/90065.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Easy off",
+    "reason": "Easy off, Owned by Reckitt linked to Blackrock, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.blackrock.com/il/individual/en/about-us/about-blackrock",
+    "alternative": "Shots - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 104,
+    "logo": "https://assets.woolworths.com.au/images/2010/880026.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Fab",
+    "reason": "Fab is owned by Henkel which supports Israeli occupation of Palestinian land.",
+    "source": "https://innovationisrael.org.il/sites/default/files/Henkel%20-%20Israel%20Innovation%20Authority%20CfP%202023%20-%20Final.pdf",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 105,
+    "logo": "https://m.media-amazon.com/images/I/61QSeyKZ9XL.jpg",
+    "name": "Fairy",
+    "reason": "Fairy is owned by Procter and Gamble opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 106,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Finish_logo.jpg/640px-Finish_logo.jpg",
+    "name": "Finish",
+    "reason": "Finish, Owned by Reckitt linked to Blackrock, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.blackrock.com/il/individual/en/about-us/about-blackrock",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 107,
+    "logo": "https://s.catch.com.au/images/product/0050/50519/60ebc9982623c974287654_w803h620.webp",
+    "name": "Fluffy",
+    "reason": "Fluffy's owner, Colgate-Palmolive has shareholders (blackrock) that supports Israeli occupation of Palestinian land.",
+    "source": "https://fintel.io/news/blackrock-inc-increases-ownership-in-cl-colgate-palmolive-company-0.1453039745298259",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 108,
+    "logo": "https://assets.woolworths.com.au/images/2010/757585.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Glad",
+    "reason": "Glad is owned by Clorox which has some shareholders (blackrock) that support Israeli occupation of Palestinian land.",
+    "source": "https://money.cnn.com/quote/shareholders/shareholders.html?symb=CLX&subView=institutional",
+    "alternative": "Store branded products (Pams/Value)",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 109,
+    "logo": "https://www.betterliving.co.nz/files/2015-07/handy-andy-logo.png",
+    "name": "Handy Andy",
+    "reason": "Handy Andy licence is owned by Unilever.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 110,
+    "logo": "https://assets.woolworths.com.au/images/2010/622217.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Harpic",
+    "reason": "Harpic, Owned by Reckitt linked to Blackrock, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.blackrock.com/il/individual/en/about-us/about-blackrock",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 111,
+    "logo": "https://arrowhygiene.co.nz/cdn/shop/products/Jiff_375ml_750043a5-43e9-40fb-b0e2-150b076de18a.png?v=1656708225",
+    "name": "Jif",
+    "reason": "Jif licence is owned by Unilever.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 112,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Colgate_logo_red.svg/1597px-Colgate_logo_red.svg.png",
+    "name": "Colgate",
+    "reason": "Colgate-Palmolive has shareholders (blackrock) that supports Israeli occupation of Palestinian land.",
+    "source": "https://fintel.io/news/blackrock-inc-increases-ownership-in-cl-colgate-palmolive-company-0.1453039745298259",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 113,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Palmolive_logo.svg/374px-Palmolive_logo.svg.png",
+    "name": "Palmolive",
+    "reason": "Colgate-Palmolive has shareholders (blackrock) that supports Israeli occupation of Palestinian land.",
+    "source": "https://fintel.io/news/blackrock-inc-increases-ownership-in-cl-colgate-palmolive-company-0.1453039745298259",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 116,
+    "logo": "https://assets.woolworths.com.au/images/2010/475333.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Surf",
+    "reason": "Surf owner, Henkel, supports Israeli occupation of Palestinian land.",
+    "source": "https://innovationisrael.org.il/sites/default/files/Henkel%20-%20Israel%20Innovation%20Authority%20CfP%202023%20-%20Final.pdf",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 117,
+    "logo": "https://cdn.sanity.io/images/92ui5egz/production/7c1c60e9afaaaa3cce61e5101717796d21b7f914-1426x1080.svg?rect=0,166,1426,749&w=1200&h=630&fm=jpg",
+    "name": "Unilever - All products",
+    "reason": "Unilever supports Israeli occupation of Palestinian land.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Cute & Co",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 118,
+    "logo": "https://www.crackerjack.co.nz/content/products/vanish-preen-oxi-action-fabric-stain-remover-375ml-webimage1-3106664.jpg",
+    "name": "Vanish",
+    "reason": "Vanish, Owned by Reckitt linked to Blackrock, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.blackrock.com/il/individual/en/about-us/about-blackrock",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 119,
+    "logo": "https://stock4u-data.s3.ap-southeast-2.amazonaws.com/wp-content/uploads/2021/03/27195729/AL99-Lux-Soap-Soft-Touch.jpg",
+    "name": "Lux",
+    "reason": "Lux, Owned by Clorox linked to Blackrock, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.blackrock.com/il/individual/en/about-us/about-blackrock",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 120,
+    "logo": "https://assets.woolworths.com.au/images/2010/468306.jpg?impolicy=wowcdxwbjbx&w=900&h=900",
+    "name": "Persil",
+    "reason": "Persil licence is owned by Unilever.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 122,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/032011/untitled-1_392.png",
+    "name": "Lancome",
+    "reason": "Lancome is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 123,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/012023/lipton.png?fbRyRvf2gy6O8JQcQhfxkr8O.CxRGBk.&itok=uZ6IQzoY",
+    "name": "Lipton",
+    "reason": "The owner of Lipton, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Dilamh",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 124,
+    "logo": "https://i.pinimg.com/originals/14/a8/b2/14a8b2fb25797e6b31a3254f5673b5ed.jpg",
+    "name": "Milo",
+    "reason": "Osem is an israeli food manufacturer which operates in Occupied Palestine. Nestle owns a controlling stake in Osem and owns Milo",
+    "source": "https://en.wikipedia.org/wiki/Osem_(company)",
+    "alternative": "Avalanche Coffee",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 126,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/NZ-Natural-Logo-1.jpg",
+    "name": "NZ Natural",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 128,
+    "logo": "https://www.coca-colajourney.co.nz/content/dam/journey/nz/en/brands/thextons/Thexton_s%20Cranberry%203L.png",
+    "name": "Thextons",
+    "reason": "The owner of Thextons, cocacola, supports Israel.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Homegrown",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 129,
+    "logo": "https://logos-world.net/wp-content/uploads/2023/06/Ben-and-Jerrys-Logo.png",
+    "name": "Ben & Jerry's",
+    "reason": "Ben & Jerry's is owned by Unilever",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "",
+    "category": [
+      "Confectionery"
+    ]
+  },
+  {
+    "id": 134,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk6mTH9ue0WAa5qCNrHIjlJHQa8nXwU4tQbA&usqp=CAU",
+    "name": "Knorr",
+    "reason": "Knorr is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Delmaine Fine Foods / Value / Pams",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 135,
+    "logo": "https://www.coca-colajourney.co.nz/content/dam/journey/nz/en/brands/thextons/Thexton_s%20Cranberry%203L.png",
+    "name": "Maggi",
+    "reason": "Osem is an israeli food manufacturer which operates in Occupied Palestine. Nestle owns a controlling stake in Osem and owns maggi",
+    "source": "https://en.wikipedia.org/wiki/Osem_(company)",
+    "alternative": "Delmaine Fine Foods / Value / Pams",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 137,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8gRZHWplvgt_AsNzT1M9c9WERGn_YYHuC2Q&usqp=CAU",
+    "name": "Bath & Body Works",
+    "reason": "The owner of Bath & Body Works parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 138,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgmReo9_Xk7Xa0Sj8q03gXfuLXUVpzEgWcNA&usqp=CAU",
+    "name": "Cera Ve",
+    "reason": "Cerave is owned by L'Oreal. L'Oreal is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 139,
+    "logo": "https://logowik.com/content/uploads/images/loewe2671.jpg",
+    "name": "Johnson & Johnson",
+    "reason": "The owner of Johnson & Johnson parent company supports Israeli companies",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab - Cute & Co",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 1390,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1mj7pjCUKapJzQriaaa93aYUr_oqwMXJAgA&s",
+    "name": "Listerine",
+    "reason": "The owner of Listerine parent company supports Israeli companies",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab - Cute & Co",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 140,
+    "logo": "https://logowik.com/content/uploads/images/loewe2671.jpg",
+    "name": "Olay",
+    "reason": "Olay is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 141,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXk844HcJWOlrY-rMhhu_SeXrtiwULrGHgPQ&usqp=CAU",
+    "name": "Cover Girl",
+    "reason": "Cover Girl is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 142,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/12/Clinique-Logo.png",
+    "name": "Clinique",
+    "reason": "Clinique is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 143,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr9KdGbY0LHv-li8HgicJ9ecbLJJ9qtJvMCQ&usqp=CAU",
+    "name": "Too Faced Cosmetics",
+    "reason": "Too Faced is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 144,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLFh9o7QnmExbeGU4Dnq5zvBRZ5uvS20NdBA&usqp=CAU",
+    "name": "La Roche-Posay",
+    "reason": "La Roche-Posay is owned by L'Oreal. L'Oreal is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 145,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjSkqKH9BCELKSo2TDRw_V29aAssiF8wpJiw&usqp=CAU",
+    "name": "Aveeno",
+    "reason": "The owner of Aveeno, Johnson & Johnson, purchased Israeli company Biosense for $400 million",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 146,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Oral-B_logo.svg/2560px-Oral-B_logo.svg.png",
+    "name": "Oral B",
+    "reason": "Oral B is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Eco Store - Grin",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 147,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSD6GCb6OfkfwXTWRaCC11ka2OkYLW_gw0JQ&usqp=CAU",
+    "name": "Signal",
+    "reason": "Signal is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Eco Store - Grin",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 148,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrIRM4GgNTQiA8GhlVnjOn2iXgQZplgpHkUg&usqp=CAU",
+    "name": "Dove",
+    "reason": "Dove is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": " Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 149,
+    "logo": "https://logowik.com/content/uploads/images/head-shoulders7079.jpg",
+    "name": "Head & Shoulders",
+    "reason": "Head and Shoulders is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": " Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 150,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsFHDcTQ_Sx5mHx2kiZ4fzxFtljt1rjp3zvw&usqp=CAU",
+    "name": "PANTENE",
+    "reason": "Pantene is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": " Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 151,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8SbmJFNKn2_6QBnBUUAJIebzhjKxgjv1F_Q&usqp=CAU",
+    "name": "Vaseline",
+    "reason": "Vaseline is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": " Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 152,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR161uE87Voo7-xm8Wdvw64NPC5OvlJKxf65A&usqp=CAU",
+    "name": "Axe",
+    "reason": "Axe is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 153,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZoONVu7guO54Z_-jTyRxflGgSH4bRLKxBJg&usqp=CAU",
+    "name": "LYNX",
+    "reason": "Lynx is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 154,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Tresemme_new_logo.png",
+    "name": "TRESemmé",
+    "reason": "TRESemmé is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 155,
+    "logo": "https://www.stives.com/wp-content/uploads/sites/2/2018/01/SI_Logo.jpg",
+    "name": "St Ives",
+    "reason": "St Ives is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 156,
+    "logo": "https://aus.mars.com/sites/g/files/jydpyr531/files/styles/brands_grid/public/2019-07/Skittles%20Logo%20sRGB_0.png?itok=VrTgUrCJ",
+    "name": "Skittles",
+    "reason": "The owner of Skittles, Mars, supports the zionist state by investing heavily in the foodtech startup scene through venture capital partner JVC.",
+    "source": "https://aus.mars.com/news-and-stories/press-releases/mars-partners-with-jerusalem-venture-partners",
+    "alternative": "Contact us if you have alternatives :)",
+    "category": [
+      "Confectionery"
+    ]
+  },
+  {
+    "id": 157,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/11/Rexona-Logo-700x394.png",
+    "name": "Rexona",
+    "reason": "Rexona is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cleaning"
+    ]
+  },
+  {
+    "id": 159,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/11/Tampax-Logo-700x394.png",
+    "name": "Tampax",
+    "reason": "The owner of Tampax Procter and Gamble opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 160,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/09/Herbal-Essences-Logo-700x394.png",
+    "name": "Herbal essence",
+    "reason": "The owner of Herbal essence Procter and Gamble opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 161,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/11/Schwarzkopf-Logo-700x394.png",
+    "name": "Schwarzkopf",
+    "reason": "The owner of Schwarzkopf parent company, Henkel, supports Israeli companies",
+    "source": "https://innovationisrael.org.il/sites/default/files/Henkel%20-%20Israel%20Innovation%20Authority%20CfP%202023%20-%20Final.pdf",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 163,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Clean_and_clear_logo.svg/1580px-Clean_and_clear_logo.svg.png",
+    "name": "Clean & Clear",
+    "reason": "The owner of Clean & Clear, Johnson & Johnson, purchased Israeli company Biosense for $400 million",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 164,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Asics_Logo.svg/2560px-Asics_Logo.svg.png",
+    "name": "Asics",
+    "reason": "ASICS VENTURES INVESTS IN ISRAELI SYNTHETIC SPIDERSILK STARTUP, SEEVIX MATERIAL SCIENCES",
+    "source": "https://corp.asics.com/en/press/article/2020-05-14-3",
+    "alternative": "Contact us if you have alternatives :)",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 165,
+    "logo": "https://theordinary.com/on/demandware.static/-/Library-Sites-DeciemSharedLibrary/default/dw4ee7d800/theordinary/logo.svg",
+    "name": "The Ordinary",
+    "reason": "The Ordinary is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 166,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/12/Maybelline-Logo-700x394.png",
+    "name": "Maybelline New York",
+    "reason": "Maybelline is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 167,
+    "logo": "https://tukuz.com/wp-content/uploads/2020/05/clarisonic-logo-vector.png",
+    "name": "Clarisonic",
+    "reason": "Clarisonic is owned by L'Oreal. L'Oreal is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 168,
+    "logo": "https://www.adorebeauty.co.nz/pim_media/000/264/432/BainFluidealisteShampoo.png?w=600&h=600&fmt=webp",
+    "name": "Kerastase",
+    "reason": "Kerastase is owned by L'Oreal. L'Oreal is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 169,
+    "logo": "https://tukuz.com/wp-content/uploads/2020/05/shu-uemura-logo-vector.png",
+    "name": "Shu Uemura",
+    "reason": "The owner of Shu Uemura, L'Oréal, supports Israeli companies",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 170,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Redken-Logo-2019-Black.png/1600px-Redken-Logo-2019-Black.png",
+    "name": "Redken",
+    "reason": "The owner of Redken, L'Oréal, supports Israeli companies",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 171,
+    "logo": "https://i.pinimg.com/originals/35/72/4c/35724c03d3f6db751aadc65cd666e5a8.png",
+    "name": "Diesel",
+    "reason": "Diesel Frangrances is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 173,
+    "logo": "https://logowik.com/content/uploads/images/550_estee_lauder.jpg",
+    "name": "Estée Lauder",
+    "reason": "The owner of Estée Lauder parent company supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 174,
+    "logo": "https://logowik.com/content/uploads/images/loewe2671.jpg",
+    "name": "Smashbox",
+    "reason": "The owner of Smashbox, Estee Lauder, parent company supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 175,
+    "logo": "https://media.elcompanies.com/images/e/estee-lauder-companies/universal/our-brands/origins/og-logo-black-v2.png?h=750&iar=0&w=1859",
+    "name": "Origins",
+    "reason": "The owner of Origins, Estee Lauder, parent company supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab  - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 176,
+    "logo": "https://feelunique.com/cdn-cgi/image/quality=90,format=auto,metadata=none,dpr=1/img/logos/dr-jart_logo_1643294942.jpg?20231113900",
+    "name": "Dr. Jart+",
+    "reason": "The owner of Dr. Jart+ parent company, Estee Lauder, supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 177,
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/7/73/BUMBLE-BUMBLE.jpg/revision/latest?cb=20200623135939",
+    "name": "Bumble and Bumble",
+    "reason": "The owner of Bumble and Bumble parent company, Estee Lauder, supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 178,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/11/Darphin-Logo-700x394.png",
+    "name": "Darphin",
+    "reason": "The owner of Darphin parent company, Estee Lauder, supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 179,
+    "logo": "https://media.elcompanies.com/images/e/estee-lauder-companies/universal/our-brands/aramis/brandintrologo-aramis-new.png?h=283&iar=0&w=1486",
+    "name": "Aramis",
+    "reason": "The owner of Aramis parent company, Estee Lauder, supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 180,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Aveda-logo.png",
+    "name": "Aveda",
+    "reason": "The owner of Aveda parent company, Estee Lauder, supports Israeli companies",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 181,
+    "logo": "https://youconnex.com/wp-content/uploads/2016/05/Logo-OGX-610x244.jpg",
+    "name": "Ogx",
+    "reason": "The owner of Ogx, Johnson & Johnson, purchased Israeli company Biosense for $400 million",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 182,
+    "logo": "https://www.regaine.co.nz/sites/regaine_nz/files/logo_3.png",
+    "name": "Regaine",
+    "reason": "The owner of Regaine, Johnson & Johnson, purchased Israeli company Biosense for $400 million",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 183,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/11/Neutrogena-Logo-700x394.png",
+    "name": "Neutrogena",
+    "reason": "The owner of Neutrogena, Johnson & Johnson, purchased Israeli company Biosense for $400 million",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 184,
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/9/98/Stayfree_logo.gif/revision/latest?cb=20140305082515",
+    "name": "Stayfree",
+    "reason": "The owner of Stayfree, Johnson & Johnson, purchased Israeli company Biosense for $400 million",
+    "source": "http://www.inminds.co.uk/boycott-johnson-and-johnson.html",
+    "alternative": "AWWA - Store branded period products",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 188,
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/e/ef/Radox_2021.png/revision/latest/scale-to-width-down/200?cb=20210112182556",
+    "name": "Radox",
+    "reason": "The owner of Radox parent company, Uniliever, supports Israeli companies",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Huda Beauty - Ecostore - Frula -  Nourish -  Glow Lab - Health Basics (Apex Brands) Bodywashes",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 189,
+    "logo": "https://www.logodesignlove.com/images/evolution/original-braun-logo-2.jpg",
+    "name": "Braun",
+    "reason": "Braun is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Store branded products",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 190,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/11/Gillette-Logo-700x394.png",
+    "name": "Gillette",
+    "reason": "Gillette is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Store branded products",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 191,
+    "logo": "https://scontent.fakl4-1.fna.fbcdn.net/v/t39.30808-6/348546045_917122419516471_2209221355690585899_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=z-QWb0_5AXYAX_X2UvD&_nc_ht=scontent.fakl4-1.fna&oh=00_AfDIyMr8IbJ6PGDfc5AsfGLS-jmbAtJm174qMLS92K1bqg&oe=6557E1B8",
+    "name": "Sudocream",
+    "reason": "The owner of Sudocream parent company supports Israeli companies",
+    "source": "https://www.mayniaga.com/boycott-cosmetics-companies-backing-israeli-occupation-in-palestine/",
+    "alternative": "TUI baby balm - Ecostore nappy balm",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 192,
+    "logo": "https://seekvectorlogo.com/wp-content/uploads/2021/12/teva-pharmaceutical-industries-ltd-vector-logo-small-2021.png",
+    "name": "Teva pharmaceutical",
+    "reason": "Teva Pharmaceuticals operates in Occupied Palestine.",
+    "source": "https://www.chemistanddruggist.co.uk/CD017184/Teva-links-to-Israel-prompt-boycott-by-UK-contractors",
+    "alternative": "zinc oxide ointment 15% (150 mg/g)-",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 193,
+    "logo": "https://images.ctfassets.net/xuuihvmvy6c9/3QfrhPwtGtI5Zr4iFYhv8C/c4ad2cf890349e49a59dbe8e17b5732c/Vicks-Logo.png?fm=avif&q=95",
+    "name": "Vicks",
+    "reason": "Vicks is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 194,
+    "logo": "https://seeklogo.com/images/P/pampers-logo-D613293CC6-seeklogo.com.png",
+    "name": "Pampers",
+    "reason": "Pampers are made in factories on occupied territory, and is owned by Procter and Gamble, who opened an R&D center in Tel Aviv, Occupied Palestine, in which it invests $2bn annually.",
+    "source": "https://www.forbes.com/sites/ricardogeromel/2012/05/16/procter-and-gamble-israel-startup/?sh=57910e4611f5",
+    "alternative": "Pam's Nappies - Cute & Co",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 195,
+    "logo": "https://dorve.com/wp-content/uploads/2021/07/huggies_logo_before_after_animation-1536x864.gif",
+    "name": "Huggies",
+    "reason": "The owner of Huggies, Kimberly Clark, invested $49.9 million to buy a 49.9% stake in Israeli sanitary paper products manufacturer",
+    "source": "http://www.inminds.com/article.php?id=10435",
+    "alternative": "Cute & Co",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 197,
+    "logo": "https://media-cldnry.s-nbcnews.com/image/upload/t_fit-1500w,f_auto,q_auto:best/msnbc/Components/Photos/061113/061113_kfc_logo_vmed5p.jpg",
+    "name": "KFC",
+    "reason": "Parent company Yum Brands is an investor in Israeli start ups",
+    "source": "https://www.calcalistech.com/ctech/articles/0,7340,L-3901254,00.html",
+    "alternative": "Any NZ/Muslim owned restaurant",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 198,
+    "logo": "https://upload.wikimedia.org/wikipedia/sco/thumb/d/d2/Pizza_Hut_logo.svg/1088px-Pizza_Hut_logo.svg.png",
+    "name": "Pizza Hut",
+    "reason": "Parent company Yum Brands is an investor in Israeli start ups.",
+    "source": "https://www.calcalistech.com/ctech/articles/0,7340,L-3901254,00.html",
+    "alternative": "Any NZ/Muslim owned restaurant",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 199,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Dominos_pizza_logo.svg/2048px-Dominos_pizza_logo.svg.png",
+    "name": "Dominos",
+    "reason": "Dominos did give free food to IDF soldiers",
+    "source": "https://www.mayniaga.com/dominos-support-for-israel-examining-the-details/",
+    "alternative": "Any NZ/Muslim owned restaurant",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 201,
+    "logo": "https://www.bp.com/apps/settings/wcm/designs/refresh/bp/images/navigation/bp-logo.svg",
+    "name": "BP - Petrol station",
+    "reason": "BP was recently awarded exploration rights off the coast of israel, which would include water which should be Palestinian controlled.",
+    "source": "https://www.reuters.com/business/energy/israel-awards-gas-exploration-licences-eni-bp-four-others-2023-10-29/",
+    "alternative": "Waitomo",
+    "category": [
+      "Retail"
+    ]
+  },
+  {
+    "id": 202,
+    "logo": "https://i0.wp.com/thesummerstudy.com/wp-content/uploads/2022/06/Rare-Beauty-makeup-review-1.jpg?w=2163&ssl=1",
+    "name": "Rare Beauty by Selena Gomez",
+    "reason": "Although Selena herself has shown some support to Palestine, as well as claiming she is neutral. She has liked posts defending Israel on instagram. The CEO of Rare Beauty, Scott Friedman, is a zionist & follows the IDF on Instagram.",
+    "source": "https://www.newsweek.com/rare-beauty-sparks-boycott-calls-israel-hamas-war-1840545",
+    "alternative": "Huda Beauty",
+    "category": [
+      "Makeup"
+    ]
+  },
+  {
+    "id": 203,
+    "logo": "https://seeklogo.com/images/C/Costa_Coffee-logo-DC0FF384B3-seeklogo.com.png",
+    "name": "Costa Cafe",
+    "reason": "Coca-Cola Company, which owns Costa Coffee, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Avalanche Coffee",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 204,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Tim_Hortons_Logo.png/1600px-Tim_Hortons_Logo.png",
+    "name": "Tim Hortons",
+    "reason": "Tim Hortons is the sister company of Burger King, which supports IDF by providing free food and drinks to Israeli militants.",
+    "source": "https://www.instagram.com/p/CyORRWHIqeH/",
+    "alternative": "Avalanche Coffee",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 205,
+    "logo": "https://media.designrush.com/inspiration_images/134802/conversions/_1511456315_653_apple-desktop.jpg",
+    "name": "Apple",
+    "reason": "Apple products are available for purchase in Israel, and the company operates an App Store tailored for Israeli users.",
+    "source": "https://isp.page/news/does-apple-support-israel/#gsc.tab=0",
+    "alternative": "",
+    "category": [
+      "Electronics"
+    ]
+  },
+  {
+    "id": 206,
+    "logo": "https://cdn.freebiesupply.com/logos/large/2x/dell-1-logo-png-transparent.png",
+    "name": "Dell",
+    "reason": "Michael Dell, the founder of Dell, is a member of the Friends of the IDF, which raises money for the Israeli military. He has donated millions so far and continues to do so.",
+    "source": "https://www.bloomberg.com/news/articles/2014-11-07/ellison-adelson-donate-to-israeli-soldiers?leadSource=uverify%20wall",
+    "alternative": "",
+    "category": [
+      "Electronics"
+    ]
+  },
+  {
+    "id": 209,
+    "logo": "https://logowik.com/content/uploads/images/511_motorola.jpg",
+    "name": "Motorola",
+    "reason": "The IDF uses motorola as a main supplier for its communication equipment which enables them to effectively control the occupied Palestinians. They also manufacture the bomb fuses used in IDF bombs.",
+    "source": "http://www.inminds.co.uk/boycott-motorola.php",
+    "alternative": "",
+    "category": [
+      "Electronics"
+    ]
+  },
+  {
+    "id": 210,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1206px-Amazon_logo.svg.png",
+    "name": "Amazon",
+    "reason": "Amazon is investing $7.2bn in data centers in israel via AWS",
+    "source": "https://www.reuters.com/technology/amazon-invest-72-bln-israel-launches-aws-cloud-region-2023-08-01/",
+    "alternative": "",
+    "category": [
+      "Retail"
+    ]
+  },
+  {
+    "id": 214,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/1600px-IBM_logo.svg.png",
+    "name": "IBM",
+    "reason": "The owner of IBM parent company supports Israeli companies",
+    "source": "https://research.ibm.com/haifa/software.shtml",
+    "alternative": "",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 215,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Intel-logo-2022.png/1600px-Intel-logo-2022.png?20220919150135",
+    "name": "Intel",
+    "reason": "Intel Invests heavily in israel including in towns stolen from Palestinians",
+    "source": "https://www.intel.com/content/www/us/en/corporate-responsibility/intel-in-israel.html",
+    "alternative": "AMD",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 216,
+    "logo": "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/227_Netflix_logo-1024.png",
+    "name": "Netflix",
+    "reason": "Netflix has added a large number of Israeli-made films",
+    "source": "https://misbar.com/en/editorial/2023/11/18/a-global-call-to-boycott-netflix-over-supporting-israel",
+    "alternative": "",
+    "category": [
+      "Entertainment"
+    ]
+  },
+  {
+    "id": 218,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/AXA_Logo.svg/200px-AXA_Logo.svg.png",
+    "name": "Axa",
+    "reason": "AXA currently holds shares worth US$ 15.5M in four Israeli banks that finance Israel's illegal settlements",
+    "source": "https://bdsmovement.net/news/axa-partner-crime",
+    "alternative": "",
+    "category": [
+      "Insurance"
+    ]
+  },
+  {
+    "id": 219,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Autodesk_Logo.svg/1600px-Autodesk_Logo.svg.png",
+    "name": "Autodesk",
+    "reason": "The owner of Autodesk parent company supports Israeli companies",
+    "source": "https://www.calcalistech.com/ctechnews/article/r1f319cba",
+    "alternative": "",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 228,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Pfizer_logo.svg/1599px-Pfizer_logo.svg.png",
+    "name": "Pfizer",
+    "reason": "The owner of Pfizer parent company supports Israeli companies",
+    "source": "https://www.reuters.com/article/us-health-coronavirus-pfizer-israel-idUSKBN27T1E9/",
+    "alternative": "",
+    "category": [
+      "Healthcare"
+    ]
+  },
+  {
+    "id": 229,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/1200px-Tesla_logo.png",
+    "name": "Tesla",
+    "reason": "The owner of Tesla parent company supports Israeli companies",
+    "source": "https://www.ulastempat.com/international/which-car-companies-show-support-for-israel/https://www.ulastempat.com/international/which-car-companies-show-support-for-israel/",
+    "alternative": "",
+    "category": [
+      "Automotive"
+    ]
+  },
+  {
+    "id": 230,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/1200px-BMW.svg.png",
+    "name": "BMW",
+    "reason": "The owner of BMW parent company supports Israeli companies",
+    "source": "https://www.ulastempat.com/international/which-car-companies-show-support-for-israel/",
+    "alternative": "",
+    "category": [
+      "Automotive"
+    ]
+  },
+  {
+    "id": 231,
+    "logo": "https://uploads.vw-mms.de/system/production/images/vwn/030/145/images/7a0d84d3b718c9a621100e43e581278433114c82/DB2019AL01950_retina_2400.jpg?1649155356",
+    "name": "Volkswagen",
+    "reason": "The owner of Volkswagen parent company supports Israeli companies",
+    "source": "https://www.ulastempat.com/international/which-car-companies-show-support-for-israel/",
+    "alternative": "",
+    "category": [
+      "Automotive"
+    ]
+  },
+  {
+    "id": 232,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Land_Rover_logo_black.svg/1188px-Land_Rover_logo_black.svg.png?20210723155746",
+    "name": "Land Rover",
+    "reason": "The owner of Land Rover parent company supports Israeli companies",
+    "source": "https://www.timesofisrael.com/jaguar-land-rover-launches-israeli-hub-to-scout-for-local-startups-mobility-tech/",
+    "alternative": "",
+    "category": [
+      "Automotive"
+    ]
+  },
+  {
+    "id": 233,
+    "logo": "https://seeklogo.com/images/J/Jaguar-logo-ED7E01A4A1-seeklogo.com.png",
+    "name": "Jaguar",
+    "reason": "The owner of Jaguar parent company supports Israeli companies",
+    "source": "https://www.timesofisrael.com/jaguar-land-rover-launches-israeli-hub-to-scout-for-local-startups-mobility-tech/",
+    "alternative": "",
+    "category": [
+      "Automotive"
+    ]
+  },
+  {
+    "id": 234,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Audi_logo_detail.svg/1600px-Audi_logo_detail.svg.png",
+    "name": "Audi",
+    "reason": "The owner of Audi parent company supports Israeli companies",
+    "source": "https://www.ulastempat.com/international/which-car-companies-show-support-for-israel/",
+    "alternative": "",
+    "category": [
+      "Automotive"
+    ]
+  },
+  {
+    "id": 236,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0020/4299/brand.gif?itok=vsJ-4i2V",
+    "name": "American Eagle",
+    "reason": "American Eagle posted an image of the Israeli Flag on their flagship billboard in Times Square showing their support for the apartheid state.",
+    "source": "https://adage.com/article/digital-marketing-ad-tech-news/israel-hamas-war-how-brands-ad-tech-firms-agencies-are-responding/2521656",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 238,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Zara_Logo.svg/1600px-Zara_Logo.svg.png",
+    "name": "Zara",
+    "reason": "The owner of Zara parent company supports Israeli companies",
+    "source": "https://new.thecradle.co/articles-id/2367",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 239,
+    "logo": "https://cdn.freebiesupply.com/logos/large/2x/under-armour-logo-logo-png-transparent.png",
+    "name": "Under Armour",
+    "reason": "Under Armour sells its products in Israel",
+    "source": "https://www.underarmour-il.com/",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 240,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/H%26M-Logo.svg/1418px-H%26M-Logo.svg.png",
+    "name": "H&M",
+    "reason": "The owner of H&M parent company supports Israeli companies",
+    "source": "https://bdsmovement.net/news/hm-whitewashing-israels-colonization-jerusalem-bds-national-committee-calls-boycotting-hm",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 242,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Skechers.svg/890px-Skechers.svg.png",
+    "name": "Skechers",
+    "reason": "Michael S Greenberg, the president of Skechers, is a zionist who has posted pro israel content on his instagram.",
+    "source": "https://www.instagram.com/p/CzMMTQgLu9Q/",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 243,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Tommy_hilfig_vectorlogo.svg/1024px-Tommy_hilfig_vectorlogo.svg.png",
+    "name": "Tommy Hilfiger",
+    "reason": "The owner of Tommy Hilfiger parent company dontaed to Israel",
+    "source": "https://luxus-plus.com/en/fashion-brands-are-providing-assistance-to-the-victims-of-the-hamas-israel-conflict/",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 244,
+    "logo": "https://static.dezeen.com/uploads/2017/02/calvin-klein-new-updated-logo-raf-simons-peter-saville_dezeen_hero.gif",
+    "name": "Calvin Klein",
+    "reason": "The owner of Calvin Klein parent company supports Israeli companies",
+    "source": "https://www.next.co.il/en/shop/brand-calvinklein-0",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 245,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/3/32/Michael_Kors_%28brand%29_logo.svg/1206px-Michael_Kors_%28brand%29_logo.svg.png?20160512073423",
+    "name": "Michael Kors",
+    "reason": "The owner of Michael Kors parent company supports Israeli companies",
+    "source": "https://theimpression.com/designer-michael-kors-capri-holdings-donation-those-affected-in-both-israel-gaza/",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 246,
+    "logo": "https://logos-world.net/wp-content/uploads/2020/04/Adidas-Logo-700x394.png",
+    "name": "Adidas",
+    "reason": "Adidas uses israeli manufacturer, Delta Galil, to manufacture its underwear range.",
+    "source": "https://adidasunderwear.com/pages/adidas-underwear-partnership/",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 248,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/RC_Cola_logo.svg/440px-RC_Cola_logo.svg.png",
+    "name": "Royal Crown Cola",
+    "reason": "Royal Crown Cola is now owned by cadbury/schweppes",
+    "source": "https://ir.mondelezinternational.com/news-releases/news-release-details/mondelez-international-collaborate-israeli-foodtech-incubator",
+    "alternative": "Nice from warehouse",
+    "category": [
+      "drinks"
+    ]
+  },
+  {
+    "id": 249,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Caterpillar-shortened.svg/200px-Caterpillar-shortened.svg.png",
+    "name": "Caterpillar",
+    "reason": "Caterpillar bulldozers have been used in the demolition of Palestinian homes. The D9 bulldozer was specifically designed for the IDF.",
+    "source": "https://en.wikipedia.org/wiki/IDF_Caterpillar_D9",
+    "alternative": "",
+    "category": [
+      "Construction"
+    ]
+  },
+  {
+    "id": 250,
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/a/a6/DURACELL.001.png/revision/latest/scale-to-width-down/300?cb=20190510183416",
+    "name": "Duracell",
+    "reason": "The owner of Duracell parent company, Warren Buffett, supports Israel",
+    "source": "https://www.timesofisrael.com/warren-buffett-helps-raise-80-million-in-israel-bonds/",
+    "alternative": "Kmart branded battery",
+    "category": [
+      "Electronics"
+    ]
+  },
+  {
+    "id": 251,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/TripAdvisor_Logo.svg/1600px-TripAdvisor_Logo.svg.png",
+    "name": "Trip Advisor",
+    "reason": "The owner of Trip Advisor parent company supports Israeli companies",
+    "source": "https://bdsmovement.net/news/tourism-service-israeli-occupation-and-annexation",
+    "alternative": "Klook",
+    "category": [
+      "Travel"
+    ]
+  },
+  {
+    "id": 252,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Expedia_2012_logo.svg/184px-Expedia_2012_logo.svg.png",
+    "name": "Expedia",
+    "reason": "The owner of Expedia parent company supports Israeli companies",
+    "source": "https://bdsmovement.net/news/tourism-service-israeli-occupation-and-annexation",
+    "alternative": "Klook",
+    "category": [
+      "Travel"
+    ]
+  },
+  {
+    "id": 253,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Marriott_hotels_logo14.svg/1024px-Marriott_hotels_logo14.svg.png",
+    "name": "Marriott",
+    "reason": "The owner of Marriott supports Israeli companies and they have hotels there",
+    "source": "https://www.marriott.com/en/destinations/tel-aviv.mi",
+    "alternative": "",
+    "category": [
+      "Hospitality"
+    ]
+  },
+  {
+    "id": 254,
+    "logo": "https://www.mymarket.co.nz/image/cache/data/MiddleEast/Mixx/Caspian%20(20)-500x500.jpg",
+    "name": "La Mamma",
+    "reason": "They get their ingredients form Israel",
+    "alternative": "Turkish Kitchen Hummus",
+    "category": [
+      "Hummus"
+    ]
+  },
+  {
+    "id": 255,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Mobil_logo.svg/600px-Mobil_logo.svg.png",
+    "name": "Mobil",
+    "reason": "Provides Israel with fuel for fighter jets used by the Israeli air force against Palestinian civilians.",
+    "source": "https://investigate.afsc.org/company/exxon-mobil",
+    "alternative": "Waitomo",
+    "category": [
+      "Oil"
+    ]
+  },
+  {
+    "id": 256,
+    "logo": "https://greyboxcreativemain.b-cdn.net/wp-content/uploads/2020/01/National-Geographic-logo.jpg",
+    "name": "National Geographic",
+    "reason": "National Geographic supports Israel",
+    "source": "https://www.nationalgeographic.com/expeditions/destinations/middle-east/israel/",
+    "alternative": "",
+    "category": [
+      "Media"
+    ]
+  },
+  {
+    "id": 257,
+    "logo": "https://logowik.com/content/uploads/images/loewe2671.jpg",
+    "name": "Loewe",
+    "reason": "The owner of Loewe's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 258,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0000/2125/brand.gif",
+    "name": "Loreal / L'oreal",
+    "reason": "L'Oreal is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 259,
+    "logo": "https://media.designrush.com/inspiration_images/136124/conversions/_1519762849_545_990__1513771354_519_louis-v1_b31600c58738-mobile.jpg",
+    "name": "Louis Vuitton",
+    "reason": "The owner of Louis Vuitton's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 260,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/122019/logo-mac_prancheta_1.png?NPZfS4QSWg_6ySGSJKInsSXz2CFRKvhS&itok=2_JpKro7",
+    "name": "MAC Cosmetics",
+    "reason": "MAC Cosmetics is owned by Estee Lauder, who's ownership, especially Ronald Lauder, has extremist Zionist views and financially and politically supports Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": " Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 261,
+    "logo": "https://perfumesociety.org/wp-content/uploads/2014/04/FRANCIS-KURK-1.jpg",
+    "name": "Maison Francis Kurkdjian",
+    "reason": "The owner of Maison Francis Kurkdjian's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 262,
+    "logo": "https://admin.showstudio.com/images/qJ-C79aRXkFj725FPJYdSkL5QgU=/376561/width-640%7Cformat-jpeg/f92ad3f3434f7a20ca931285c2df9906.png",
+    "name": "Maison Margiela Fragrances",
+    "reason": "Maison Margiela Fragrances is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 263,
+    "logo": "https://assets.stickpng.com/thumbs/600f2d37fcd2b50004308408.png",
+    "name": "Marc Jacobs",
+    "reason": "The owner of Marc Jacobs's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 264,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/360px-McDonald%27s_Golden_Arches.svg.png",
+    "name": "McDonalds",
+    "reason": "McDonalds Israel supports IDF by providing free food and drinks to Israeli militants. See tweet (click translate) for reference.",
+    "source": "https://twitter.com/McDonaldsIL/status/1715047104895230153",
+    "alternative": "Other NZ / Muslim owned restaurants",
+    "category": [
+      "Fast Food"
+    ]
+  },
+  {
+    "id": 265,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/asset-library/publishingimages/brands/chocolate-confectionery/milkybar-logo-round.png",
+    "name": "Milkybar",
+    "reason": "The owner of the Milkybar brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Whittaker's",
+    "category": [
+      "Chocolate"
+    ]
+  },
+  {
+    "id": 266,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtmGGog03Rp28l-WS8xL5iCUJakSfX14s_qdxOuOkJ&s",
+    "name": "Moovit",
+    "source": "https://twitter.com/UriLevine1",
+    "reason": "Founder, Uri Levine, is a Zionist who is also ex-IDF (also founded Waze).",
+    "alternative": "",
+    "category": [
+      "Transportation"
+    ]
+  },
+  {
+    "id": 267,
+    "logo": "https://cdn.supadupa.me/shop/13/images/1908639/morrocan-oil-logo-gravity-_grande.png",
+    "name": "Moroccan Oil",
+    "reason": "Moroccan Oil obscures its manufacturing and origins. It poses as a Moroccan brand, however, its products are all manufactured in Israel.",
+    "source": "https://electronicintifada.net/blogs/sarah-irving/moroccanoil-israeli-hair-products-glamorize-apartheid",
+    "alternative": "Huda beauty",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 268,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0009/3885/brand.gif",
+    "name": "Mountain Dew",
+    "reason": "The owner of Mountain Dew, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": [
+      "Soft Drinks"
+    ]
+  },
+  {
+    "id": 269,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/movenpick-logo-round-2021.png",
+    "name": "Movenpick",
+    "reason": "The owner of the Movenpick brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer that operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "",
+    "category": [
+      "Ice Cream"
+    ]
+  },
+  {
+    "id": 270,
+    "logo": "https://notwanepharmacy.store/wp-content/uploads/2020/08/mugler-logo.png",
+    "name": "Mugler Beauty",
+    "reason": "Mugler Beauty is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 271,
+    "logo": "https://lens-storage.storage.googleapis.com/png/74504afc12b6483d988c46d13fa2f6ca",
+    "name": "NYX Professional Makeup",
+    "reason": "NYX Professional is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 272,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/nescafe-logo-square.png",
+    "name": "Nescafe",
+    "reason": "The owner of the Nescafe brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Avalanche Coffee",
+    "category": [
+      "Coffee"
+    ]
+  },
+  {
+    "id": 273,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/nespresso-logo-round-2.png",
+    "name": "Nespresso",
+    "reason": "The owner of the Nespresso brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Avalanche Coffee",
+    "category": [
+      "Coffee"
+    ]
+  },
+  {
+    "id": 274,
+    "logo": "https://1000logos.net/wp-content/uploads/2018/02/Krispy-Kreme-Logo.png",
+    "name": "Krispy Kreme",
+    "reason": "The owners of Krispy Kreme, the Reimann family are staunch zionists and support the zionist state with investment and donations through their Alfred Landecker Foundation.",
+    "source": "https://www.alfredlandecker.org/en/article/the-story-of-the-alfred-landecker-foundation",
+    "alternative": "Southern Maid",
+    "category": [
+      "Donuts"
+    ]
+  },
+  {
+    "id": 275,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/nesquik-logo-round-2021.png",
+    "name": "Nesquik",
+    "reason": "The owner of the Nesquik brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Pams - Dilmah",
+    "category": [
+      "Chocolate"
+    ]
+  },
+  {
+    "id": 276,
+    "logo": "https://resources.stuff.co.nz/content/dam/images/4/y/r/p/p/g/image.related.StuffLandscapeSixteenByNine.710x400.228j3m.png/1616992936367.jpg?format=pjpg&optimize=medium",
+    "name": "Nestle",
+    "reason": "Osem is an Israeli food manufacturer which operates in Occupied Palestine. Nestle owns a controlling stake in Osem.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "",
+    "category": [
+      "Food",
+      "Drinks"
+    ]
+  },
+  {
+    "id": 277,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0021/0128/brand.gif",
+    "name": "Pepsi",
+    "reason": "PepsiCo owns SodaStream and 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": [
+      "Drinks",
+      "Food"
+    ]
+  },
+  {
+    "id": 278,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/powerade-logo.png",
+    "name": "Powerade",
+    "reason": "Coca-Cola Company which owns Powerade, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 279,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/102010/prada-original.png",
+    "name": "Prada Beauty",
+    "reason": "Prada Beauty is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics",
+      "Clothing",
+      "Fashion"
+    ]
+  },
+  {
+    "id": 280,
+    "logo": "https://press.priceline.com/wp-content/uploads/2019/10/Priceline_Logo_RGB_Blue_2019-1-1.png",
+    "name": "Priceline",
+    "reason": "Booking.com, whose parent company Booking Holdings owns Priceline, allows listings in occupied Palestinian territory, and after initially deciding to add a label to properties which are in occupied territory, reversed that move under pressure from Israel.",
+    "source": "https://www.aljazeera.com/news/2022/10/5/is-booking-com-reversal-palestine-corporate-hypocrisy",
+    "alternative": "Klook",
+    "category": [
+      "Technology",
+      "Travel"
+    ]
+  },
+  {
+    "id": 281,
+    "logo": "https://staticg.sportskeeda.com/editor/2023/03/bda84-16779522739911-1920.jpg",
+    "name": "Puma",
+    "reason": "Puma is the main sponsor of the Israel Football Association (IFA), which includes teams in Israel’s illegal settlements on occupied Palestinian land.",
+    "source": "https://bdsmovement.net/boycott-puma",
+    "alternative": "Farmers - Cotton On",
+    "category": [
+      "Fashion"
+    ]
+  },
+  {
+    "id": 282,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/pure-life-logo-square.png",
+    "name": "Pure Life",
+    "reason": "The owner of the Pure Life brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 283,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0003/0211/brand.gif",
+    "name": "Ralph Lauren Fragrances",
+    "reason": "Ralph Lauren Fragrances is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty -  Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics",
+      "Clothing",
+      "Fashion"
+    ]
+  },
+  {
+    "id": 284,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0025/2387/brand.gif",
+    "name": "Rockstar Energy",
+    "reason": "The owner of Rockstar Energy, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 285,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/schweppes-logo.png",
+    "name": "Schweppes",
+    "reason": "Coca-Cola Company which owns Schweppes, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 286,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/092012/soda_stream.png",
+    "name": "Soda Stream",
+    "reason": "Soda Stream is an Israeli company which manufactured its products in Occupied Palestine. Now owned by Pepsico after a $3.2b acquisition. It since moved its factory from the West Bank to main Israel, however is still subject to boycott for its firing of 60 Palestinian workers and dark history.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": [
+      "Drinks",
+      "Manufacturer",
+      "Household"
+    ]
+  },
+  {
+    "id": 287,
+    "logo": "https://www.coca-colacompany.com/content/dam/company/us/en/brands/logos/sprite-logo.png",
+    "name": "Sprite",
+    "reason": "Coca-Cola Company which owns Appletiser, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 288,
+    "logo": "https://www.tailorbrands.com/wp-content/uploads/2020/11/starbucks-logo-2011.jpg",
+    "name": "Starbucks",
+    "reason": "Howard Shultz is the largest private owner of Starbucks shares and is a staunch Zionist who invests heavily in Israel's economy, including a recent $1.7 Billion investment in cybersecurity startup Wiz.",
+    "source": "https://fortune.com/2021/04/07/wiz-howard-schultz-investment-fundraising-cybersecurity-startups-starbucks-ceo/",
+    "alternative": "Avalanche Coffee",
+    "category": [
+      "Coffee",
+      "Drinks"
+    ]
+  },
+  {
+    "id": 289,
+    "logo": "https://r.lvmh-static.com/uploads/2022/08/stella-logo.png",
+    "name": "Stella",
+    "reason": "The owner of STELLA by Stella McCartney's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Fashion",
+      "Clothing",
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 290,
+    "logo": "https://i.pinimg.com/originals/50/5f/1d/505f1dc613cff29078ccb445708b7b33.png",
+    "name": "TAG Heuer",
+    "reason": "The owner of TAG Heuer's parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "",
+    "category": [
+      "Fashion",
+      "Luxury"
+    ]
+  },
+  {
+    "id": 291,
+    "logo": "https://www.nzdoctor.co.nz/sites/default/files/styles/cropped_image_16_7_/public/2017-11/Chemist_Warehouse.jpg?itok=YkQy75n7",
+    "name": "Chemist Warehouse",
+    "reason": "Chemist Warehouse owner is a big supporter of Israel.",
+    "source": "https://www.afr.com/world/middle-east/pro-palestine-boycott-of-aussie-companies-condemned-20231108-p5eier",
+    "alternative": "Bargain Chemist",
+    "category": [
+      "Pharmaceuticals"
+    ]
+  },
+  {
+    "id": 292,
+    "logo": "https://clearvisioneyecare.ca/wp-content/uploads/2017/03/Tiffany-Co-logo.jpg",
+    "name": "Tiffany & Co.",
+    "reason": "The owner of Tiffany & Co.'s parent company, LVMH, Bernard Arnault invests hundreds of millions in Israeli companies",
+    "source": "https://www.timesofisrael.com/luxury-goods-magnate-bernard-arnault-invests-in-israeli-cybersecurity-firm-wiz/",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Fashion",
+      "Clothing",
+      "Cosmetics",
+      "Luxury"
+    ]
+  },
+  {
+    "id": 293,
+    "logo": "https://media.licdn.com/dms/image/D4E0BAQH9tPiLt38cxA/company-logo_200_200/0/1695305566079?e=2147483647&v=beta&t=er2z4E0XEEsougatDEiiqIlaKhIJ4JnbpT2yTPKZqbM",
+    "name": "Tom Ford Beauty",
+    "reason": "Tom Ford Beauty is owned by Estee Lauder, whose ownership, especially Ronald Lauder, has extremist Zionist views and financially and politically supports the Israeli occupation of Palestinian land.",
+    "source": "https://www.jnf.org/menu-3/speakers-bureau/bio-page?id=830973c9-caae-67a8-a4cf-ff000038378d",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics",
+      "Clothing"
+    ]
+  },
+  {
+    "id": 294,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0017/4978/brand.gif",
+    "name": "Tropicana",
+    "reason": "The owner of Tropicana, PepsiCo, bought SodaStream for $3.2bn and owns 50% of Sabra both of which had taken advantage of the Israeli occupation of Palestine.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Homegrown",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 295,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/012012/ud.png",
+    "name": "Urban Decay",
+    "reason": "Urban Decay is a brand owned by L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 296,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0002/2916/brand.gif",
+    "name": "Valentino Beauty",
+    "reason": "Valentino Beauty is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics",
+      "Clothing",
+      "Fashion"
+    ]
+  },
+  {
+    "id": 297,
+    "logo": "https://cdn-icons-png.flaticon.com/512/124/124016.png",
+    "name": "Viber",
+    "reason": "Founder, Talmon Marco, is a Zionist who supports IDF operations in Gaza.",
+    "source": "https://twitter.com/duras",
+    "alternative": "",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 299,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/062010/VR_logo.gif",
+    "name": "Viktor & Rolf Beauty",
+    "reason": "Viktor & Rolf Beauty is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics",
+      "Clothing",
+      "Fashion"
+    ]
+  },
+  {
+    "id": 300,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/vittel-logo-round.png",
+    "name": "Vittel",
+    "reason": "The owner of the Vittel brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer that operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 301,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/052018/untitled-4_19.png?Nrpk5Y1UlrEvEEOMK6vQRsPrg_u.VN8O&itok=wHARdQlD",
+    "name": "Volvo",
+    "reason": "Volvo heavy machinery has been used in the demolition of Palestinian neighborhoods in Occupied Palestine, benefiting them commercially from the Israeli occupation. They issued a statement distancing themselves and rejecting responsibility for its sales network's decisions; however, it is still complicit unless it ends its relationship with the companies who sell equipment to the IDF, for example, Mayers Cars and Trucks in Ashdod.",
+    "source": "http://www.inminds.co.uk/article.php?id=10424",
+    "alternative": "",
+    "category": [
+      "Car",
+      "Manufacturer"
+    ]
+  },
+  {
+    "id": 302,
+    "logo": "https://9to5google.com/2020/06/29/waze-logo-2020-brand-refresh/waze-logo-2020-1/",
+    "name": "Waze",
+    "reason": "Founder, Uri Levine, is a staunch Zionist who is also ex-IDF (also founded moovit).",
+    "source": "https://twitter.com/UriLevine1",
+    "alternative": "",
+    "category": [
+      "Technology",
+      "Travel"
+    ]
+  },
+  {
+    "id": 303,
+    "logo": "https://cdn-icons-png.flaticon.com/512/5968/5968762.png",
+    "name": "Wix",
+    "reason": "CEO Avishai Abrahami is a Zionist who supports the IDF.",
+    "source": "https://twitter.com/avishai_ab",
+    "alternative": "Wordpress",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 304,
+    "logo": "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/102014/logo_cassandre-ysl.png",
+    "name": "Yves Saint Laurent Beauty / YSL Beauty",
+    "reason": "YSL Beauty is a partnership with L'Oreal, which is a 'warm friend of Israel'. After sending a letter to the Arab League with information helping the boycott, they paid a $1.4m fine and issued an apology, before fostering a new relationship with Israel, with heavy investment and even operating a factory in Occupied Palestine.",
+    "source": "https://bdsmovement.net/news/l%E2%80%99oreal-makeup-israeli-apartheid",
+    "alternative": "Huda beauty - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics",
+      "Clothing",
+      "Fashion"
+    ]
+  },
+  {
+    "id": 305,
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/6/6c/Alpro-2012.png/revision/latest?cb=20210807125043",
+    "name": "Alpro",
+    "reason": "Owned by Groupe Danone who supports Israel",
+    "source": "https://www.timesofisrael.com/french-dairy-giant-danone-leads-3-5m-investment-into-israeli-cultured-milk-startup/",
+    "alternative": "Store branded dairy (i.e Pams, value, etc.)",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 306,
+    "logo": "https://seeklogo.com/images/D/danone-activia-logo-4976BD71EE-seeklogo.com.png",
+    "name": "Activia",
+    "reason": "Owned by Groupe Danone who supports Israel",
+    "source": "https://www.timesofisrael.com/french-dairy-giant-danone-leads-3-5m-investment-into-israeli-cultured-milk-startup/",
+    "alternative": "Store branded dairy (i.e Pams, value, etc.)",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 307,
+    "logo": "https://www.nestle.com/sites/default/files/styles/thumbnail/public/asset-library/publishingimages/brands/chocolate-confectionery/milkybar-logo-round.png",
+    "name": "Go Healthy",
+    "reason": "The owner of the Go Healthy brand, Nestle, owns a controlling stake in Osem. Osem is an Israeli food manufacturer which operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Contact us if you have alternatives :).",
+    "category": [
+      "Chocolate"
+    ]
+  },
+  {
+    "id": 308,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Pascall_Pineapple_Lumps.JPG/440px-Pascall_Pineapple_Lumps.JPG",
+    "name": "Pascall",
+    "reason": "Owned by Mondelez who is a big supporter of Israel",
+    "source": "https://ir.mondelezinternational.com/news-releases/news-release-details/mondelez-international-collaborate-israeli-foodtech-incubator",
+    "alternative": "Mayceys",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 309,
+    "logo": "https://www.purenature.co.nz/cdn/shop/products/BlackCuminSeedOilOrganicL.jpg?v=1591140097",
+    "name": "Pure Nature Black Cumin Seed Oil, Organic",
+    "reason": "Black seed oil from pure nature comes from Israel",
+    "source": "https://www.purenature.co.nz/products/black-cumin-seed-oil-organic?variant=9397863940140&gclid=CjwKCAiAgeeqBhBAEiwAoDDhn30zVzCgfWn5NpzM9sJneylEKaWK3QEm1DL90iyzsWkGVX0jFAgh1xoCDIkQAvD_BwE",
+    "alternative": "Store branded dairy (i.e Pams, value, etc.)",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 310,
+    "logo": "",
+    "name": "Bomaja",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 311,
+    "logo": "",
+    "name": "Carmel Agrexco",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 312,
+    "logo": "",
+    "name": "Delilah",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 313,
+    "logo": "",
+    "name": "Desert Diamond",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 314,
+    "logo": "",
+    "name": "hadiklaim",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 315,
+    "logo": "",
+    "name": "Jordan Plains",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 316,
+    "logo": "",
+    "name": "Jordan River",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 317,
+    "logo": "",
+    "name": "King Solomon",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 318,
+    "logo": "",
+    "name": "Paradise Dates",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 319,
+    "logo": "",
+    "name": "Rapunzel",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 320,
+    "logo": "",
+    "name": "Red Sea",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 321,
+    "logo": "",
+    "name": "Royal Treasure",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 322,
+    "logo": "",
+    "name": "Shams",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 323,
+    "logo": "",
+    "name": "Tamara",
+    "reason": "Israeli Dates",
+    "alternative": "Cinderlla Camel - Al madinah Halal meats date",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 324,
+    "logo": "",
+    "name": "Elementor wordpress theme builder",
+    "reason": "An Israeli product",
+    "alternative": "Divi / Gutenberg",
+    "category": [
+      "Technology"
+    ]
+  },
+  {
+    "id": 325,
+    "logo": "https://www.nestle-family.com/sites/site.prod1.nestle-family.com/files/styles/medium/public/2019-07/S26%201.6%20KG.png?itok=6yp2QtK9",
+    "name": "s26",
+    "reason": "Owned by Nestle",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "Haven",
+    "category": [
+      "baby"
+    ]
+  },
+  {
+    "id": 326,
+    "logo": "https://prod-admin.nutriciastore.co.nz/media/catalog/product/cache/5c6dc3efdfd69a2944a63390180480a7/1/0/10755773562910.jpg",
+    "name": "Karicare",
+    "reason": "Owned by Danone",
+    "source": "https://www.timesofisrael.com/french-dairy-giant-danone-leads-3-5m-investment-into-israeli-cultured-milk-startup/",
+    "alternative": "Haven",
+    "category": [
+      "baby"
+    ]
+  },
+  {
+    "id": 327,
+    "logo": "https://www.blackboxreviews.co.nz/wp-content/uploads/2020/02/Sunsilk-Shampoo-Detox-For-Men-600x600.jpg",
+    "name": "Sunsilk",
+    "reason": "Owned by Uniliver",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "Ecostore",
+    "category": [
+      "baby"
+    ]
+  },
+  {
+    "id": 328,
+    "logo": "https://beautystoreprod.s3.amazonaws.com/f860cfc0-44b4-4b27-a8a3-323f9054f5a5_big.jpg",
+    "name": "Macleans",
+    "reason": "Owned by GSK who has bussines with Israel.",
+    "source": "https://www.gsk.com/en-gb/locations/israel/",
+    "alternative": "Ecostore - Grin",
+    "category": [
+      "Oral"
+    ]
+  },
+  {
+    "id": 329,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Kogan_logo.jpg/1600px-Kogan_logo.jpg",
+    "name": "Kogan",
+    "reason": "Owned by Ruslan Kogan who supports Israel.",
+    "source": "https://www.channelnews.com.au/kogan-along-with-anaconda-targeted-by-pro-palestinian-protesters/",
+    "alternative": "Noel Leeming",
+    "category": [
+      "Tech"
+    ]
+  },
+  {
+    "id": 3290,
+    "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfU0-8NtWrV10HCk2GBPO_Bipj7l43n7gYEA&s",
+    "name": "Mighty Ape",
+    "reason": "Owned by Ruslan Kogan who supports Israel.",
+    "source": "https://www.channelnews.com.au/kogan-along-with-anaconda-targeted-by-pro-palestinian-protesters/",
+    "alternative": "Noel Leeming",
+    "category": [
+      "Tech"
+    ]
+  },
+  {
+    "id": 330,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/NIVEA_logo_2021.svg/440px-NIVEA_logo_2021.svg.png",
+    "name": "Nivea",
+    "reason": "Nivea has bussines in Israel.",
+    "source": "https://www.adl.org/resources/news/nivea-skincare-lists-israel-corporate-web-site",
+    "alternative": "Dermaveen",
+    "category": [
+      "Skin Care"
+    ]
+  },
+  {
+    "id": 331,
+    "logo": "https://www.arnoldproducts.co.nz/imagecache/ii_1_2133_5.jpg",
+    "name": "Craigs",
+    "reason": "The owner of Craigs, Heinz, has bussines in Israel and has its products sold there",
+    "source": "https://shoppy.co.il/products/heinz-tomato-ketchup",
+    "alternative": "Westgold",
+    "category": [
+      "Food"
+    ]
+  },
+  {
+    "id": 332,
+    "logo": "https://mma.prnewswire.com/media/385568/doTERRA_Logo.jpg?w=200",
+    "name": "doTERRA",
+    "reason": "They have stores in the occupied lands of palestine.",
+    "source": "https://www.doterra.com/US/en/doterra-israel-founders-club",
+    "alternative": "",
+    "category": [
+      "Oil"
+    ]
+  },
+  {
+    "id": 333,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/f/f7/Monster_Energy.png",
+    "name": "Monster",
+    "reason": "Owned by Coca cola, supporters of Israeli apartheid and genocide against palestinian people.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 335,
+    "logo": "https://kwality.co.nz/Files/Product/Cover/142cfd83-2b2e-496f-a0bd-9edb33f6e7a1.jpg",
+    "name": "Limca",
+    "reason": "Coca-Cola Company which owns Limca, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Nice from Warehouse",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 336,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/vlogo23.png",
+    "name": "V Energy",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 337,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/f/f3/Mother_Logo.png",
+    "name": "Mother Energy",
+    "reason": "Coca-Cola Company which owns Mother Energy, operates a factory in the illegal Israeli settlement of Atarot, which is built in Occupied Palestine.",
+    "source": "https://www.foa.org.uk/campaign/boycottcocacola",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 338,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/09/Suntory-BOSS-lockup-scaled.jpg",
+    "name": "Boss Coffee",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Nippy's",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 339,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/LOGO.jpg",
+    "name": "Maximus",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 340,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/Ribena-logo-New-look-1-scaled.jpg",
+    "name": "Ribena",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Nippy's",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 341,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/McCoy-logo_Master_white2.jpg",
+    "name": "The Real McCoy",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Homegrown",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 342,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/09/JustJuice_Logo.png",
+    "name": "Just Juice",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Homegrown",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 343,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/09/Fresh-Up-Logo-CMYK-Hi-res-scaled.jpg",
+    "name": "Fresh Up",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Homegrown",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 344,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/Lucozade-Energy-Stacked-Black2.png",
+    "name": "Lucozade Energy",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 345,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/09/h2go-CMYK-LR.jpg",
+    "name": "H2Go",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 346,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/Mizone-NZ_Logo-scaled.jpg",
+    "name": "Mizone",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Pure NZ",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 347,
+    "logo": "https://www.frucorsuntory.com/wp-content/uploads/2020/10/G-Force-Full-Logo2.png",
+    "name": "G Force",
+    "reason": "Owned by Frucor Suntory who has partnership with PepsiCo.",
+    "source": "https://www.frucorsuntory.com/our-brands/",
+    "alternative": "Musashi Energy Drink",
+    "category": [
+      "Drinks"
+    ]
+  },
+  {
+    "id": 348,
+    "logo": "https://cdn.sanity.io/images/92ui5egz/production/26b76dc0a16aa60339c059b31babcb45a6d1409a-1080x1080.jpg?w=375&h=375&fit=crop&auto=format",
+    "name": "Magnum",
+    "reason": "Magnum Ice Creams is owned by Unilever. Ben & Jerry's is also owned by Unilever. When Ben & Jerry's decided to stop selling its products in Israel, Unilever sold off the Israeli distribution rights to Avi Zinger to circumvent their decision and to force Ben & Jerry's brand name to continue selling in Israel.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "",
+    "category": [
+      "Ice Cream"
+    ]
+  },
+  {
+    "id": 349,
+    "logo": "https://www.keter.co.nz/cdn/shop/files/Keter-NZ-Logo.png?crop=center&height=140&v=1685320121&width=240",
+    "name": "Keter",
+    "reason": "Owned by an Israeli manufacturer and marketer of resin-based household and garden consumer products, and has been established in 1948.",
+    "source": "https://en.wikipedia.org/wiki/Keter_Group#:~:text=4%20References-,History,his%20sons%2C%20Sami%20and%20Itzhak.",
+    "alternative": "Contact us if you have alternatives :)",
+    "category": [
+      "storage"
+    ]
+  },
+  {
+    "id": 350,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Burts-bees-logo.svg/440px-Burts-bees-logo.svg.png",
+    "name": "Burt's Bees",
+    "reason": "Burt's Bees is owned by Clorox which has some shareholders (blackrock) that support Israeli occupation of Palestinian land.",
+    "source": "https://en.m.wikipedia.org/wiki/Burt%27s_Bees",
+    "alternative": "ecostore, Aotearoad, Manuka Health, Lucas' Pawpaw",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 351,
+    "logo": "https://static.chemistwarehouse.co.nz/ams/media/pi/64580/3DF_800.jpg",
+    "name": "Little Eyes",
+    "reason": "Little Eyes is made in Israel.",
+    "source": "https://www.bargainchemist.co.nz/cdn/shop/products/10375245955102_1000x.jpg?v=1669288996",
+    "alternative": "Shotz - Ecostore - Frula -  Nourish -  Glow Lab",
+    "category": [
+      "Cosmetics"
+    ]
+  },
+  {
+    "id": 352,
+    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Tip_Top_icecream_logo.svg/400px-Tip_Top_icecream_logo.svg.png",
+    "name": "Tip Top",
+    "reason": "The owner of Tip Top, Nestle, owns a controlling stake in Osem. Osem operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "",
+    "category": "Ice cream"
+  },
+  {
+    "id": 353,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Heartbrand%2C_no_text.svg/440px-Heartbrand%2C_no_text.svg.png",
+    "name": "Streets",
+    "reason": "Streets's owner brand, Unilever, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "",
+    "category": [
+      "Ice Cream"
+    ]
+  },
+  {
+    "id": 354,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Heartbrand%2C_no_text.svg/440px-Heartbrand%2C_no_text.svg.png",
+    "name": "Streets",
+    "reason": "Streets's owner brand, Unilever, supports Israeli occupation of Palestinian land.",
+    "source": "https://www.unilever.com/news/press-and-media/press-releases/2022/unilever-reaches-new-business-arrangement-for-ben-jerrys-in-israel/",
+    "alternative": "",
+    "category": [
+      "Ice Cream"
+    ]
+  },
+  {
+    "id": 355,
+    "logo": "https://qph.cf2.quoracdn.net/main-qimg-440818cad86bb38fa465d9d19c6b6ed5",
+    "name": "Aerogard / Mortein",
+    "reason": "Aerogard (and Mortein) are owned by Reckitt which has Blackrock as shareholders, which supports genocide.",
+    "source": "https://www.aerogard.com.au/contact-us/https://reckitt.com/media/8734/reckitt_ar20_engaginginvestors.pdf",
+    "alternative": "Skin Technology, OFF!",
+    "category": [
+      "Ice Cream"
+    ]
+  },
+  {
+    "id": 356,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/1024px-Stripe_Logo%2C_revised_2016.svg.png",
+    "name": "Stripe",
+    "reason": "Stripe does not support Palestine owned businesses and closes their accounts without giving them the money. This happened to our Kiwi based Palestinian id ",
+    "alternative": "",
+    "category": [
+      "Ice Cream"
+    ]
+  },
+  {
+    "id": 357,
+    "logo": "https://www.7up.com/images/7up-logo.png",
+    "name": "Seven 7 Up",
+    "reason": "7 Up is manufactured by multi-national PepsiCo who supports Israel.",
+    "source": "https://www.bloomberg.com/view/articles/2018-08-22/pepsico-s-sodastream-purchase-is-sweet-news-for-israelis?leadSource=uverify%20wall#xj4y7vzkg",
+    "alternative": "Nice Fizzy (warehouse) - Homegrown - Almighty drinks",
+    "category": [
+      "drinks"
+    ]
+  },
+  {
+    "id": 358,
+    "logo": "https://assets-global.website-files.com/620aad58387394efe9951e58/620aad5838739446d6951e9e_kapiti-logo-gold.png",
+    "name": "Kapiti (Ice Cream Only, Yogurt is Okay)",
+    "reason": "The owner of Kapiti is Tip Top which is owned by Nestle, owns a controlling stake in Osem. Osem operates in Occupied Palestine.",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "",
+    "category": "Ice cream"
+  },
+  {
+    "id": 359,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Caltex_brand_logo.svg/600px-Caltex_brand_logo.svg.png",
+    "name": "Caltex",
+    "reason": "Caltex is owned by the Chevron brand",
+    "source": "https://bdsmovement.net/Call-to-Boycott-Chevron-Siemens",
+    "alternative": "Gull - Waitomo",
+    "category": "Petrol"
+  },
+  {
+    "id": 360,
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Caltex_brand_logo.svg/600px-Caltex_brand_logo.svg.png",
+    "name": "Montblanc",
+    "reason": "Caltex is owned by the Chevron brand",
+    "source": "https://bdsmovement.net/Call-to-Boycott-Chevron-Siemens",
+    "alternative": "Gull - Waitomo",
+    "category": "Petrol"
+  },
+  {
+    "id": 362,
+    "logo": "https://m.media-amazon.com/images/I/814Ci3DVfQL._AC_UF1000,1000_QL80_.jpg",
+    "name": "Nutella / ferrero rocher",
+    "reason": "Their products are sold in Israel",
+    "source": "https://www.nutella.com/il/en/",
+    "alternative": "",
+    "category": "Other"
+  },
+  {
+    "id": 363,
+    "logo": "https://www.health2000.co.nz/media/catalog/product/e/s/ester_c_plus_1000mg_90_tablets_solgar.jpg?quality=80&fit=bounds&height=550&width=550",
+    "name": "Solgar",
+    "reason": "Owned by Nestle",
+    "source": "https://www.mayniaga.com/the-nestle-israel-connection-unraveled/",
+    "alternative": "",
+    "category": "Other"
+  },
+  {
+    "id": 3640,
+    "logo": "https://cactusoutdoor.co.nz/cdn/shop/files/cactus-logo-horz-2500px_390x@2x.png?v=1614314743",
+    "name": "Cactus Outdoor",
+    "reason": "Cactus Outdoor NZ owner Ben Kepes has made many Zionist and bullying comments on his twitter account",
+    "source": "https://nzjc.org.nz/2024/01/03/indigeneity-and-colonialism-not-useful-metaphors-for-israel/",
+    "alternative": "",
+    "category": "Other"
+  },
+  {
+    "id": 3640,
+    "logo": "https://i5.walmartimages.com/seo/Red-Bull-Energy-Drink-8-4-fl-oz-Pack-of-4-Cans_6fdc6476-7d2d-4945-9944-a1d853303352.2d41ccaf72c07b2ff924ef5114890d74.jpeg",
+    "name": "Red Bull",
+    "reason": "Red Bull is operating in Israel.",
+    "source": "https://www.ulastempat.com/international/does-red-bull-support-israel-decoding-the-unraveled-connection/",
+    "alternative": "Musashi Energy Drink",
+    "category": "Musashi"
+  }
+]

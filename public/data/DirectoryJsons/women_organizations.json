@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Islamic Women's Council of New Zealand (IWCNZ)",
+    "type": "National Organization",
+    "address": "",
+    "phone": "092208800",
+    "website": "iwcnz.org.nz",
+    "email": "community@iwcnz.org.nz",
+    "description": "NATIONAL BODY. Supports Muslim women and women's groups in their local communities, centres and mosques",
+    "region": "National",
+    "services": ["Community Support", "Women's Advocacy", "Education"]
+  },
+  {
+    "name": "Khadija Leadership Network (KLN)",
+    "type": "Leadership Network",
+    "address": "",
+    "phone": "",
+    "website": "khadijaleadershipnetwork.org",
+    "email": "",
+    "description": "Supporting emerging and established female leaders in the Muslim community",
+    "region": "National",
+    "services": ["Leadership Development", "Networking", "Mentoring"]
+  },
+  {
+    "name": "Ar Rahmah",
+    "type": "Women's Group",
+    "address": "Avondale Islamic Center",
+    "phone": "+64210424113",
+    "website": "",
+    "email": "",
+    "description": "Friday class for sisters and support - Quran Urdu Tafseer, serving for over 23 years. Pastoral care/Counseling available",
+    "region": "Auckland",
+    "services": ["Islamic Education", "Counseling", "Support Services"]
+  },
+  {
+    "name": "EthNix Links & Advocacy Network (ELAN)",
+    "type": "Support Network",
+    "address": "",
+    "phone": "021813607",
+    "website": "nixcrew.com",
+    "email": "annepala@nixcrew.com",
+    "description": "Community Support and Development Advocacy, Intercultural & Human Rights Affairs, Ethnic Women's networking events",
+    "region": "Auckland",
+    "services": ["Community Support", "Advocacy", "Networking"]
+  },
+  {
+    "name": "West Auckland Mosque Women's Committee (WAMWC)",
+    "type": "Women's Committee",
+    "address": "",
+    "phone": "02102403436",
+    "website": "",
+    "email": "",
+    "description": "Contact: Sr. Naaz Mehzabeen",
+    "region": "Auckland",
+    "services": ["Community Support", "Women's Activities"]
+  },
+  {
+    "name": "Young Muslim Women's Association (YMWA)",
+    "type": "Youth Organization",
+    "address": "",
+    "phone": "",
+    "website": "ymwa.org",
+    "email": "ymwa.nz@gmail.com",
+    "description": "Non-profit organization committed to supporting and nurturing Islamic identity and values of Muslimah's in the Auckland region",
+    "region": "Auckland",
+    "services": ["Youth Support", "Islamic Education", "Community Activities"]
+  },
+  {
+    "name": "Canterbury Muslimah Network",
+    "type": "Women's Network",
+    "address": "",
+    "phone": "0210409131",
+    "website": "",
+    "email": "",
+    "description": "Contact: Sr. Jumayah",
+    "region": "Canterbury",
+    "services": ["Community Support", "Networking"]
+  },
+  {
+    "name": "Muslim Association of Canterbury Women's Subcommittee",
+    "type": "Women's Committee",
+    "address": "101 Deans Avenue, Christchurch",
+    "phone": "03-348 3930",
+    "website": "",
+    "email": "",
+    "description": "Alternative Phone: 027 396 1311",
+    "region": "Christchurch",
+    "services": ["Community Support", "Women's Activities"]
+  },
+  {
+    "name": "Hawkes Bay Baitul-Mukarram Masjid Women Wing",
+    "type": "Women's Wing",
+    "address": "",
+    "phone": "022 312 1027",
+    "website": "fb.com/profile.php?id=100075855 771993",
+    "email": "Gulnazzshabnum@gmail.com",
+    "description": "",
+    "region": "Hawkes Bay",
+    "services": ["Community Support", "Women's Activities"]
+  },
+  {
+    "name": "Women's Organisation of the Waikato Muslim Association (WOWMA)",
+    "type": "Women's Organization",
+    "address": "",
+    "phone": "",
+    "website": "fb.com/yourwowma",
+    "email": "aliyad@yourwowma.com",
+    "description": "Focus on female youth and adult female programs. Women's branch of the Waikato Muslim Association",
+    "region": "Hamilton",
+    "services": ["Youth Programs", "Women's Activities", "Community Support"]
+  },
+  {
+    "name": "International Muslim Association of New Zealand (IMAN) Women's Wing",
+    "type": "Women's Wing",
+    "address": "",
+    "phone": "0212642958",
+    "website": "",
+    "email": "",
+    "description": "Contact: Sister Nourina Jamal (Alternative contact: Sister Mardiya 0226562630)",
+    "region": "Wellington",
+    "services": ["Community Support", "Women's Activities"]
+  },
+  {
+    "name": "Northland Muslim Community Youth Centre Women's Wing",
+    "type": "Women's Wing",
+    "address": "11C Porowini Avenue Whangarei",
+    "phone": "021 02235124",
+    "website": "",
+    "email": "",
+    "description": "Contact Sr. Shirley",
+    "region": "Whangarei",
+    "services": ["Community Support", "Women's Activities"]
+  }
+]

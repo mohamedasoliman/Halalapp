@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Nusuk Hajj Platform",
+    "type": "Official Platform",
+    "address": "",
+    "phone": "",
+    "website": "hajj.nusuk.sa",
+    "email": "",
+    "description": "The official platform for booking and managing your spiritual Hajj journey by Kingdom of Saudi Arabia",
+    "services": ["Hajj Booking", "Hajj Management"],
+    "region": "Saudi Arabia"
+  },
+  {
+    "name": "Akhtar Umrah Services",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "021 116 4360",
+    "website": "",
+    "email": "",
+    "description": "Contact: Akhtar Bhamji",
+    "services": ["Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Almarwah Travel",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "022 0256 656",
+    "website": "",
+    "email": "",
+    "description": "Contacts: Khalifa Hasi, Mohammad Rasheed (021 1750 422)",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Dominion Travels and Tours",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "09 6201541",
+    "website": "",
+    "email": "",
+    "description": "",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Enjaz International Travel Pty Ltd",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "09 276 4786",
+    "website": "",
+    "email": "",
+    "description": "Alternative Phone: 027 277 2786",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Hayat International Travel and Tours Limited",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "09 626 0972",
+    "website": "",
+    "email": "",
+    "description": "Contacts: Sheikh Abubakar Husen (021 263 7861), Muhammad Mubeen (021 326 794), Sheikh Khalil Nadat (022 671 6102)",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Labbaik Travel New Zealand",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "021764786",
+    "website": "",
+    "email": "",
+    "description": "Contacts: Br. Mahboob Hussain, Dr Farhaan Mirza (0275050500)",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Masjid Ayesha Hajj & Umrah Services",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "0211589395",
+    "website": "",
+    "email": "",
+    "description": "Contact: Imam Sheikh Mohammed Tasleem",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "MK Tours",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "021 234 7019",
+    "website": "",
+    "email": "",
+    "description": "Contact: Ustadh Kalam",
+    "services": ["Hajj Services", "Umrah Services"],
+    "region": "New Zealand"
+  },
+  {
+    "name": "Royal Umrah New Zealand",
+    "type": "Travel Service",
+    "address": "",
+    "phone": "021876846",
+    "website": "",
+    "email": "",
+    "description": "Contact: Abubakar Nazif",
+    "services": ["Umrah Services"],
+    "region": "New Zealand"
+  }
+]
