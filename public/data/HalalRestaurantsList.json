@@ -1585,20 +1585,20 @@
   },
   {
     "CATEGORY": "Pizza",
-    "NAME": "Pizzas and Mocktails",
+    "NAME": "Beach Pizza",
     "ADDRESS": "2020 Great North Rd, Avondale, Auckland",
     "Latitude": -36.8981564,
     "Longitude": 174.6971715,
-    "PHONENUMBER": "09 217 0050",
-    "MONDAY": "4–11 pm",
-    "TUESDAY": "4–11 pm",
-    "WEDNESDAY": "11 am–1 am",
-    "THURSDAY": "11 am–1 am",
-    "FRIDAY": "11 am–1 am",
-    "SATURDAY": "11 am–1 am",
-    "SUNDAY": "11 am–12 am",
-    "WEBSITEURL": "https://pizzasandmocktails.co.nz/",
-    "LOGOURL": "https://assets.foodhub.com/static/ff81da985b5845921acbb2cfcdb7a64e/img/1659933934phpB2I1Gt.png",
+    "PHONENUMBER": "09 212 2123",
+    "MONDAY": "11 am–11 pm",
+    "TUESDAY": "11 am–11 pm",
+    "WEDNESDAY": "11 am–11 pm",
+    "THURSDAY": "11 am–11 pm",
+    "FRIDAY": "11 am–11 pm",
+    "SATURDAY": "11 am–11 pm",
+    "SUNDAY": "11 am–11 pm",
+    "WEBSITEURL": "https://beachpizza.co.nz/",
+    "LOGOURL": "-",
     "Certified": ""
   },
   {
@@ -4050,24 +4050,6 @@
     "Certified": "FIANZ"
   },
   {
-    "CATEGORY": "Mediterranean - Cafe - Other",
-    "NAME": "Middle Eastern Morning",
-    "ADDRESS": "226 Stoddard Road, Wesley, Auckland 1041",
-    "Latitude": -36.89999796574306,
-    "Longitude": 174.72019428408888,
-    "PHONENUMBER": "-",
-    "MONDAY": "CLOSED",
-    "TUESDAY": "7 am–3 pm",
-    "WEDNESDAY": "7 am–3 pm",
-    "THURSDAY": "7 am–3 pm",
-    "FRIDAY": "7 am–3 pm",
-    "SATURDAY": "7 am–3 pm",
-    "SUNDAY": "7 am–3 pm",
-    "WEBSITEURL": "https://memcafe.co.nz/",
-    "LOGOURL": "",
-    "Certified": "FIANZ"
-  },
-  {
     "CATEGORY": "Chicken - Burger",
     "NAME": "Charcoal Chicken",
     "ADDRESS": "2 Periko Way, Takanini, Auckland, 2112",
@@ -4122,8 +4104,8 @@
     "Certified": ""
   },
   {
-    "CATEGORY": "Pizza",
-    "NAME": "Pasand Pizza",
+    "CATEGORY": "Indian",
+    "NAME": "Tandoori Hut",
     "ADDRESS": "5/489 Richardson Road, Mount Roskill, Auckland 1041",
     "Latitude": -36.915919642020945,
     "Longitude": 174.73059159872193,
@@ -4135,8 +4117,8 @@
     "FRIDAY": "3 pm–9:30 pm",
     "SATURDAY": "11:30 am–9:30 pm",
     "SUNDAY": "11:30 am–9:30 pm",
-    "WEBSITEURL": "https://pasandpizza.co.nz/",
-    "LOGOURL": "https://pasandpizza.com/wp-content/uploads/2023/12/section-2-left-img.png",
+    "WEBSITEURL": "-",
+    "LOGOURL": "-",
     "Certified": ""
   },
   {
