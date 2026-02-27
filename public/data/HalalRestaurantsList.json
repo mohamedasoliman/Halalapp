@@ -15,7 +15,9 @@
     "SUNDAY": "9 am\u20136 pm",
     "WEBSITEURL": "https://www.bakeandbeans.co.nz/",
     "LOGOURL": "https://halalbites.co.nz/wp-content/uploads/2017/09/bake_1-copy.jpg",
-    "Certified": ""
+    "Certified": "",
+    "membership_tier": "verified",
+    "is_verified": 1
   },
   {
     "CATEGORY": "Bakery - Sweet",
