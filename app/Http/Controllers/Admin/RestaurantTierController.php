@@ -79,6 +79,8 @@ class RestaurantTierController extends Controller
             'membership_tier' => 'required|in:free,verified,featured,premium',
             'is_verified' => 'required|in:0,1',
             'menu_url' => 'nullable|string|max:500',
+            'images.*' => 'nullable|image|max:5120',
+            'logo' => 'nullable|image|max:5120',
         ]);
 
         $restaurants = $this->loadRestaurants();
@@ -97,9 +99,60 @@ class RestaurantTierController extends Controller
             unset($restaurants[$index]['menu_url']);
         }
 
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $logoUrl = $this->uploadImage($request->file('logo'), $restaurants[$index]['NAME'] ?? 'restaurant', 'logo');
+            if ($logoUrl) {
+                $restaurants[$index]['LOGOURL'] = $logoUrl;
+            }
+        }
+
+        // Handle image uploads (up to 6)
+        if ($request->hasFile('images')) {
+            $imgNum = 1;
+            foreach ($request->file('images') as $image) {
+                if ($imgNum > 6) break;
+                $imgUrl = $this->uploadImage($image, $restaurants[$index]['NAME'] ?? 'restaurant', "img{$imgNum}");
+                if ($imgUrl) {
+                    $restaurants[$index]["Image_{$imgNum}"] = $imgUrl;
+                }
+                $imgNum++;
+            }
+        }
+
         $this->saveRestaurants($restaurants);
 
         $name = $restaurants[$index]['NAME'] ?? 'Restaurant';
-        return redirect()->back()->with('success', "{$name} updated to {$tier} tier.");
+        return redirect()->back()->with('success', "{$name} updated.");
+    }
+
+    private function uploadImage($file, string $restaurantName, string $suffix): ?string
+    {
+        try {
+            $slug = preg_replace('/[^a-z0-9]+/', '_', strtolower(trim($restaurantName)));
+            $ext = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = "{$slug}_{$suffix}.{$ext}";
+
+            // Store in public upload directory
+            $uploadDir = public_path('upload/resturant');
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
+
+            $file->move($uploadDir, $filename);
+
+            // Also copy to public_html on server
+            $serverDir = '/home5/halalapp/public_html/upload/resturant';
+            if (is_dir('/home5/halalapp/public_html/upload')) {
+                if (!is_dir($serverDir)) {
+                    @mkdir($serverDir, 0775, true);
+                }
+                @copy("{$uploadDir}/{$filename}", "{$serverDir}/{$filename}");
+            }
+
+            return "https://halalapp.info/upload/resturant/{$filename}";
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

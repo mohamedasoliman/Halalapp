@@ -115,7 +115,7 @@
                                                         <div class="modal fade" id="editModal{{ $r['_index'] }}" tabindex="-1">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
-                                                                    <form action="{{ route('restaurant.tiers.update', $r['_index']) }}" method="POST">
+                                                                    <form action="{{ route('restaurant.tiers.update', $r['_index']) }}" method="POST" enctype="multipart/form-data">
                                                                         @csrf
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title">{{ $r['NAME'] ?? 'Restaurant' }}</h5>
@@ -141,6 +141,44 @@
                                                                             <div class="form-group mb-3">
                                                                                 <label>Menu URL</label>
                                                                                 <input type="text" name="menu_url" class="form-control" value="{{ $r['menu_url'] ?? '' }}" placeholder="https://...">
+                                                                            </div>
+
+                                                                            <hr>
+                                                                            <h6>Images</h6>
+
+                                                                            @if(!empty($r['LOGOURL']))
+                                                                                <div class="mb-2">
+                                                                                    <small class="text-muted">Current logo:</small><br>
+                                                                                    <img src="{{ $r['LOGOURL'] }}" alt="Logo" style="max-height:60px; border-radius:4px;">
+                                                                                </div>
+                                                                            @endif
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Upload New Logo</label>
+                                                                                <input type="file" name="logo" class="form-control" accept="image/*">
+                                                                            </div>
+
+                                                                            @php
+                                                                                $existingImages = [];
+                                                                                for ($i = 1; $i <= 6; $i++) {
+                                                                                    $img = $r["Image_{$i}"] ?? '';
+                                                                                    if (!empty($img) && $img !== 'null') $existingImages[] = $img;
+                                                                                }
+                                                                            @endphp
+
+                                                                            @if(count($existingImages) > 0)
+                                                                                <div class="mb-2">
+                                                                                    <small class="text-muted">Current images ({{ count($existingImages) }}):</small><br>
+                                                                                    @foreach($existingImages as $img)
+                                                                                        @php $imgUrl = str_starts_with($img, 'http') ? $img : "https://halalapp.info/upload/resturant/{$img}"; @endphp
+                                                                                        <img src="{{ $imgUrl }}" alt="Restaurant" style="max-height:50px; border-radius:4px; margin:2px;">
+                                                                                    @endforeach
+                                                                                </div>
+                                                                            @endif
+
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Upload Images (up to 6)</label>
+                                                                                <input type="file" name="images[]" class="form-control" accept="image/*" multiple>
+                                                                                <small class="text-muted">New uploads will replace existing images starting from Image 1.</small>
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
