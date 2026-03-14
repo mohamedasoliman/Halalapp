@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementControlle
 use App\Http\Controllers\JsondataController;
 use App\Http\Controllers\Admin\PrioritisationController;
 use App\Http\Controllers\Admin\BrandsController;
+use App\Http\Controllers\Admin\RestaurantTierController;
 
 Route::get('/login', function() {
     return redirect()->route('admin.login');
@@ -127,6 +128,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('user/status/update/{id}', [UsersController::class, 'statusUpdate'])->name('users.status.update');
     Route::post('user/checkemail', [UsersController::class, 'checkUniqueEmail'])->name('user.email');
     Route::post('user/checkmobileno', [UsersController::class, 'checkUniqueMobileNo'])->name('user.mobileno');
+
+    // Restaurant Tier Routes
+    Route::get('restaurant-tiers', [RestaurantTierController::class, 'index'])->name('restaurant.tiers');
+    Route::post('restaurant-tiers/{index}', [RestaurantTierController::class, 'update'])->name('restaurant.tiers.update');
 
     // Prioritisation Routes
     Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');

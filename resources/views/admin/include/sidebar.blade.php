@@ -140,25 +140,25 @@
         {{-- JSON Menu End --}}
 
 
-        {{-- Resturant Management Menu Start --}}
-       {{-- <ul class="pcoded-item pcoded-left-item">
-			<li class="pcoded-hasmenu @if (\Request::route()->getName() == 'resturant.index') active pcoded-trigger @endif">
+        {{-- Restaurant Tiers Menu Start --}}
+        <ul class="pcoded-item pcoded-left-item">
+			<li class="pcoded-hasmenu @if (\Request::route()->getName() == 'restaurant.tiers') active pcoded-trigger @endif">
 				<a href="javascript:void(0)" data-i18n="nav.advance-components.main">
 					<span class="pcoded-micon"><i class="ti-view-grid"></i></span>
-					<span class="pcoded-mtext" data-i18n="nav.dash.main">Resturant Management</span>
+					<span class="pcoded-mtext" data-i18n="nav.dash.main">Restaurant Tiers</span>
 					<span class="pcoded-mcaret"></span>
 				</a>
 				<ul class="pcoded-submenu">
-					<li class="@if (\Request::route()->getName() == 'resturant.index') active @endif">
-						<a href="{{ route('resturant.index') }}" data-i18n="nav.advance-components.draggable">
+					<li class="@if (\Request::route()->getName() == 'restaurant.tiers') active @endif">
+						<a href="{{ route('restaurant.tiers') }}" data-i18n="nav.advance-components.draggable">
 							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-							<span class="pcoded-mtext">Resturant</span>
+							<span class="pcoded-mtext">Manage Tiers</span>
 							<span class="pcoded-mcaret"></span>
 						</a>
 					</li>
 				</ul>
 			</li>
-		</ul> --}}
-        {{-- Resturant Management Menu End --}}
+		</ul>
+        {{-- Restaurant Tiers Menu End --}}
 </div>
 </nav>
