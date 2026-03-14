@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Api\PrioritiseRequest;
 use App\Models\Brand;
+use App\Models\BrandCommunication;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
 use App\Models\RequestWatcher;
@@ -109,15 +110,22 @@ class PrioritisationController extends Controller
                 $brand = Brand::where('name', 'LIKE', $brandName)->first();
                 if ($brand) {
                     if ($brand->email && $brand->contact_type === 'email') {
-                        if ($brand->response) {
+                        if ($brand->response && $brand->response_scope === 'blanket') {
+                            // Brand gave a blanket response (all products) — ready for review
                             $status = 'ready_for_review';
                         } else {
-                            $status = 'ready_for_outreach';
+                            // Check if this specific barcode was already mentioned in an outreach
+                            $barcodeAlreadySent = BrandCommunication::where('brand_id', $brand->id)
+                                ->where('direction', 'outbound')
+                                ->whereJsonContains('barcodes_mentioned', $barcode)
+                                ->exists();
+
+                            if ($barcodeAlreadySent) {
+                                $status = 'contacted'; // This exact product was already asked about
+                            } else {
+                                $status = 'ready_for_outreach'; // New product for this brand — need to email again
+                            }
                         }
-                    }
-                    // Check if brand was already contacted recently
-                    if ($brand->last_contacted_at && !$brand->response) {
-                        $status = 'contacted';
                     }
                 }
             }
