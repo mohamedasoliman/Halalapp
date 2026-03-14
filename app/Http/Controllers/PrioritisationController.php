@@ -53,6 +53,18 @@ class PrioritisationController extends Controller
                     );
                 }
 
+                // Fill in missing info if the new request has more data
+                $updates = [];
+                if (empty($existingRequest->product_name) && $request->product_name) {
+                    $updates['product_name'] = $request->product_name;
+                }
+                if (empty($existingRequest->brand_name) && $request->brand_name) {
+                    $updates['brand_name'] = $request->brand_name;
+                }
+                if (!empty($updates)) {
+                    $existingRequest->update($updates);
+                }
+
                 return response()->json([
                     'already_requested' => true,
                     'status' => $existingRequest->status,
