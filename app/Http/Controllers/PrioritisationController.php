@@ -20,8 +20,15 @@ class PrioritisationController extends Controller
             $userEmail = $request->user_email;
             $isAnonymous = empty($userEmail) || str_contains(strtolower($userEmail), 'noreply');
 
-            // 1. Check if product already has a verdict
+            // 1. Check if product already has a verdict (lookup by barcode, fallback to ID)
             $product = Product::where('Barcode', $barcode)->first();
+            if (!$product && is_numeric($barcode)) {
+                $product = Product::find($barcode);
+                // Use the actual barcode from the product if found by ID
+                if ($product && $product->Barcode) {
+                    $barcode = $product->Barcode;
+                }
+            }
             if ($product && in_array($product->halal_status, ['0', '1', 0, 1])) {
                 return response()->json([
                     'already_resolved' => true,
