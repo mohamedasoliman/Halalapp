@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Role\CustomRole;
 use App\Models\ProductModel\Product;
 use App\Models\MasjidModel\Masjid;
+use App\Models\PrioritisationRequest;
 use App\Models\ResturantModel\Resturant;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -51,6 +52,8 @@ class AdminController extends Controller
             $stats['total_mosques'] = Masjid::count();
             $stats['total_restaurants'] = Resturant::count();
             $stats['total_admins'] = Admin::count();
+            $stats['pending_requests'] = PrioritisationRequest::where('status', '!=', 'resolved')->count();
+            $stats['review_requests'] = PrioritisationRequest::where('status', 'ready_for_review')->count();
         } catch (\Exception $e) {
             // Tables may not exist yet during setup
         }

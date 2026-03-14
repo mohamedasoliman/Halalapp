@@ -71,6 +71,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mt-2">
+                                <div class="col-md-3 col-sm-6">
+                                    <a href="{{ route('prioritisation.index') }}" style="text-decoration:none;">
+                                        <div class="stat-card">
+                                            <div class="stat-icon" style="background: #8e44ad;">
+                                                <i class="icofont icofont-tasks"></i>
+                                            </div>
+                                            <div class="stat-info">
+                                                <h3>{{ $stats['pending_requests'] ?? 0 }}</h3>
+                                                <p>Active Requests</p>
+                                                <small>{{ $stats['review_requests'] ?? 0 }} ready for review</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>

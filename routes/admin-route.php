@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ProductController\ProductController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 use App\Http\Controllers\JsondataController;
+use App\Http\Controllers\Admin\PrioritisationController;
+use App\Http\Controllers\Admin\BrandsController;
 
 Route::get('/login', function() {
     return redirect()->route('admin.login');
@@ -125,6 +127,19 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('user/status/update/{id}', [UsersController::class, 'statusUpdate'])->name('users.status.update');
     Route::post('user/checkemail', [UsersController::class, 'checkUniqueEmail'])->name('user.email');
     Route::post('user/checkmobileno', [UsersController::class, 'checkUniqueMobileNo'])->name('user.mobileno');
+
+    // Prioritisation Routes
+    Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');
+    Route::get('prioritisation/{id}', [PrioritisationController::class, 'show'])->name('prioritisation.show');
+    Route::post('prioritisation/{id}/status', [PrioritisationController::class, 'updateStatus'])->name('prioritisation.status');
+    Route::post('prioritisation/{id}/resolve', [PrioritisationController::class, 'resolve'])->name('prioritisation.resolve');
+
+    // Brands Routes
+    Route::get('brands', [BrandsController::class, 'index'])->name('brands.index');
+    Route::post('brands', [BrandsController::class, 'store'])->name('brands.store');
+    Route::get('brands/{id}/edit', [BrandsController::class, 'edit'])->name('brands.edit');
+    Route::post('brands/{id}', [BrandsController::class, 'update'])->name('brands.update');
+    Route::delete('brands/{id}', [BrandsController::class, 'destroy'])->name('brands.destroy');
 
     // Admin Routes
     Route::post('/admin-users', [AdminController::class, 'addadminUser'])->name('add.adminusers');

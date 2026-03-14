@@ -46,6 +46,34 @@
 			</li>
 		</ul>
 
+		<!-- Prioritisation Menu Start -->
+		<ul class="pcoded-item pcoded-left-item">
+			<li class="pcoded-hasmenu @if (in_array(\Request::route()->getName(), ['prioritisation.index', 'prioritisation.show', 'brands.index', 'brands.edit'])) active pcoded-trigger @endif">
+				<a href="javascript:void(0)" data-i18n="nav.advance-components.main">
+					<span class="pcoded-micon"><i class="ti-clipboard"></i></span>
+					<span class="pcoded-mtext" data-i18n="nav.dash.main">Prioritisation</span>
+					<span class="pcoded-mcaret"></span>
+				</a>
+				<ul class="pcoded-submenu">
+					<li class="@if (in_array(\Request::route()->getName(), ['prioritisation.index', 'prioritisation.show'])) active @endif">
+						<a href="{{ route('prioritisation.index') }}" data-i18n="nav.advance-components.draggable">
+							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+							<span class="pcoded-mtext">Requests</span>
+							<span class="pcoded-mcaret"></span>
+						</a>
+					</li>
+					<li class="@if (in_array(\Request::route()->getName(), ['brands.index', 'brands.edit'])) active @endif">
+						<a href="{{ route('brands.index') }}" data-i18n="nav.advance-components.draggable">
+							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+							<span class="pcoded-mtext">Brands</span>
+							<span class="pcoded-mcaret"></span>
+						</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<!-- Prioritisation Menu End -->
+
 		<!-- Products Management Menu Start -->
 		<ul class="pcoded-item pcoded-left-item">
 			<li class="pcoded-hasmenu @if (\Request::route()->getName() == 'product.index') active pcoded-trigger @endif">
