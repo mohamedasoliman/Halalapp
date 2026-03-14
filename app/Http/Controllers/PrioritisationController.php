@@ -14,6 +14,13 @@ class PrioritisationController extends Controller
 {
     public function store(PrioritiseRequest $request)
     {
+        Log::info('Prioritise request received', [
+            'barcode' => $request->barcode,
+            'type' => $request->type,
+            'ip' => $request->ip(),
+            'all' => $request->all(),
+        ]);
+
         try {
             $barcode = $request->barcode;
             $type = $request->type ?? 'prioritise';
