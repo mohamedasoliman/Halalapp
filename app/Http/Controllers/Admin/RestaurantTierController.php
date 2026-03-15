@@ -42,12 +42,23 @@ class RestaurantTierController extends Controller
     {
         $restaurants = $this->loadRestaurants();
         $tierFilter = $request->get('tier', 'all');
+        $search = $request->get('search', '');
 
         // Add index for identification
         foreach ($restaurants as $i => &$r) {
             $r['_index'] = $i;
         }
         unset($r);
+
+        // Apply search filter
+        if (!empty($search)) {
+            $searchLower = strtolower($search);
+            $restaurants = array_filter($restaurants, function ($r) use ($searchLower) {
+                return str_contains(strtolower($r['NAME'] ?? ''), $searchLower)
+                    || str_contains(strtolower($r['CATEGORY'] ?? ''), $searchLower)
+                    || str_contains(strtolower($r['ADDRESS'] ?? ''), $searchLower);
+            });
+        }
 
         if ($tierFilter !== 'all') {
             $restaurants = array_filter($restaurants, function ($r) use ($tierFilter) {
@@ -70,7 +81,7 @@ class RestaurantTierController extends Controller
             }
         }
 
-        return view('admin.restaurant_tiers.index', compact('restaurants', 'counts', 'tierFilter'));
+        return view('admin.restaurant_tiers.index', compact('restaurants', 'counts', 'tierFilter', 'search'));
     }
 
     public function update(Request $request, int $index)

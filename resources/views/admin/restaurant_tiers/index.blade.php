@@ -52,6 +52,22 @@
                                     </div>
                                 </div>
 
+                                {{-- Search --}}
+                                <div class="card mb-3">
+                                    <div class="card-block" style="padding: 10px 20px;">
+                                        <form action="{{ route('restaurant.tiers') }}" method="GET" class="d-flex gap-2">
+                                            @if($tierFilter !== 'all')
+                                                <input type="hidden" name="tier" value="{{ $tierFilter }}">
+                                            @endif
+                                            <input type="text" name="search" class="form-control" placeholder="Search by name, category, or area..." value="{{ request('search') }}" style="max-width: 400px;">
+                                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                            @if(request('search'))
+                                                <a href="{{ route('restaurant.tiers', ['tier' => $tierFilter]) }}" class="btn btn-outline-secondary btn-sm">Clear</a>
+                                            @endif
+                                        </form>
+                                    </div>
+                                </div>
+
                                 {{-- Restaurants table --}}
                                 <div class="card">
                                     <div class="card-block">

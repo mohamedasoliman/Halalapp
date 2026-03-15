@@ -50,7 +50,8 @@ class AdminController extends Controller
             $stats['not_halal_products'] = Product::where('halal_status', 1)->count();
             $stats['not_sure_products'] = Product::where('halal_status', 2)->count();
             $stats['total_mosques'] = Masjid::count();
-            $stats['total_restaurants'] = Resturant::count();
+            $restaurantJson = public_path('data/HalalRestaurantsList.json');
+            $stats['total_restaurants'] = file_exists($restaurantJson) ? count(json_decode(file_get_contents($restaurantJson), true) ?? []) : 0;
             $stats['total_admins'] = Admin::count();
             $stats['pending_requests'] = PrioritisationRequest::where('status', '!=', 'resolved')->count();
             $stats['review_requests'] = PrioritisationRequest::where('status', 'ready_for_review')->count();
