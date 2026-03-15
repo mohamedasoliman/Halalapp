@@ -6,24 +6,12 @@
     "notificationButtonText": "View",
     "ads": [
         {
+            "adImageUrl": "https://halalapp.info/data/images/BreezeAd.png",
+            "adLinkUrl": "https://www.breezerestaurant.co.nz"
+        },
+        {
             "adImageUrl": "https://halalapp.info/data/images/fcpmate-main-screen.png",
             "adLinkUrl": "https://fcpmate.com/"
-        },
-        {
-            "adImageUrl": "https://halalapp.info/data/images/promo_home_page.png",
-            "adLinkUrl": "https://halalkiwi.com/"
-        },
-        {
-            "adImageUrl": "https://halalapp.info/data/images/Bawarachi_Main_Screen.webp",
-            "adLinkUrl": "https://www.bawarchi.co.nz/"
-        },
-        {
-            "adImageUrl": "https://halalapp.info/data/images/Waffle-Cafe-Main-Screen.webp",
-            "adLinkUrl": "https://www.facebook.com/share/18CXw89g3j/?mibextid=LQQJ4d"
-        },
-        {
-            "adImageUrl": "https://halalapp.info/data/images/Firangi-Fusion-Main-Screen.webp",
-            "adLinkUrl": "https://www.firangifusion.nz/"
         }
     ],
     "discounts": [
