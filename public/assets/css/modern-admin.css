@@ -2125,6 +2125,26 @@ code {
     align-items: center !important;
 }
 
+/* Smaller user profile in header */
+.user-profile.header-notification > a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+}
+
+.user-profile.header-notification > a img {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+}
+
+.user-profile.header-notification > a span {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
 /* Clean up the fullscreen icon */
 .nav-left li a {
     color: rgba(255,255,255,0.7) !important;
