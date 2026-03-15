@@ -160,5 +160,26 @@
 			</li>
 		</ul>
         {{-- Restaurant Tiers Menu End --}}
+
+        {{-- Notifications Menu Start --}}
+        <ul class="pcoded-item pcoded-left-item">
+			<li class="pcoded-hasmenu @if (\Request::route()->getName() == 'notification.manager') active pcoded-trigger @endif">
+				<a href="javascript:void(0)" data-i18n="nav.advance-components.main">
+					<span class="pcoded-micon"><i class="ti-bell"></i></span>
+					<span class="pcoded-mtext" data-i18n="nav.dash.main">Notifications</span>
+					<span class="pcoded-mcaret"></span>
+				</a>
+				<ul class="pcoded-submenu">
+					<li class="@if (\Request::route()->getName() == 'notification.manager') active @endif">
+						<a href="{{ route('notification.manager') }}" data-i18n="nav.advance-components.draggable">
+							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+							<span class="pcoded-mtext">Manage</span>
+							<span class="pcoded-mcaret"></span>
+						</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+        {{-- Notifications Menu End --}}
 </div>
 </nav>

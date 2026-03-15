@@ -13,6 +13,7 @@ use App\Http\Controllers\JsondataController;
 use App\Http\Controllers\Admin\PrioritisationController;
 use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\RestaurantTierController;
+use App\Http\Controllers\Admin\NotificationManagerController;
 
 Route::get('/login', function() {
     return redirect()->route('admin.login');
@@ -132,6 +133,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     // Restaurant Tier Routes
     Route::get('restaurant-tiers', [RestaurantTierController::class, 'index'])->name('restaurant.tiers');
     Route::post('restaurant-tiers/{index}', [RestaurantTierController::class, 'update'])->name('restaurant.tiers.update');
+
+    // Notification Manager Routes
+    Route::get('notification-manager', [NotificationManagerController::class, 'index'])->name('notification.manager');
+    Route::post('notification-manager', [NotificationManagerController::class, 'update'])->name('notification.manager.update');
 
     // Prioritisation Routes
     Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');
