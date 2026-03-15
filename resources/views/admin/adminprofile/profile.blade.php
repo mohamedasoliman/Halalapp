@@ -320,7 +320,7 @@
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: "{{ route('admin.user.changepassword','') }}/"+$('#viewchangeuserid').val(),
+                    url: "{{ url('admin/updatePassword') }}/"+$('#viewchangeuserid').val(),
                     type: "POST",
                     data: new FormData(form),
                     dataType: 'json',
@@ -376,7 +376,7 @@ $('#changeuserimage').click(function() {
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: "{{ route('admin.profilesimage.update','') }}/"+$('#viewuserid').val(),
+                    url: "{{ url('admin/adminprofileimage') }}/"+$('#viewuserid').val(),
                     type: "POST",
                     data: new FormData(form),
                     dataType: 'json',
