@@ -31,7 +31,7 @@ class PrioritisationController extends Controller
                     $barcode = $product->Barcode;
                 }
             }
-            if ($product && in_array($product->halal_status, ['0', '1', 0, 1])) {
+            if ($product && ($product->halal_status === '0' || $product->halal_status === '1')) {
                 return response()->json([
                     'already_resolved' => true,
                     'halal_status' => (int) $product->halal_status,
