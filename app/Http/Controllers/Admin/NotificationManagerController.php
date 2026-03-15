@@ -58,7 +58,7 @@ class NotificationManagerController extends Controller
         if (preg_match('#^/barcode/product/(.+)$#', $notification['notificationButton'], $m)) {
             $linkType = 'product';
             $linkTarget = $m[1];
-        } elseif (preg_match('#^/restaurant/(.+)$#', $notification['notificationButton'], $m)) {
+        } elseif (preg_match('#^/restaurants/(.+)$#', $notification['notificationButton'], $m)) {
             $linkType = 'restaurant';
             $linkTarget = $m[1];
         } elseif ($notification['notificationButton'] === '/masjid') {
@@ -100,7 +100,7 @@ class NotificationManagerController extends Controller
             $linkTarget = trim($request->link_target ?? '');
             $data['notificationButton'] = match ($request->link_type) {
                 'product' => '/barcode/product/' . $linkTarget,
-                'restaurant' => '/restaurant/' . $linkTarget,
+                'restaurant' => '/restaurants/' . urlencode($linkTarget),
                 'masjid' => '/masjid',
                 'screen' => $linkTarget,
                 'url' => $linkTarget,
