@@ -84,7 +84,7 @@
                                                         </div>
                                                     </div>
 
-                                                    {{-- Link Target --}}
+                                                    {{-- Link Target (text input) --}}
                                                     <div class="form-group row" id="linkTargetGroup">
                                                         <label class="col-sm-3 col-form-label" id="linkTargetLabel">Link Target</label>
                                                         <div class="col-sm-9">
@@ -92,6 +92,20 @@
                                                                 value="{{ $notification['linkTarget'] }}"
                                                                 placeholder="Enter barcode number">
                                                             <small class="form-text text-muted" id="linkTargetHelp">Enter the product barcode number.</small>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Restaurant Dropdown (shown only when link type is restaurant) --}}
+                                                    <div class="form-group row" id="restaurantDropdownGroup" style="display:none;">
+                                                        <label class="col-sm-3 col-form-label">Restaurant</label>
+                                                        <div class="col-sm-9">
+                                                            <select class="form-control" id="restaurantDropdown">
+                                                                <option value="">-- Select a restaurant --</option>
+                                                                @foreach($restaurantNames as $name)
+                                                                    <option value="{{ $name }}" {{ ($notification['linkTarget'] ?? '') === $name ? 'selected' : '' }}>{{ $name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <small class="form-text text-muted">Select the restaurant to link to.</small>
                                                         </div>
                                                     </div>
 
@@ -252,16 +266,34 @@
             }
         };
 
+        const restaurantDropdownGroup = document.getElementById('restaurantDropdownGroup');
+        const restaurantDropdown = document.getElementById('restaurantDropdown');
+
+        // Sync restaurant dropdown to link_target input
+        restaurantDropdown.addEventListener('change', function() {
+            linkTarget.value = this.value;
+            updatePreviewPath();
+        });
+
         function updateLinkTypeUI() {
             const config = linkTypeConfig[linkType.value];
+            const isRestaurant = linkType.value === 'restaurant';
+
             linkTargetLabel.textContent = config.label;
             linkTarget.placeholder = config.placeholder;
             linkTargetHelp.textContent = config.help;
 
-            if (config.show) {
+            // Show restaurant dropdown instead of text input
+            if (isRestaurant) {
+                linkTargetGroup.style.display = 'none';
+                restaurantDropdownGroup.style.display = '';
+                linkTarget.value = restaurantDropdown.value;
+            } else if (config.show) {
                 linkTargetGroup.style.display = '';
+                restaurantDropdownGroup.style.display = 'none';
             } else {
                 linkTargetGroup.style.display = 'none';
+                restaurantDropdownGroup.style.display = 'none';
                 linkTarget.value = '';
             }
 

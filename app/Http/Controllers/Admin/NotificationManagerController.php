@@ -75,7 +75,16 @@ class NotificationManagerController extends Controller
         // Check if notification is active (has text)
         $notification['active'] = !empty($notification['notificationText']);
 
-        return view('admin.notification_manager.index', compact('notification'));
+        // Load restaurant names for dropdown
+        $restaurantNames = [];
+        $restaurantJsonPath = public_path('data/HalalRestaurantsList.json');
+        if (File::exists($restaurantJsonPath)) {
+            $restaurants = json_decode(File::get($restaurantJsonPath), true) ?? [];
+            $restaurantNames = array_filter(array_map(fn($r) => $r['NAME'] ?? null, $restaurants));
+            sort($restaurantNames);
+        }
+
+        return view('admin.notification_manager.index', compact('notification', 'restaurantNames'));
     }
 
     public function update(Request $request)
@@ -100,7 +109,7 @@ class NotificationManagerController extends Controller
             $linkTarget = trim($request->link_target ?? '');
             $data['notificationButton'] = match ($request->link_type) {
                 'product' => '/barcode/product/' . $linkTarget,
-                'restaurant' => '/restaurants/' . urlencode($linkTarget),
+                'restaurant' => '/restaurants/' . rawurlencode($linkTarget),
                 'masjid' => '/masjid',
                 'screen' => $linkTarget,
                 'url' => $linkTarget,
