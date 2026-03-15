@@ -22,6 +22,7 @@ Route::middleware(['api_key', 'throttle:api'])->group(function(){
         Route::post('/events-contact-us', [EventsContactMessageController::class, 'send']);
         Route::post('/kiwisaver-contact', [KiwiSaverContactMessageController::class, 'send']);
         Route::post('/prioritise', [PrioritisationController::class, 'store']);
+        Route::post('/prioritise/check', [PrioritisationController::class, 'checkStatus']);
     });
 });
 

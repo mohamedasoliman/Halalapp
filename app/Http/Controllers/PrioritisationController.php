@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Api\PrioritiseRequest;
+use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\BrandCommunication;
 use App\Models\PrioritisationRequest;
@@ -167,6 +168,31 @@ class PrioritisationController extends Controller
                 'message' => 'Request submitted.',
             ]);
         }
+    }
+
+    public function checkStatus(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['resolved' => []]);
+        }
+
+        // Limit to 50 IDs per request
+        $ids = array_slice($ids, 0, 50);
+
+        $resolved = PrioritisationRequest::whereIn('id', $ids)
+            ->where('status', 'resolved')
+            ->get(['id', 'barcode', 'product_name', 'resolved_status'])
+            ->map(function ($r) {
+                return [
+                    'id' => $r->id,
+                    'product_name' => $r->product_name ?? 'Unknown Product',
+                    'halal_status' => $r->resolved_status,
+                    'status_label' => $r->resolved_status === 0 ? 'Halal' : 'Not Halal',
+                ];
+            });
+
+        return response()->json(['resolved' => $resolved]);
     }
 
     private function lookupOpenFoodFacts(string $barcode): ?array
