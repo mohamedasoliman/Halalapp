@@ -152,8 +152,8 @@ class PrioritisationController extends Controller
                 ]);
             }
 
-            // 8. If new product, add to products table so future scans find it
-            if ($type === 'new_product' && !$product && $productName) {
+            // 8. If product not in DB and we have a name, add it so future scans find it
+            if (!$product && $productName) {
                 Product::create([
                     'product_name' => $productName,
                     'Barcode' => $barcode,
