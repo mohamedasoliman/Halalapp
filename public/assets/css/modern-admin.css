@@ -2120,3 +2120,30 @@ code {
 .navbar-container {
     margin-left: 260px !important;
 }
+
+/* Push user profile to far right in header */
+.navbar-container > div {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    width: 100% !important;
+}
+
+.nav-left {
+    margin-right: auto !important;
+}
+
+.nav-right {
+    margin-left: auto !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Clean up the fullscreen icon */
+.nav-left li a {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+.nav-left li a:hover {
+    color: #fff !important;
+}
