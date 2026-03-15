@@ -3,6 +3,9 @@
 	<div class="pcoded-inner-navbar main-menu">
 		<div class="">
 			<div class="main-menu-header">
+				<div style="text-align: center; margin-bottom: 12px;">
+					<img src="{{ asset('assets/images/logo-white.png') }}" alt="Halal Kiwi" style="max-width: 160px; height: auto; opacity: 0.9;">
+				</div>
 				@if(!empty(auth()->user()->admin_image))
 				@php
 				$image = auth()->user()->admin_image;

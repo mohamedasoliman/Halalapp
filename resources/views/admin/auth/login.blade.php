@@ -5,10 +5,10 @@
 <div class="auth-wrapper">
     <div class="auth-content">
         <div class="text-center mb-4">
-            <img src="{{asset('assets/images/logo.png')}}" alt="HalalKiwi Logo" style="max-width: 150px; height: auto;">
+            <img src="{{asset('assets/images/logo.png')}}" alt="Halal Kiwi" style="max-width: 220px; height: auto;">
         </div>
 
-        <h4 class="text-center mb-4">Welcome Back</h4>
+        <h4 class="text-center mb-4">Admin Panel</h4>
 
         <form id="login-form" method="POST" action="{{ route('admin.login.submit') }}">
             @csrf
