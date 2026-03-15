@@ -1,11 +1,7 @@
 <nav class="pcoded-navbar" pcoded-header-position="relative">
 	<div class="sidebar_toggle"><a href="{{ route('admin.dashboard') }}"><i class="icon-close icons"></i></a></div>
 	<div class="pcoded-inner-navbar main-menu">
-		<div class="">
-			<div class="main-menu-header" style="padding: 24px 20px 16px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px;">
-				<img src="{{ asset('assets/images/logo-white.png') }}" alt="Halal Kiwi" style="max-width: 140px; height: auto; opacity: 0.9;">
-			</div>
-		</div>
+		<div class="" style="padding-top: 12px;"></div>
 
 		<ul class="pcoded-item pcoded-left-item">
 		<li class="@if (\Request::route()->getName() == 'admin.dashboard') active pcoded-trigger @endif">
