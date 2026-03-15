@@ -72,6 +72,10 @@ ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
     mkdir -p /home5/halalapp/public_html/data/DirectoryJsons
     cp -f public/data/*.json /home5/halalapp/public_html/data/
     cp -f public/data/DirectoryJsons/*.json /home5/halalapp/public_html/data/DirectoryJsons/
+
+    echo "Syncing assets to public_html..."
+    cp -rf public/assets/images/* /home5/halalapp/public_html/assets/images/ 2>/dev/null || true
+    cp -rf public/assets/css/* /home5/halalapp/public_html/assets/css/ 2>/dev/null || true
 ENDSSH
 
 # Step 4: Verify deployment

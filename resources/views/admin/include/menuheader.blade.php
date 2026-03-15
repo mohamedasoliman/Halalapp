@@ -13,7 +13,7 @@
                     </a>
                     <a href="{{ route('admin.dashboard') }}"
                         style="display: inline-block; margin-inline: 50px; text-align: left;">
-                        <img class="img-fluid" src="{{ asset('assets/images/logo.png') }}" alt="Halal Kiwi" style="max-height: 45px; width: auto;" />
+                        <img class="img-fluid" src="{{ asset('assets/images/logo-white.png') }}" alt="Halal Kiwi" style="max-height: 40px; width: auto;" />
                     </a>
                     <a class="mobile-options">
                         <i class="ti-more"></i>

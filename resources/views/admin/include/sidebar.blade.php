@@ -38,7 +38,7 @@
 			</div>
 		</div>
 
-		<ul class="pcoded-item pcoded-left-item">-->
+		<ul class="pcoded-item pcoded-left-item">
 		<li class="pcoded-hasmenu @if (\Request::route()->getName() == 'admin.dashboard') active pcoded-trigger @endif">
 		<a href="{{ route('admin.dashboard') }}">
 					<span class="pcoded-micon"><i class="ti-home"></i></span>
