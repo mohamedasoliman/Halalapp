@@ -84,7 +84,11 @@ class NotificationManagerController extends Controller
             sort($restaurantNames);
         }
 
-        return view('admin.notification_manager.index', compact('notification', 'restaurantNames'));
+        // Load ads and users count
+        $ads = $data['ads'] ?? [];
+        $usersCount = $data['users'] ?? '';
+
+        return view('admin.notification_manager.index', compact('notification', 'restaurantNames', 'ads', 'usersCount'));
     }
 
     public function update(Request $request)
@@ -139,6 +143,107 @@ class NotificationManagerController extends Controller
         $this->saveJson($data);
 
         return redirect()->back()->with('success', 'Notification updated successfully. Version: ' . $data['notificationVersion']);
+    }
+
+    public function updateAds(Request $request)
+    {
+        $request->validate([
+            'ad_image_urls' => 'nullable|array',
+            'ad_image_urls.*' => 'nullable|string|max:500',
+            'ad_link_urls' => 'nullable|array',
+            'ad_link_urls.*' => 'nullable|string|max:500',
+            'new_ad_image' => 'nullable|image|max:5120',
+            'new_ad_link' => 'nullable|string|max:500',
+        ]);
+
+        $data = $this->loadJson();
+        $ads = [];
+
+        // Update existing ads
+        $imageUrls = $request->ad_image_urls ?? [];
+        $linkUrls = $request->ad_link_urls ?? [];
+
+        for ($i = 0; $i < count($imageUrls); $i++) {
+            if (!empty($imageUrls[$i])) {
+                $ads[] = [
+                    'adImageUrl' => $imageUrls[$i],
+                    'adLinkUrl' => $linkUrls[$i] ?? '',
+                ];
+            }
+        }
+
+        // Handle new ad with image upload
+        if ($request->hasFile('new_ad_image')) {
+            $imageUrl = $this->uploadAdImage($request->file('new_ad_image'));
+            if ($imageUrl) {
+                $ads[] = [
+                    'adImageUrl' => $imageUrl,
+                    'adLinkUrl' => $request->new_ad_link ?? '',
+                ];
+            }
+        }
+
+        $data['ads'] = $ads;
+        $this->saveJson($data);
+
+        return redirect()->back()->with('success', 'Ads updated successfully.');
+    }
+
+    public function deleteAd(Request $request, int $index)
+    {
+        $data = $this->loadJson();
+        $ads = $data['ads'] ?? [];
+
+        if (!isset($ads[$index])) {
+            return redirect()->back()->with('error', 'Ad not found.');
+        }
+
+        array_splice($ads, $index, 1);
+        $data['ads'] = $ads;
+        $this->saveJson($data);
+
+        return redirect()->back()->with('success', 'Ad deleted successfully.');
+    }
+
+    public function updateUsers(Request $request)
+    {
+        $request->validate([
+            'users_count' => 'required|string|max:50',
+        ]);
+
+        $data = $this->loadJson();
+        $data['users'] = $request->users_count;
+        $this->saveJson($data);
+
+        return redirect()->back()->with('success', 'Users count updated successfully.');
+    }
+
+    private function uploadAdImage($file): ?string
+    {
+        try {
+            $ext = $file->getClientOriginalExtension() ?: 'png';
+            $filename = 'ad_' . time() . '_' . mt_rand(100, 999) . '.' . $ext;
+
+            $uploadDir = public_path('data/images');
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
+
+            $file->move($uploadDir, $filename);
+
+            // Also copy to public_html on server
+            $serverDir = '/home5/halalapp/public_html/data/images';
+            if (is_dir('/home5/halalapp/public_html/data')) {
+                if (!is_dir($serverDir)) {
+                    @mkdir($serverDir, 0775, true);
+                }
+                @copy("{$uploadDir}/{$filename}", "{$serverDir}/{$filename}");
+            }
+
+            return "https://halalapp.info/data/images/{$filename}";
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function uploadImage($file): ?string

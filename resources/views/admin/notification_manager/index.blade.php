@@ -206,6 +206,127 @@
                                         </div>
                                     </div>
                                 </div>
+                                {{-- Users Count --}}
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Users Count</h5>
+                                                <span class="text-muted float-right">Displayed in the app</span>
+                                            </div>
+                                            <div class="card-block">
+                                                <form action="{{ route('users.count.update') }}" method="POST">
+                                                    @csrf
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-3 col-form-label">Users</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="text" class="form-control" name="users_count" value="{{ $usersCount }}" placeholder="e.g. 20,000">
+                                                            <small class="form-text text-muted">The user count displayed in the app (e.g. "20,000").</small>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <button type="submit" class="btn btn-primary btn-round btn-sm">
+                                                                <i class="ti-save"></i> Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Ads Manager --}}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Ads Manager</h5>
+                                                <span class="text-muted float-right">{{ count($ads) }} ad(s)</span>
+                                            </div>
+                                            <div class="card-block">
+                                                {{-- Existing Ads --}}
+                                                @if(count($ads) > 0)
+                                                    <form action="{{ route('ads.update') }}" method="POST" enctype="multipart/form-data">
+                                                        @csrf
+                                                        <div class="table-responsive mb-3">
+                                                            <table class="table table-bordered table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:80px;">#</th>
+                                                                        <th style="width:120px;">Preview</th>
+                                                                        <th>Image URL</th>
+                                                                        <th>Link URL</th>
+                                                                        <th style="width:100px;">Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach($ads as $i => $ad)
+                                                                        <tr>
+                                                                            <td>{{ $i + 1 }}</td>
+                                                                            <td>
+                                                                                @if(!empty($ad['adImageUrl']))
+                                                                                    <img src="{{ $ad['adImageUrl'] }}" alt="Ad {{ $i + 1 }}" style="max-width: 100px; max-height: 60px; border-radius: 4px;">
+                                                                                @else
+                                                                                    <span class="text-muted">No image</span>
+                                                                                @endif
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="text" class="form-control form-control-sm" name="ad_image_urls[]" value="{{ $ad['adImageUrl'] ?? '' }}">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="text" class="form-control form-control-sm" name="ad_link_urls[]" value="{{ $ad['adLinkUrl'] ?? '' }}">
+                                                                            </td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-sm btn-danger delete-ad-btn" data-index="{{ $i }}">
+                                                                                    <i class="ti-trash"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary btn-round btn-sm mb-3">
+                                                            <i class="ti-save"></i> Save All Ads
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <p class="text-muted mb-3">No ads configured yet.</p>
+                                                @endif
+
+                                                <hr>
+
+                                                {{-- Add New Ad --}}
+                                                <h6>Add New Ad</h6>
+                                                <form action="{{ route('ads.update') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    {{-- Preserve existing ads --}}
+                                                    @foreach($ads as $ad)
+                                                        <input type="hidden" name="ad_image_urls[]" value="{{ $ad['adImageUrl'] ?? '' }}">
+                                                        <input type="hidden" name="ad_link_urls[]" value="{{ $ad['adLinkUrl'] ?? '' }}">
+                                                    @endforeach
+
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">Ad Image</label>
+                                                        <div class="col-sm-4">
+                                                            <input type="file" class="form-control" name="new_ad_image" accept="image/*">
+                                                            <small class="form-text text-muted">Upload an image (max 5MB). Will be stored in data/images/.</small>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Link</label>
+                                                        <div class="col-sm-3">
+                                                            <input type="text" class="form-control" name="new_ad_link" placeholder="https://example.com">
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <button type="submit" class="btn btn-success btn-round btn-sm">
+                                                                <i class="ti-plus"></i> Add Ad
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -364,6 +485,20 @@
 
         // Initialize
         updateLinkTypeUI();
+
+        // Ad delete buttons
+        document.querySelectorAll('.delete-ad-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                if (!confirm('Are you sure you want to delete this ad?')) return;
+                var index = this.getAttribute('data-index');
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ url("admin/ads") }}/' + index;
+                form.innerHTML = '@csrf' + '<input type="hidden" name="_method" value="DELETE">';
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
     });
 </script>
 @endpush

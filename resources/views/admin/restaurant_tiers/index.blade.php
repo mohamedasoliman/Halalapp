@@ -52,19 +52,24 @@
                                     </div>
                                 </div>
 
-                                {{-- Search --}}
+                                {{-- Search + Add Button --}}
                                 <div class="card mb-3">
                                     <div class="card-block" style="padding: 10px 20px;">
-                                        <form action="{{ route('restaurant.tiers') }}" method="GET" class="d-flex gap-2">
-                                            @if($tierFilter !== 'all')
-                                                <input type="hidden" name="tier" value="{{ $tierFilter }}">
-                                            @endif
-                                            <input type="text" name="search" class="form-control" placeholder="Search by name, category, or area..." value="{{ request('search') }}" style="max-width: 400px;">
-                                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
-                                            @if(request('search'))
-                                                <a href="{{ route('restaurant.tiers', ['tier' => $tierFilter]) }}" class="btn btn-outline-secondary btn-sm">Clear</a>
-                                            @endif
-                                        </form>
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                            <form action="{{ route('restaurant.tiers') }}" method="GET" class="d-flex gap-2">
+                                                @if($tierFilter !== 'all')
+                                                    <input type="hidden" name="tier" value="{{ $tierFilter }}">
+                                                @endif
+                                                <input type="text" name="search" class="form-control" placeholder="Search by name, category, or area..." value="{{ request('search') }}" style="max-width: 400px;">
+                                                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                                @if(request('search'))
+                                                    <a href="{{ route('restaurant.tiers', ['tier' => $tierFilter]) }}" class="btn btn-outline-secondary btn-sm">Clear</a>
+                                                @endif
+                                            </form>
+                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addRestaurantModal">
+                                                <i class="ti-plus"></i> Add Restaurant
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -124,39 +129,116 @@
                                                                     data-bs-target="#editModal{{ $r['_index'] }}">
                                                                     Edit
                                                                 </button>
+                                                                <button type="button" class="btn btn-sm btn-danger delete-restaurant-btn" data-index="{{ $r['_index'] }}" data-name="{{ $r['NAME'] ?? 'Restaurant' }}">
+                                                                    <i class="ti-trash"></i>
+                                                                </button>
                                                             </td>
                                                         </tr>
 
                                                         {{-- Edit Modal --}}
                                                         <div class="modal fade" id="editModal{{ $r['_index'] }}" tabindex="-1">
-                                                            <div class="modal-dialog">
+                                                            <div class="modal-dialog modal-lg">
                                                                 <div class="modal-content">
                                                                     <form action="{{ route('restaurant.tiers.update', $r['_index']) }}" method="POST" enctype="multipart/form-data">
                                                                         @csrf
                                                                         <div class="modal-header">
-                                                                            <h5 class="modal-title">{{ $r['NAME'] ?? 'Restaurant' }}</h5>
+                                                                            <h5 class="modal-title">Edit: {{ $r['NAME'] ?? 'Restaurant' }}</h5>
                                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                                         </div>
                                                                         <div class="modal-body">
-                                                                            <div class="form-group mb-3">
-                                                                                <label>Membership Tier</label>
-                                                                                <select name="membership_tier" class="form-control">
-                                                                                    <option value="free" {{ $tier === 'free' ? 'selected' : '' }}>Free</option>
-                                                                                    <option value="verified" {{ $tier === 'verified' ? 'selected' : '' }}>Verified ($5/wk)</option>
-                                                                                    <option value="featured" {{ $tier === 'featured' ? 'selected' : '' }}>Featured ($10/wk)</option>
-                                                                                    <option value="premium" {{ $tier === 'premium' ? 'selected' : '' }}>Premium ($15/wk)</option>
-                                                                                </select>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Name</label>
+                                                                                        <input type="text" name="name" class="form-control" value="{{ $r['NAME'] ?? '' }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Category</label>
+                                                                                        <input type="text" name="category" class="form-control" value="{{ $r['CATEGORY'] ?? '' }}" placeholder="e.g. Bakery - Sweet">
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                             <div class="form-group mb-3">
-                                                                                <label>Verified</label>
-                                                                                <select name="is_verified" class="form-control">
-                                                                                    <option value="0" {{ empty($r['is_verified']) ? 'selected' : '' }}>No</option>
-                                                                                    <option value="1" {{ !empty($r['is_verified']) ? 'selected' : '' }}>Yes</option>
-                                                                                </select>
+                                                                                <label>Address</label>
+                                                                                <input type="text" name="address" class="form-control" value="{{ $r['ADDRESS'] ?? '' }}">
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Phone</label>
+                                                                                        <input type="text" name="phone" class="form-control" value="{{ $r['PHONENUMBER'] ?? '' }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Website</label>
+                                                                                        <input type="text" name="website" class="form-control" value="{{ $r['WEBSITEURL'] ?? '' }}" placeholder="https://...">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Latitude</label>
+                                                                                        <input type="number" step="any" name="latitude" class="form-control" value="{{ $r['Latitude'] ?? '' }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Longitude</label>
+                                                                                        <input type="number" step="any" name="longitude" class="form-control" value="{{ $r['Longitude'] ?? '' }}">
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                             <div class="form-group mb-3">
-                                                                                <label>Menu URL</label>
-                                                                                <input type="text" name="menu_url" class="form-control" value="{{ $r['menu_url'] ?? '' }}" placeholder="https://...">
+                                                                                <label>Certified</label>
+                                                                                <input type="text" name="certified" class="form-control" value="{{ $r['Certified'] ?? '' }}" placeholder="Certification info">
+                                                                            </div>
+
+                                                                            <hr>
+                                                                            <h6>Opening Hours</h6>
+                                                                            <div class="row">
+                                                                                @foreach(['monday' => 'MONDAY', 'tuesday' => 'TUESDAY', 'wednesday' => 'WEDNESDAY', 'thursday' => 'THURSDAY', 'friday' => 'FRIDAY', 'saturday' => 'SATURDAY', 'sunday' => 'SUNDAY'] as $field => $key)
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="form-group mb-2">
+                                                                                            <label>{{ ucfirst($field) }}</label>
+                                                                                            <input type="text" name="{{ $field }}" class="form-control form-control-sm" value="{{ $r[$key] ?? '' }}" placeholder="e.g. 8 am - 7 pm">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                @endforeach
+                                                                            </div>
+
+                                                                            <hr>
+                                                                            <h6>Tier & Verification</h6>
+                                                                            <div class="row">
+                                                                                <div class="col-md-4">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Membership Tier</label>
+                                                                                        <select name="membership_tier" class="form-control">
+                                                                                            <option value="free" {{ $tier === 'free' ? 'selected' : '' }}>Free</option>
+                                                                                            <option value="verified" {{ $tier === 'verified' ? 'selected' : '' }}>Verified ($5/wk)</option>
+                                                                                            <option value="featured" {{ $tier === 'featured' ? 'selected' : '' }}>Featured ($10/wk)</option>
+                                                                                            <option value="premium" {{ $tier === 'premium' ? 'selected' : '' }}>Premium ($15/wk)</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-4">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Verified</label>
+                                                                                        <select name="is_verified" class="form-control">
+                                                                                            <option value="0" {{ empty($r['is_verified']) ? 'selected' : '' }}>No</option>
+                                                                                            <option value="1" {{ !empty($r['is_verified']) ? 'selected' : '' }}>Yes</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-4">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Menu URL</label>
+                                                                                        <input type="text" name="menu_url" class="form-control" value="{{ $r['menu_url'] ?? '' }}" placeholder="https://...">
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
 
                                                                             <hr>
@@ -220,6 +302,128 @@
     </div>
 @endsection
 
+{{-- Add Restaurant Modal --}}
+<div class="modal fade" id="addRestaurantModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ route('restaurant.tiers.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Restaurant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Category</label>
+                                <input type="text" name="category" class="form-control" placeholder="e.g. Bakery - Sweet">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Address</label>
+                        <input type="text" name="address" class="form-control" placeholder="e.g. 123 Main St, Auckland">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Phone</label>
+                                <input type="text" name="phone" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Website</label>
+                                <input type="text" name="website" class="form-control" placeholder="https://...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Latitude</label>
+                                <input type="number" step="any" name="latitude" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Longitude</label>
+                                <input type="number" step="any" name="longitude" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Certified</label>
+                        <input type="text" name="certified" class="form-control" placeholder="Certification info">
+                    </div>
+
+                    <hr>
+                    <h6>Opening Hours</h6>
+                    <div class="row">
+                        @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day)
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>{{ ucfirst($day) }}</label>
+                                    <input type="text" name="{{ $day }}" class="form-control form-control-sm" placeholder="e.g. 8 am - 7 pm">
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <hr>
+                    <h6>Tier & Verification</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Membership Tier</label>
+                                <select name="membership_tier" class="form-control">
+                                    <option value="free">Free</option>
+                                    <option value="verified">Verified ($5/wk)</option>
+                                    <option value="featured">Featured ($10/wk)</option>
+                                    <option value="premium">Premium ($15/wk)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Verified</label>
+                                <select name="is_verified" class="form-control">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Menu URL</label>
+                                <input type="text" name="menu_url" class="form-control" placeholder="https://...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h6>Logo</h6>
+                    <div class="form-group mb-3">
+                        <label>Upload Logo</label>
+                        <input type="file" name="logo" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Restaurant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('styles')
 <style>
     .gap-2 { gap: 8px; }
@@ -229,4 +433,24 @@
     .badge-verified { background: #27ae60; color: #fff; }
     .badge-free { background: #bdc3c7; color: #333; }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.delete-restaurant-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var name = this.getAttribute('data-name');
+                if (!confirm('Are you sure you want to delete "' + name + '"?')) return;
+                var index = this.getAttribute('data-index');
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ url("admin/restaurant-tiers") }}/' + index;
+                form.innerHTML = '@csrf' + '<input type="hidden" name="_method" value="DELETE">';
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+    });
+</script>
 @endpush

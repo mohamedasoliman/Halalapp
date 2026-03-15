@@ -132,11 +132,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     // Restaurant Tier Routes
     Route::get('restaurant-tiers', [RestaurantTierController::class, 'index'])->name('restaurant.tiers');
+    Route::post('restaurant-tiers/add', [RestaurantTierController::class, 'store'])->name('restaurant.tiers.store');
     Route::post('restaurant-tiers/{index}', [RestaurantTierController::class, 'update'])->name('restaurant.tiers.update');
+    Route::delete('restaurant-tiers/{index}', [RestaurantTierController::class, 'destroy'])->name('restaurant.tiers.destroy');
 
     // Notification Manager Routes
     Route::get('notification-manager', [NotificationManagerController::class, 'index'])->name('notification.manager');
     Route::post('notification-manager', [NotificationManagerController::class, 'update'])->name('notification.manager.update');
+    Route::post('ads/update', [NotificationManagerController::class, 'updateAds'])->name('ads.update');
+    Route::delete('ads/{index}', [NotificationManagerController::class, 'deleteAd'])->name('ads.delete');
+    Route::post('users-count/update', [NotificationManagerController::class, 'updateUsers'])->name('users.count.update');
 
     // Prioritisation Routes
     Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');
