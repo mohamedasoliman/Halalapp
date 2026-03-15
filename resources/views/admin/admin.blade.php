@@ -10,82 +10,66 @@
                 <div class="main-body">
                     <div class="page-wrapper">
                         <div class="page-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="welcome-box text-center">
-                                        <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="img-fluid mb-4">
-                                        <div class="welcome-text">
-                                            <h1>Welcome Back!</h1>
-                                            <p class="lead">Welcome to the Halal Kiwi Admin Dashboard. Let's make a difference together!</p>
-                                        </div>
-                                    </div>
+                            {{-- Welcome Banner - Horizontal --}}
+                            <div class="welcome-banner">
+                                <img src="{{ asset('assets/images/logo-white.png') }}" alt="Halal Kiwi" class="welcome-logo">
+                                <div class="welcome-text">
+                                    <h1>Welcome Back!</h1>
+                                    <p>Halal Kiwi Admin Dashboard</p>
                                 </div>
                             </div>
 
                             @if(!empty($stats))
-                            <div class="row mt-4">
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="stat-card">
-                                        <div class="stat-icon" style="background: #2ecc71;">
-                                            <i class="icofont icofont-food-basket"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <h3>{{ number_format($stats['total_products'] ?? 0) }}</h3>
-                                            <p>Total Products</p>
-                                            <small>{{ $stats['active_products'] ?? 0 }} active</small>
-                                        </div>
+                            {{-- Stats Grid --}}
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon" style="background: #2ecc71;">
+                                        <i class="icofont icofont-food-basket"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3>{{ number_format($stats['total_products'] ?? 0) }}</h3>
+                                        <p>Total Products</p>
+                                        <small>{{ $stats['active_products'] ?? 0 }} active</small>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="stat-card">
-                                        <div class="stat-icon" style="background: #004644;">
-                                            <i class="icofont icofont-check-circled"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <h3>{{ number_format($stats['halal_products'] ?? 0) }}</h3>
-                                            <p>Halal</p>
-                                            <small>{{ $stats['not_halal_products'] ?? 0 }} not halal &middot; {{ $stats['not_sure_products'] ?? 0 }} unsure</small>
-                                        </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon" style="background: #004644;">
+                                        <i class="icofont icofont-check-circled"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3>{{ number_format($stats['halal_products'] ?? 0) }}</h3>
+                                        <p>Halal</p>
+                                        <small>{{ $stats['not_halal_products'] ?? 0 }} not halal</small>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="stat-card">
-                                        <div class="stat-icon" style="background: #3498db;">
-                                            <i class="icofont icofont-mosque"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <h3>{{ $stats['total_mosques'] ?? 0 }}</h3>
-                                            <p>Mosques</p>
-                                        </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon" style="background: #3498db;">
+                                        <i class="ti-location-pin"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3>{{ $stats['total_mosques'] ?? 0 }}</h3>
+                                        <p>Mosques</p>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="stat-card">
-                                        <div class="stat-icon" style="background: #e67e22;">
-                                            <i class="icofont icofont-restaurant"></i>
-                                        </div>
-                                        <div class="stat-info">
-                                            <h3>{{ $stats['total_restaurants'] ?? 0 }}</h3>
-                                            <p>Restaurants</p>
-                                        </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon" style="background: #e67e22;">
+                                        <i class="ti-shopping-cart"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3>{{ $stats['total_restaurants'] ?? 0 }}</h3>
+                                        <p>Restaurants</p>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-md-3 col-sm-6">
-                                    <a href="{{ route('prioritisation.index') }}" style="text-decoration:none;">
-                                        <div class="stat-card">
-                                            <div class="stat-icon" style="background: #8e44ad;">
-                                                <i class="icofont icofont-tasks"></i>
-                                            </div>
-                                            <div class="stat-info">
-                                                <h3>{{ $stats['pending_requests'] ?? 0 }}</h3>
-                                                <p>Active Requests</p>
-                                                <small>{{ $stats['review_requests'] ?? 0 }} ready for review</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
+                                <a href="{{ route('prioritisation.index') }}" class="stat-card stat-card-link">
+                                    <div class="stat-icon" style="background: #8e44ad;">
+                                        <i class="ti-clipboard"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3>{{ $stats['pending_requests'] ?? 0 }}</h3>
+                                        <p>Active Requests</p>
+                                        <small>{{ $stats['review_requests'] ?? 0 }} ready for review</small>
+                                    </div>
+                                </a>
                             </div>
                             @endif
                         </div>
@@ -97,50 +81,69 @@
 
 @endsection
 
-@push('scripts')
-    <!-- Additional scripts can be added here -->
-@endpush
-
 @push('styles')
     <style>
-        .welcome-box {
-            background: #004644;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
+        .welcome-banner {
+            background: linear-gradient(135deg, #004644 0%, #006b5a 100%);
+            border-radius: 16px;
+            padding: 28px 36px;
             margin-top: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .welcome-logo {
+            height: 60px;
+            width: auto;
+            opacity: 0.92;
         }
 
         .welcome-text h1 {
             color: #ffffff;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 4px 0;
         }
 
         .welcome-text p {
-            color: #ffffff;
-            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.95rem;
+            margin: 0;
         }
 
-        .welcome-box img {
-            max-width: 200px;
-            height: auto;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
         }
 
         .stat-card {
             background: #ffffff;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 20px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 15px;
+            gap: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .stat-card-link {
+            text-decoration: none !important;
+            color: inherit !important;
+            cursor: pointer;
         }
 
         .stat-icon {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -149,26 +152,43 @@
         }
 
         .stat-icon i {
-            font-size: 24px;
+            font-size: 22px;
             color: #ffffff;
         }
 
         .stat-info h3 {
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #333;
+            color: #1e293b;
         }
 
         .stat-info p {
             margin: 0;
-            font-size: 0.9rem;
-            color: #666;
+            font-size: 0.85rem;
+            color: #64748b;
         }
 
         .stat-info small {
-            color: #999;
+            color: #94a3b8;
             font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 @endpush
