@@ -2107,6 +2107,14 @@ code {
     margin-left: 260px !important;
 }
 
+/* Fix select dropdown text cut off */
+select.form-control {
+    height: auto !important;
+    min-height: 44px !important;
+    padding: 10px 14px !important;
+    line-height: 1.5 !important;
+}
+
 /* Push user profile to far right in header */
 .navbar-container > div {
     display: flex !important;
