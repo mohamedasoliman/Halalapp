@@ -600,8 +600,15 @@ body {
     background: rgba(255, 255, 255, 0.08) !important;
 }
 
-.pcoded-submenu li a .pcoded-micon {
+.pcoded-submenu li a .pcoded-micon,
+.pcoded-inner-navbar .pcoded-submenu li a .pcoded-micon {
     display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
 }
 
 .sidebar_toggle {
