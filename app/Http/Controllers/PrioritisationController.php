@@ -78,15 +78,6 @@ class PrioritisationController extends Controller
             $productName = $request->product_name;
             $brandName = $request->brand_name;
 
-            // Server-side Open Food Facts fallback
-            if (empty($productName) || empty($brandName)) {
-                $offData = $this->lookupOpenFoodFacts($barcode);
-                if ($offData) {
-                    $productName = $productName ?: $offData['product_name'];
-                    $brandName = $brandName ?: $offData['brand'];
-                }
-            }
-
             // Fall back to existing product data if available
             if ($product) {
                 $productName = $productName ?: $product->product_name;

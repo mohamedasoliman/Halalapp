@@ -145,6 +145,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
 
     // Prioritisation Routes
     Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');
+    Route::post('prioritisation/research', [PrioritisationController::class, 'researchUnknown'])->name('prioritisation.research');
     Route::get('prioritisation/{id}', [PrioritisationController::class, 'show'])->name('prioritisation.show');
     Route::post('prioritisation/{id}/status', [PrioritisationController::class, 'updateStatus'])->name('prioritisation.status');
     Route::post('prioritisation/{id}/resolve', [PrioritisationController::class, 'resolve'])->name('prioritisation.resolve');

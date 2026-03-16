@@ -52,6 +52,13 @@
                                                class="btn btn-sm {{ $statusFilter === 'resolved' ? 'btn-success' : 'btn-outline-success' }}">
                                                 Resolved <span class="badge bg-light text-dark">{{ $counts['resolved'] }}</span>
                                             </a>
+
+                                            <form action="{{ route('prioritisation.research') }}" method="POST" style="display:inline; margin-left: auto;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-primary" onclick="return confirm('This will look up all unknown products on Open Food Facts. It may take a minute. Continue?')">
+                                                    <i class="ti-search"></i> Research Unknown Products
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

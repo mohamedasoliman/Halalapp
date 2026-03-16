@@ -9,6 +9,8 @@ use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class PrioritisationController extends Controller
@@ -122,5 +124,69 @@ class PrioritisationController extends Controller
 
         return redirect()->route('prioritisation.index')
             ->with('success', "Resolved: {$productName} marked as {$statusLabel}. {$watcherEmails->unique()->count()} user(s) notified.");
+    }
+
+    public function researchUnknown()
+    {
+        $requests = PrioritisationRequest::where(function ($q) {
+            $q->whereNull('product_name')->orWhere('product_name', '');
+        })->where('status', '!=', 'resolved')->get();
+
+        if ($requests->isEmpty()) {
+            return redirect()->back()->with('success', 'No unknown products to research.');
+        }
+
+        $found = 0;
+        $failed = 0;
+
+        foreach ($requests as $request) {
+            try {
+                $response = Http::timeout(8)
+                    ->get("https://world.openfoodfacts.org/api/v2/product/{$request->barcode}.json", [
+                        'fields' => 'product_name,brands',
+                    ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (($data['status'] ?? 0) == 1) {
+                        $product = $data['product'] ?? [];
+                        $updates = [];
+
+                        if (!empty($product['product_name'])) {
+                            $updates['product_name'] = $product['product_name'];
+                        }
+                        if (!empty($product['brands']) && empty($request->brand_name)) {
+                            $updates['brand_name'] = $product['brands'];
+                        }
+
+                        if (!empty($updates)) {
+                            $request->update($updates);
+
+                            // Also update the product in DB if it exists
+                            if (!empty($updates['product_name'])) {
+                                $dbProduct = Product::where('Barcode', $request->barcode)->first();
+                                if ($dbProduct && empty($dbProduct->product_name)) {
+                                    $dbProduct->update(['product_name' => $updates['product_name']]);
+                                }
+                            }
+
+                            $found++;
+                        } else {
+                            $failed++;
+                        }
+                    } else {
+                        $failed++;
+                    }
+                } else {
+                    $failed++;
+                }
+            } catch (\Exception $e) {
+                $failed++;
+                Log::debug("OFF lookup failed for {$request->barcode}: {$e->getMessage()}");
+            }
+        }
+
+        return redirect()->back()
+            ->with('success', "Research complete. Found: {$found}, Not found: {$failed} (out of {$requests->count()} unknown products).");
     }
 }
