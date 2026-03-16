@@ -142,6 +142,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('ads/update', [NotificationManagerController::class, 'updateAds'])->name('ads.update');
     Route::delete('ads/{index}', [NotificationManagerController::class, 'deleteAd'])->name('ads.delete');
     Route::post('users-count/update', [NotificationManagerController::class, 'updateUsers'])->name('users.count.update');
+    Route::post('scan-ads/update', [NotificationManagerController::class, 'updateScanAds'])->name('scan.ads.update');
+    Route::delete('scan-ads/{index}', [NotificationManagerController::class, 'deleteScanAd'])->name('scan.ads.delete');
 
     // Prioritisation Routes
     Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');

@@ -326,6 +326,96 @@
                                             </div>
                                         </div>
                                     </div>
+                                {{-- Scan Ads (shown after barcode scan) --}}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Scan Result Ads</h5>
+                                                <span class="text-muted float-right">Shown after barcode scan results — random ad each time</span>
+                                            </div>
+                                            <div class="card-block">
+                                                <form action="{{ route('scan.ads.update') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+
+                                                    <div class="form-group mb-3">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="scanAdsToggle" name="scan_ads_active" value="1"
+                                                                {{ $scanAdsActive ? 'checked' : '' }}>
+                                                            <label class="custom-control-label" for="scanAdsToggle">Show ads after barcode scan results</label>
+                                                        </div>
+                                                    </div>
+
+                                                    @if(count($scanAds) > 0)
+                                                        <div class="table-responsive mb-3">
+                                                            <table class="table table-bordered table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width:80px;">#</th>
+                                                                        <th style="width:120px;">Preview</th>
+                                                                        <th>Image URL</th>
+                                                                        <th>Link URL</th>
+                                                                        <th style="width:100px;">Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach($scanAds as $i => $ad)
+                                                                        <tr>
+                                                                            <td>{{ $i + 1 }}</td>
+                                                                            <td>
+                                                                                @if(!empty($ad['adImageUrl']))
+                                                                                    <img src="{{ $ad['adImageUrl'] }}" alt="Scan Ad" style="max-width: 100px; max-height: 60px; border-radius: 4px;">
+                                                                                @endif
+                                                                            </td>
+                                                                            <td><input type="text" class="form-control form-control-sm" name="ad_image_urls[]" value="{{ $ad['adImageUrl'] ?? '' }}"></td>
+                                                                            <td><input type="text" class="form-control form-control-sm" name="ad_link_urls[]" value="{{ $ad['adLinkUrl'] ?? '' }}"></td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-sm btn-danger delete-scan-ad-btn" data-index="{{ $i }}">
+                                                                                    <i class="ti-trash"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    @else
+                                                        <p class="text-muted mb-3">No scan ads yet.</p>
+                                                    @endif
+
+                                                    <button type="submit" class="btn btn-primary btn-round btn-sm mb-3">
+                                                        <i class="ti-save"></i> Save Scan Ads
+                                                    </button>
+                                                </form>
+
+                                                <hr>
+                                                <h6>Add New Scan Ad</h6>
+                                                <form action="{{ route('scan.ads.update') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="scan_ads_active" value="{{ $scanAdsActive ? '1' : '' }}">
+                                                    @foreach($scanAds as $ad)
+                                                        <input type="hidden" name="ad_image_urls[]" value="{{ $ad['adImageUrl'] ?? '' }}">
+                                                        <input type="hidden" name="ad_link_urls[]" value="{{ $ad['adLinkUrl'] ?? '' }}">
+                                                    @endforeach
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">Image</label>
+                                                        <div class="col-sm-4">
+                                                            <input type="file" class="form-control" name="new_ad_image" accept="image/*">
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Link</label>
+                                                        <div class="col-sm-3">
+                                                            <input type="text" class="form-control" name="new_ad_link" placeholder="https://...">
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <button type="submit" class="btn btn-success btn-round btn-sm"><i class="ti-plus"></i> Add</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 </div>
                             </div>
                         </div>
@@ -494,6 +584,20 @@
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = '{{ url("admin/ads") }}/' + index;
+                form.innerHTML = '@csrf' + '<input type="hidden" name="_method" value="DELETE">';
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
+
+        // Scan ad delete buttons
+        document.querySelectorAll('.delete-scan-ad-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                if (!confirm('Delete this scan ad?')) return;
+                var index = this.getAttribute('data-index');
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ url("admin/scan-ads") }}/' + index;
                 form.innerHTML = '@csrf' + '<input type="hidden" name="_method" value="DELETE">';
                 document.body.appendChild(form);
                 form.submit();

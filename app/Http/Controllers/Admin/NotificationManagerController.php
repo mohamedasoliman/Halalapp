@@ -87,8 +87,10 @@ class NotificationManagerController extends Controller
         // Load ads and users count
         $ads = $data['ads'] ?? [];
         $usersCount = $data['users'] ?? '';
+        $scanAds = $data['scanAds'] ?? [];
+        $scanAdsActive = $data['scanAdsActive'] ?? false;
 
-        return view('admin.notification_manager.index', compact('notification', 'restaurantNames', 'ads', 'usersCount'));
+        return view('admin.notification_manager.index', compact('notification', 'restaurantNames', 'ads', 'usersCount', 'scanAds', 'scanAdsActive'));
     }
 
     public function update(Request $request)
@@ -216,6 +218,66 @@ class NotificationManagerController extends Controller
         $this->saveJson($data);
 
         return redirect()->back()->with('success', 'Users count updated successfully.');
+    }
+
+    public function updateScanAds(Request $request)
+    {
+        $request->validate([
+            'ad_image_urls' => 'nullable|array',
+            'ad_image_urls.*' => 'nullable|string|max:500',
+            'ad_link_urls' => 'nullable|array',
+            'ad_link_urls.*' => 'nullable|string|max:500',
+            'new_ad_image' => 'nullable|image|max:5120',
+            'new_ad_link' => 'nullable|string|max:500',
+        ]);
+
+        $data = $this->loadJson();
+
+        $data['scanAdsActive'] = $request->has('scan_ads_active');
+
+        $ads = [];
+        $imageUrls = $request->ad_image_urls ?? [];
+        $linkUrls = $request->ad_link_urls ?? [];
+
+        for ($i = 0; $i < count($imageUrls); $i++) {
+            if (!empty($imageUrls[$i])) {
+                $ads[] = [
+                    'adImageUrl' => $imageUrls[$i],
+                    'adLinkUrl' => $linkUrls[$i] ?? '',
+                ];
+            }
+        }
+
+        if ($request->hasFile('new_ad_image')) {
+            $imageUrl = $this->uploadAdImage($request->file('new_ad_image'));
+            if ($imageUrl) {
+                $ads[] = [
+                    'adImageUrl' => $imageUrl,
+                    'adLinkUrl' => $request->new_ad_link ?? '',
+                ];
+            }
+        }
+
+        $data['scanAds'] = $ads;
+        $this->saveJson($data);
+
+        return redirect()->back()->with('success', 'Scan ads updated successfully.');
+    }
+
+    public function deleteScanAd(int $index)
+    {
+        $data = $this->loadJson();
+        $ads = $data['scanAds'] ?? [];
+
+        if (!isset($ads[$index])) {
+            return redirect()->back()->with('error', 'Ad not found.');
+        }
+
+        array_splice($ads, $index, 1);
+        $data['scanAds'] = $ads;
+        $this->saveJson($data);
+
+        return redirect()->back()->with('success', 'Scan ad deleted.');
     }
 
     private function uploadAdImage($file): ?string
