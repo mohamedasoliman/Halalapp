@@ -31,6 +31,6 @@ class PrioritisationRequest extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', '!=', 'resolved');
+        return $query->whereNotIn('status', ['resolved', 'dead_end']);
     }
 }

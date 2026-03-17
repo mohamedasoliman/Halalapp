@@ -53,7 +53,7 @@ class AdminController extends Controller
             $restaurantJson = public_path('data/HalalRestaurantsList.json');
             $stats['total_restaurants'] = file_exists($restaurantJson) ? count(json_decode(file_get_contents($restaurantJson), true) ?? []) : 0;
             $stats['total_admins'] = Admin::count();
-            $stats['pending_requests'] = PrioritisationRequest::where('status', '!=', 'resolved')->count();
+            $stats['pending_requests'] = PrioritisationRequest::whereNotIn('status', ['resolved', 'dead_end'])->count();
             $stats['review_requests'] = PrioritisationRequest::where('status', 'ready_for_review')->count();
         } catch (\Exception $e) {
             // Tables may not exist yet during setup

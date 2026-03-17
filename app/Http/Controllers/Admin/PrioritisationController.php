@@ -38,6 +38,7 @@ class PrioritisationController extends Controller
             'contacted' => PrioritisationRequest::where('status', 'contacted')->count(),
             'ready_for_review' => PrioritisationRequest::where('status', 'ready_for_review')->count(),
             'resolved' => PrioritisationRequest::where('status', 'resolved')->count(),
+            'dead_end' => PrioritisationRequest::where('status', 'dead_end')->count(),
         ];
 
         return view('admin.prioritisation.index', compact('requests', 'counts', 'statusFilter'));
@@ -55,7 +56,7 @@ class PrioritisationController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,ready_for_outreach,contacted,ready_for_review,resolved',
+            'status' => 'required|in:pending,ready_for_outreach,contacted,ready_for_review,resolved,dead_end',
             'brand_name' => 'nullable|string|max:255',
         ]);
 
@@ -130,7 +131,7 @@ class PrioritisationController extends Controller
     {
         $requests = PrioritisationRequest::where(function ($q) {
             $q->whereNull('product_name')->orWhere('product_name', '');
-        })->where('status', '!=', 'resolved')->get();
+        })->whereNotIn('status', ['resolved', 'dead_end'])->get();
 
         if ($requests->isEmpty()) {
             return redirect()->back()->with('success', 'No unknown products to research.');

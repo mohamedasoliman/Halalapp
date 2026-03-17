@@ -49,7 +49,7 @@ class RequestsResolve extends Command
 
         // 3. Resolve all matching prioritisation requests
         $requests = PrioritisationRequest::where('barcode', $barcode)
-            ->where('status', '!=', 'resolved')
+            ->whereNotIn('status', ['resolved', 'dead_end'])
             ->get();
 
         if ($requests->isEmpty()) {

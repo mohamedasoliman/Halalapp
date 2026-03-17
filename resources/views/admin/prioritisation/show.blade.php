@@ -46,6 +46,7 @@
                                                                     'contacted' => 'badge-secondary',
                                                                     'ready_for_review' => 'badge-danger',
                                                                     'resolved' => 'badge-success',
+                                                                    'dead_end' => 'badge-dark',
                                                                     default => 'badge-light',
                                                                 };
                                                             @endphp
@@ -114,7 +115,7 @@
                                         </div>
 
                                         {{-- Update status --}}
-                                        @if($request->status !== 'resolved')
+                                        @if(!in_array($request->status, ['resolved', 'dead_end']))
                                         <div class="card">
                                             <div class="card-header"><h5>Update Status</h5></div>
                                             <div class="card-block">
@@ -126,6 +127,7 @@
                                                             <option value="ready_for_outreach" {{ $request->status === 'ready_for_outreach' ? 'selected' : '' }}>Ready for Outreach</option>
                                                             <option value="contacted" {{ $request->status === 'contacted' ? 'selected' : '' }}>Contacted</option>
                                                             <option value="ready_for_review" {{ $request->status === 'ready_for_review' ? 'selected' : '' }}>Ready for Review</option>
+                                                            <option value="dead_end" {{ $request->status === 'dead_end' ? 'selected' : '' }}>Dead End</option>
                                                         </select>
                                                     </div>
                                                     <div class="form-group mb-2">
@@ -155,6 +157,19 @@
                                                         <textarea name="notes" class="form-control" rows="3" placeholder="Resolution notes..."></textarea>
                                                     </div>
                                                     <button type="submit" class="btn btn-danger btn-block" onclick="return confirm('Are you sure? This will mark the product and notify all watchers.')">Resolve</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        @elseif($request->status === 'dead_end')
+                                        <div class="card">
+                                            <div class="card-header"><h5>Dead End</h5></div>
+                                            <div class="card-block">
+                                                <p><span class="badge badge-dark">Dead End</span></p>
+                                                <p class="text-muted">{{ $request->notes }}</p>
+                                                <form action="{{ route('prioritisation.status', $request->id) }}" method="POST" class="mt-3">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="pending">
+                                                    <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Reopen this request?')">Reopen as Pending</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -191,6 +206,7 @@
     .badge-secondary { background: #95a5a6; color: #fff; }
     .badge-danger { background: #e74c3c; color: #fff; }
     .badge-success { background: #27ae60; color: #fff; }
+    .badge-dark { background: #2c3e50; color: #fff; }
     .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
     .btn-block { width: 100%; }
 </style>

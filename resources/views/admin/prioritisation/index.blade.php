@@ -52,6 +52,10 @@
                                                class="btn btn-sm {{ $statusFilter === 'resolved' ? 'btn-success' : 'btn-outline-success' }}">
                                                 Resolved <span class="badge bg-light text-dark">{{ $counts['resolved'] }}</span>
                                             </a>
+                                            <a href="{{ route('prioritisation.index', ['status' => 'dead_end']) }}"
+                                               class="btn btn-sm {{ $statusFilter === 'dead_end' ? 'btn-dark' : 'btn-outline-dark' }}">
+                                                Dead End <span class="badge bg-light text-dark">{{ $counts['dead_end'] }}</span>
+                                            </a>
 
                                             <form action="{{ route('prioritisation.research') }}" method="POST" style="display:inline; margin-left: auto;">
                                                 @csrf
@@ -93,6 +97,7 @@
                                                                         'contacted' => 'badge-secondary',
                                                                         'ready_for_review' => 'badge-danger',
                                                                         'resolved' => 'badge-success',
+                                                                        'dead_end' => 'badge-dark',
                                                                         default => 'badge-light',
                                                                     };
                                                                 @endphp
@@ -132,6 +137,7 @@
     .badge-secondary { background: #95a5a6; color: #fff; }
     .badge-danger { background: #e74c3c; color: #fff; }
     .badge-success { background: #27ae60; color: #fff; }
+    .badge-dark { background: #2c3e50; color: #fff; }
     .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8em; }
 </style>
 @endpush
