@@ -48,6 +48,7 @@ ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
     echo "Backing up admin-managed files..."
     cp -f public/data/customData.json /tmp/customData_backup.json 2>/dev/null || true
     cp -f public/data/HalalRestaurantsList.json /tmp/HalalRestaurantsList_backup.json 2>/dev/null || true
+    cp -f public/data/BusinessList.json /tmp/BusinessList_backup.json 2>/dev/null || true
 
     echo "Pulling latest changes..."
     git fetch origin
@@ -56,6 +57,7 @@ ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
     echo "Restoring admin-managed files..."
     cp -f /tmp/customData_backup.json public/data/customData.json 2>/dev/null || true
     cp -f /tmp/HalalRestaurantsList_backup.json public/data/HalalRestaurantsList.json 2>/dev/null || true
+    cp -f /tmp/BusinessList_backup.json public/data/BusinessList.json 2>/dev/null || true
 
     echo "Installing dependencies..."
     php ~/.composer/2022-10-27_14-39-29-2.4.4-old.phar install --no-dev --optimize-autoloader --no-interaction

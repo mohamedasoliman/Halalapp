@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PrioritisationController;
 use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\RestaurantTierController;
 use App\Http\Controllers\Admin\NotificationManagerController;
+use App\Http\Controllers\Admin\BusinessNetworkController;
 
 Route::get('/login', function() {
     return redirect()->route('admin.login');
@@ -135,6 +136,14 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('restaurant-tiers/add', [RestaurantTierController::class, 'store'])->name('restaurant.tiers.store');
     Route::post('restaurant-tiers/{index}', [RestaurantTierController::class, 'update'])->name('restaurant.tiers.update');
     Route::delete('restaurant-tiers/{index}', [RestaurantTierController::class, 'destroy'])->name('restaurant.tiers.destroy');
+
+    // Muslim Business Network Routes
+    Route::get('business-network', [BusinessNetworkController::class, 'index'])->name('business-network.index');
+    Route::get('business-network/create', [BusinessNetworkController::class, 'create'])->name('business-network.create');
+    Route::post('business-network', [BusinessNetworkController::class, 'store'])->name('business-network.store');
+    Route::get('business-network/{index}/edit', [BusinessNetworkController::class, 'edit'])->name('business-network.edit');
+    Route::put('business-network/{index}', [BusinessNetworkController::class, 'update'])->name('business-network.update');
+    Route::delete('business-network/{index}', [BusinessNetworkController::class, 'destroy'])->name('business-network.destroy');
 
     // Notification Manager Routes
     Route::get('notification-manager', [NotificationManagerController::class, 'index'])->name('notification.manager');

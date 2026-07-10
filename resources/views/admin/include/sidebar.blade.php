@@ -11,6 +11,24 @@
 					<span class="pcoded-mcaret"></span>
 				</a>
 			</li>
+        </ul>
+
+        <ul class="pcoded-item pcoded-left-item">
+			<li class="pcoded-hasmenu @if (str_starts_with(\Request::route()->getName() ?? '', 'business-network.')) active pcoded-trigger @endif">
+				<a href="javascript:void(0)">
+					<span class="pcoded-micon"><i class="ti-briefcase"></i></span>
+					<span class="pcoded-mtext">Business Network</span>
+					<span class="pcoded-mcaret"></span>
+				</a>
+				<ul class="pcoded-submenu">
+					<li class="@if (str_starts_with(\Request::route()->getName() ?? '', 'business-network.')) active @endif">
+						<a href="{{ route('business-network.index') }}">
+							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+							<span class="pcoded-mtext">Manage Businesses</span>
+						</a>
+					</li>
+				</ul>
+			</li>
 		</ul>
 
 		<ul class="pcoded-item pcoded-left-item">
