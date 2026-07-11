@@ -135,6 +135,9 @@
                                                                 @if(!empty($business['Verified']))
                                                                     <div class="mt-1"><span class="badge bg-info">Verified</span></div>
                                                                 @endif
+                                                                @if(!empty($business['FeatureInCarousel']) || (!array_key_exists('FeatureInCarousel', $business) && $tier === 'premium'))
+                                                                    <div class="mt-1"><span class="badge bg-warning text-dark">Featured</span></div>
+                                                                @endif
                                                             </td>
                                                             <td>
                                                                 @if(!empty($business['DealTitle']))

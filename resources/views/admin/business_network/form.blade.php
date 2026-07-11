@@ -11,6 +11,9 @@
     };
     $hours = $business['hours'] ?? [];
     $active = !array_key_exists('IsActive', $business) || (bool) $business['IsActive'];
+    $featuredInCarousel = array_key_exists('FeatureInCarousel', $business)
+        ? (bool) $business['FeatureInCarousel']
+        : $tier === 'premium';
 @endphp
 
 @section('content')
@@ -176,6 +179,14 @@
                                                         <input id="is_active" name="is_active" type="checkbox" value="1" class="form-check-input"
                                                                @checked((bool) old('is_active', $active))>
                                                         <label for="is_active" class="form-check-label">Visible in the Halal Kiwi app</label>
+                                                    </div>
+                                                    <div class="form-check mb-2">
+                                                        <input type="hidden" name="feature_in_carousel" value="0">
+                                                        <input id="feature_in_carousel" name="feature_in_carousel" type="checkbox" value="1" class="form-check-input"
+                                                               @checked((bool) old('feature_in_carousel', $featuredInCarousel))>
+                                                        <label for="feature_in_carousel" class="form-check-label">
+                                                            Show in the Businesses featured carousel
+                                                        </label>
                                                     </div>
                                                     <div class="form-check">
                                                         <input type="hidden" name="permission_granted" value="0">

@@ -149,6 +149,7 @@ class BusinessNetworkController extends Controller
             'tier' => ['required', Rule::in(self::TIERS)],
             'verified' => ['required', 'boolean'],
             'is_active' => ['required', 'boolean'],
+            'feature_in_carousel' => ['required', 'boolean'],
             'permission_granted' => [$creating ? 'accepted' : 'nullable', 'boolean'],
             'logo' => ['nullable', 'image', 'max:5120'],
             'images' => ['nullable', 'array', 'max:5'],
@@ -187,6 +188,7 @@ class BusinessNetworkController extends Controller
         $business['Tier'] = ucfirst($data['tier']);
         $business['Verified'] = (bool) $data['verified'];
         $business['IsActive'] = (bool) $data['is_active'];
+        $business['FeatureInCarousel'] = (bool) $data['feature_in_carousel'];
         $business['PermissionGranted'] = $request->boolean('permission_granted')
             || (bool) ($existing['PermissionGranted'] ?? false);
         $business['MenuUrl'] = $data['menu_url'] ?? '';
