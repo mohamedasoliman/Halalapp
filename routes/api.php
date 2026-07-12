@@ -11,6 +11,7 @@ use App\Http\Controllers\KiwiSaverContactMessageController;
 use App\Http\Controllers\PrioritisationController;
 use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
+use App\Http\Controllers\Api\AnalyticsIngestionController;
 
 Route::middleware(['api_key', 'throttle:api'])->group(function(){
     Route::post('listing', [ApiController::class, 'allListing']);
@@ -25,6 +26,9 @@ Route::middleware(['api_key', 'throttle:api'])->group(function(){
         Route::post('/prioritise/check', [PrioritisationController::class, 'checkStatus']);
     });
 });
+
+Route::post('/analytics/events', [AnalyticsIngestionController::class, 'store'])
+    ->middleware(['api_key', 'throttle:analytics']);
 
 Route::post('masjid', [MasjidManagementController::class, 'apishow']);
 Route::get('resturant',[ResturantManagementController::class, 'api']);

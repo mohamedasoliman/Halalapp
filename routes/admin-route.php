@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\BrandsController;
 use App\Http\Controllers\Admin\RestaurantTierController;
 use App\Http\Controllers\Admin\NotificationManagerController;
 use App\Http\Controllers\Admin\BusinessNetworkController;
+use App\Http\Controllers\Admin\AnalyticsController;
 
 Route::get('/login', function() {
     return redirect()->route('admin.login');
@@ -144,6 +145,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::get('business-network/{index}/edit', [BusinessNetworkController::class, 'edit'])->name('business-network.edit');
     Route::put('business-network/{index}', [BusinessNetworkController::class, 'update'])->name('business-network.update');
     Route::delete('business-network/{index}', [BusinessNetworkController::class, 'destroy'])->name('business-network.destroy');
+
+    // First-party Analytics Routes
+    Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('analytics/partner/{type}/{key}', [AnalyticsController::class, 'partner'])->name('analytics.partner');
+    Route::get('analytics/partner/{type}/{key}/export', [AnalyticsController::class, 'exportPartner'])->name('analytics.partner.export');
 
     // Notification Manager Routes
     Route::get('notification-manager', [NotificationManagerController::class, 'index'])->name('notification.manager');

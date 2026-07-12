@@ -36,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by($request->ip());
         });
 
+        RateLimiter::for('analytics', function (Request $request) {
+            return Limit::perMinute(120)->by($request->ip());
+        });
+
         // Only query database if tables exist (prevents errors during migrations/setup)
         try {
             if (Schema::hasTable('general_settings')) {

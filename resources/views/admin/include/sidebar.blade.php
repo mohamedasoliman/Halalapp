@@ -13,7 +13,7 @@
 			</li>
         </ul>
 
-        <ul class="pcoded-item pcoded-left-item">
+		<ul class="pcoded-item pcoded-left-item">
 			<li class="pcoded-hasmenu @if (str_starts_with(\Request::route()->getName() ?? '', 'business-network.')) active pcoded-trigger @endif">
 				<a href="javascript:void(0)">
 					<span class="pcoded-micon"><i class="ti-briefcase"></i></span>
@@ -28,6 +28,16 @@
 						</a>
 					</li>
 				</ul>
+			</li>
+		</ul>
+
+        <ul class="pcoded-item pcoded-left-item">
+			<li class="@if (str_starts_with(\Request::route()->getName() ?? '', 'analytics.')) active pcoded-trigger @endif">
+				<a href="{{ route('analytics.index') }}">
+					<span class="pcoded-micon"><i class="ti-bar-chart"></i></span>
+					<span class="pcoded-mtext">Analytics</span>
+					<span class="pcoded-mcaret"></span>
+				</a>
 			</li>
 		</ul>
 
