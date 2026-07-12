@@ -265,6 +265,7 @@ class NotificationManagerController extends Controller
             'destination_target' => ['required_if:active,1', 'nullable', 'string', 'max:500'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'logo_url' => ['nullable', 'url:http,https', 'max:500'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'remove_logo' => ['nullable', 'boolean'],
         ]);
@@ -281,10 +282,15 @@ class NotificationManagerController extends Controller
         $data = $this->loadJson();
         $existing = $data['stickyAd'] ?? [];
         $logoUrl = $existing['logoUrl'] ?? '';
+        $submittedLogoUrl = trim($validated['logo_url'] ?? '');
 
         if ($request->boolean('remove_logo')) {
             $logoUrl = '';
+        } elseif ($submittedLogoUrl !== '') {
+            $logoUrl = $submittedLogoUrl;
         }
+
+        // A newly uploaded file takes priority over an entered URL.
         if ($request->hasFile('logo')) {
             $uploadedLogo = $this->uploadAdImage($request->file('logo'));
             if ($uploadedLogo !== null) {

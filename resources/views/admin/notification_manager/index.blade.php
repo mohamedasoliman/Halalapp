@@ -323,11 +323,21 @@
                                                             </datalist>
 
                                                             <div class="form-row">
+                                                                <div class="form-group col-md-8">
+                                                                    <label for="stickyLogoUrl">Logo image URL (optional)</label>
+                                                                    <input id="stickyLogoUrl" type="url" class="form-control" name="logo_url"
+                                                                        maxlength="500" value="{{ old('logo_url', $stickyAd['logoUrl']) }}"
+                                                                        placeholder="https://example.com/business-logo.png">
+                                                                    <small class="form-text text-muted">Use a direct public HTTP or HTTPS image link.</small>
+                                                                </div>
                                                                 <div class="form-group col-md-4">
                                                                     <label for="stickyLogo">Square logo (optional)</label>
                                                                     <input id="stickyLogo" type="file" class="form-control" name="logo" accept="image/png,image/jpeg,image/webp">
-                                                                    <small class="form-text text-muted">A square logo works best. Maximum 2MB.</small>
+                                                                    <small class="form-text text-muted">A square logo works best. Maximum 2MB. Upload takes priority over URL.</small>
                                                                 </div>
+                                                            </div>
+
+                                                            <div class="form-row">
                                                                 <div class="form-group col-md-3">
                                                                     <label for="stickyStartDate">Start date</label>
                                                                     <input id="stickyStartDate" type="date" class="form-control" name="start_date"
@@ -766,6 +776,8 @@
         const stickySponsorName = document.getElementById('stickySponsorName');
         const stickyMessage = document.getElementById('stickyMessage');
         const stickyButtonText = document.getElementById('stickyButtonText');
+        const stickyLogoUrl = document.getElementById('stickyLogoUrl');
+        const stickyPreviewLogo = document.querySelector('.sticky-ad-preview-logo');
         const stickyPreview = document.querySelector('.sticky-ad-preview');
         const stickyPreviewSponsor = document.getElementById('stickyPreviewSponsor');
         const stickyPreviewMessage = document.getElementById('stickyPreviewMessage');
@@ -817,17 +829,37 @@
             stickyPreview.style.opacity = stickyActive.checked ? '1' : '.55';
         }
 
+        function updateStickyLogoPreview(source) {
+            stickyPreviewLogo.replaceChildren();
+            if (!source) {
+                const placeholder = document.createElement('i');
+                placeholder.className = 'ti-shopping-cart';
+                stickyPreviewLogo.appendChild(placeholder);
+                return;
+            }
+
+            const image = document.createElement('img');
+            image.src = source;
+            image.alt = 'Sponsor logo';
+            image.addEventListener('error', function() {
+                updateStickyLogoPreview('');
+            }, { once: true });
+            stickyPreviewLogo.appendChild(image);
+        }
+
         stickyDestinationType.addEventListener('change', updateStickyDestinationUI);
         stickyActive.addEventListener('change', updateStickyPreview);
         stickySponsorName.addEventListener('input', updateStickyPreview);
         stickyMessage.addEventListener('input', updateStickyPreview);
         stickyButtonText.addEventListener('input', updateStickyPreview);
+        stickyLogoUrl.addEventListener('input', function() {
+            updateStickyLogoPreview(this.value.trim());
+        });
         document.getElementById('stickyLogo').addEventListener('change', function() {
             if (!this.files || !this.files[0]) return;
             const reader = new FileReader();
             reader.onload = function(event) {
-                document.querySelector('.sticky-ad-preview-logo').innerHTML =
-                    '<img src="' + event.target.result + '" alt="Sponsor logo">';
+                updateStickyLogoPreview(event.target.result);
             };
             reader.readAsDataURL(this.files[0]);
         });
