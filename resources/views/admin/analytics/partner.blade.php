@@ -36,6 +36,7 @@
                                     @foreach([
                                         'impressions' => 'Impressions',
                                         'profile_views' => 'Profile views',
+                                        'sponsored_clicks' => 'Sponsored clicks',
                                         'engagements' => 'Customer actions',
                                         'calls' => 'Calls',
                                         'directions' => 'Directions',

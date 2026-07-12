@@ -238,7 +238,8 @@ class AnalyticsController extends Controller
                 'entity_key',
                 DB::raw('MAX(entity_label) AS entity_label'),
                 DB::raw("SUM(CASE WHEN event_name IN ('business_page_viewed','restaurant_details_viewed') THEN event_count ELSE 0 END) AS profile_views"),
-                DB::raw("SUM(CASE WHEN event_name IN ('business_featured_impression','business_directory_impression','restaurant_featured_impression','restaurant_directory_impression') THEN event_count ELSE 0 END) AS impressions"),
+                DB::raw("SUM(CASE WHEN event_name IN ('business_featured_impression','business_directory_impression','restaurant_featured_impression','restaurant_directory_impression','business_sticky_ad_impression','restaurant_sticky_ad_impression') THEN event_count ELSE 0 END) AS impressions"),
+                DB::raw("SUM(CASE WHEN event_name IN ('business_sticky_ad_clicked','restaurant_sticky_ad_clicked') THEN event_count ELSE 0 END) AS sponsored_clicks"),
                 DB::raw("SUM(CASE WHEN event_name IN ('business_action_clicked','restaurant_action_clicked') THEN event_count ELSE 0 END) AS actions"),
                 DB::raw('SUM(event_count) AS total_events'),
             ])
@@ -253,12 +254,14 @@ class AnalyticsController extends Controller
         $viewEvent = $type === 'business' ? 'business_page_viewed' : 'restaurant_details_viewed';
         $actionEvent = $type === 'business' ? 'business_action_clicked' : 'restaurant_action_clicked';
         $impressionEvents = $type === 'business'
-            ? ['business_featured_impression', 'business_directory_impression']
-            : ['restaurant_featured_impression', 'restaurant_directory_impression'];
+            ? ['business_featured_impression', 'business_directory_impression', 'business_sticky_ad_impression']
+            : ['restaurant_featured_impression', 'restaurant_directory_impression', 'restaurant_sticky_ad_impression'];
+        $sponsoredClickEvent = $type.'_sticky_ad_clicked';
 
         $profileViews = (int) (clone $query)->where('event_name', $viewEvent)->sum('event_count');
         $impressions = (int) (clone $query)->whereIn('event_name', $impressionEvents)->sum('event_count');
         $actions = (int) (clone $query)->where('event_name', $actionEvent)->sum('event_count');
+        $sponsoredClicks = (int) (clone $query)->where('event_name', $sponsoredClickEvent)->sum('event_count');
 
         $actionCount = fn (array $names): int => (int) (clone $query)
             ->where('event_name', $actionEvent)
@@ -269,6 +272,7 @@ class AnalyticsController extends Controller
         return [
             'impressions' => $impressions,
             'profile_views' => $profileViews,
+            'sponsored_clicks' => $sponsoredClicks,
             'engagements' => $actions,
             'calls' => $actionCount(['call']),
             'directions' => $actionCount(['directions']),

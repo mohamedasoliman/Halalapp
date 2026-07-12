@@ -121,6 +121,7 @@
                                                         <th>Type</th>
                                                         <th>Impressions</th>
                                                         <th>Profile views</th>
+                                                        <th>Sponsored clicks</th>
                                                         <th>Actions</th>
                                                         <th>Profile conversion</th>
                                                         <th></th>
@@ -134,6 +135,7 @@
                                                             <td><span class="type-badge">{{ ucfirst($partner->entity_type) }}</span></td>
                                                             <td>{{ number_format($partner->impressions) }}</td>
                                                             <td>{{ number_format($partner->profile_views) }}</td>
+                                                            <td>{{ number_format($partner->sponsored_clicks) }}</td>
                                                             <td>{{ number_format($partner->actions) }}</td>
                                                             <td>{{ $conversion }}%</td>
                                                             <td class="text-end">
@@ -144,7 +146,7 @@
                                                             </td>
                                                         </tr>
                                                     @empty
-                                                        <tr><td colspan="7" class="text-center text-muted py-4">Partner activity will appear here after the new app release begins collecting events.</td></tr>
+                                                        <tr><td colspan="8" class="text-center text-muted py-4">Partner activity will appear here after the new app release begins collecting events.</td></tr>
                                                     @endforelse
                                                 </tbody>
                                             </table>

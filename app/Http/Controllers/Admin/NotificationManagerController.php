@@ -21,9 +21,10 @@ class NotificationManagerController extends Controller
     private function loadJson(): array
     {
         $path = $this->jsonPath();
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return [];
         }
+
         return json_decode(File::get($path), true) ?? [];
     }
 
@@ -73,15 +74,26 @@ class NotificationManagerController extends Controller
         $notification['linkTarget'] = $linkTarget;
 
         // Check if notification is active (has text)
-        $notification['active'] = !empty($notification['notificationText']);
+        $notification['active'] = ! empty($notification['notificationText']);
 
         // Load restaurant names for dropdown
         $restaurantNames = [];
         $restaurantJsonPath = public_path('data/HalalRestaurantsList.json');
         if (File::exists($restaurantJsonPath)) {
             $restaurants = json_decode(File::get($restaurantJsonPath), true) ?? [];
-            $restaurantNames = array_filter(array_map(fn($r) => $r['NAME'] ?? null, $restaurants));
+            $restaurantNames = array_filter(array_map(fn ($r) => $r['NAME'] ?? null, $restaurants));
             sort($restaurantNames);
+        }
+
+        $businessNames = [];
+        $businessJsonPath = public_path('data/BusinessList.json');
+        if (File::exists($businessJsonPath)) {
+            $businesses = json_decode(File::get($businessJsonPath), true) ?? [];
+            $businessNames = array_values(array_filter(array_map(
+                fn ($business) => $business['Name'] ?? null,
+                $businesses
+            )));
+            sort($businessNames);
         }
 
         // Load ads and users count
@@ -89,8 +101,30 @@ class NotificationManagerController extends Controller
         $usersCount = $data['users'] ?? '';
         $scanAds = $data['scanAds'] ?? [];
         $scanAdsActive = $data['scanAdsActive'] ?? false;
+        $stickyAd = array_merge([
+            'active' => false,
+            'campaignId' => '',
+            'sponsorName' => '',
+            'message' => '',
+            'logoUrl' => '',
+            'buttonText' => 'View',
+            'destinationType' => 'business',
+            'destinationTarget' => '',
+            'startDate' => '',
+            'endDate' => '',
+            'version' => 0,
+        ], $data['stickyAd'] ?? []);
 
-        return view('admin.notification_manager.index', compact('notification', 'restaurantNames', 'ads', 'usersCount', 'scanAds', 'scanAdsActive'));
+        return view('admin.notification_manager.index', compact(
+            'notification',
+            'restaurantNames',
+            'businessNames',
+            'ads',
+            'usersCount',
+            'scanAds',
+            'scanAdsActive',
+            'stickyAd'
+        ));
     }
 
     public function update(Request $request)
@@ -114,8 +148,8 @@ class NotificationManagerController extends Controller
             // Build the GoRouter path based on link type
             $linkTarget = trim($request->link_target ?? '');
             $data['notificationButton'] = match ($request->link_type) {
-                'product' => '/barcode/product/' . $linkTarget,
-                'restaurant' => '/restaurants/' . rawurlencode($linkTarget),
+                'product' => '/barcode/product/'.$linkTarget,
+                'restaurant' => '/restaurants/'.rawurlencode($linkTarget),
                 'masjid' => '/masjid',
                 'screen' => $linkTarget,
                 'url' => $linkTarget,
@@ -144,7 +178,7 @@ class NotificationManagerController extends Controller
 
         $this->saveJson($data);
 
-        return redirect()->back()->with('success', 'Notification updated successfully. Version: ' . $data['notificationVersion']);
+        return redirect()->back()->with('success', 'Notification updated successfully. Version: '.$data['notificationVersion']);
     }
 
     public function updateAds(Request $request)
@@ -166,7 +200,7 @@ class NotificationManagerController extends Controller
         $linkUrls = $request->ad_link_urls ?? [];
 
         for ($i = 0; $i < count($imageUrls); $i++) {
-            if (!empty($imageUrls[$i])) {
+            if (! empty($imageUrls[$i])) {
                 $ads[] = [
                     'adImageUrl' => $imageUrls[$i],
                     'adLinkUrl' => $linkUrls[$i] ?? '',
@@ -196,7 +230,7 @@ class NotificationManagerController extends Controller
         $data = $this->loadJson();
         $ads = $data['ads'] ?? [];
 
-        if (!isset($ads[$index])) {
+        if (! isset($ads[$index])) {
             return redirect()->back()->with('error', 'Ad not found.');
         }
 
@@ -220,6 +254,67 @@ class NotificationManagerController extends Controller
         return redirect()->back()->with('success', 'Users count updated successfully.');
     }
 
+    public function updateStickyAd(Request $request)
+    {
+        $validated = $request->validate([
+            'active' => ['nullable', 'boolean'],
+            'sponsor_name' => ['required_if:active,1', 'nullable', 'string', 'max:60'],
+            'message' => ['required_if:active,1', 'nullable', 'string', 'max:90'],
+            'button_text' => ['nullable', 'string', 'max:16'],
+            'destination_type' => ['required', 'in:business,restaurant,screen,url'],
+            'destination_target' => ['required_if:active,1', 'nullable', 'string', 'max:500'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'logo' => ['nullable', 'image', 'max:2048'],
+            'remove_logo' => ['nullable', 'boolean'],
+        ]);
+
+        $active = $request->boolean('active');
+        $destinationType = $validated['destination_type'];
+        $destinationTarget = trim($validated['destination_target'] ?? '');
+        if ($active && $destinationType === 'url' && ! filter_var($destinationTarget, FILTER_VALIDATE_URL)) {
+            return redirect()->back()
+                ->withErrors(['destination_target' => 'Enter a valid external URL.'])
+                ->withInput();
+        }
+
+        $data = $this->loadJson();
+        $existing = $data['stickyAd'] ?? [];
+        $logoUrl = $existing['logoUrl'] ?? '';
+
+        if ($request->boolean('remove_logo')) {
+            $logoUrl = '';
+        }
+        if ($request->hasFile('logo')) {
+            $uploadedLogo = $this->uploadAdImage($request->file('logo'));
+            if ($uploadedLogo !== null) {
+                $logoUrl = $uploadedLogo;
+            }
+        }
+
+        $version = ((int) ($existing['version'] ?? 0)) + 1;
+        $data['stickyAd'] = [
+            'active' => $active,
+            'campaignId' => 'sticky-'.$version,
+            'sponsorName' => trim($validated['sponsor_name'] ?? ''),
+            'message' => trim($validated['message'] ?? ''),
+            'logoUrl' => $logoUrl,
+            'buttonText' => trim($validated['button_text'] ?? '') ?: 'View',
+            'destinationType' => $destinationType,
+            'destinationTarget' => $destinationTarget,
+            'startDate' => $validated['start_date'] ?? '',
+            'endDate' => $validated['end_date'] ?? '',
+            'version' => $version,
+        ];
+
+        $this->saveJson($data);
+
+        return redirect()->back()->with(
+            'success',
+            $active ? 'Sticky sponsored banner activated.' : 'Sticky sponsored banner saved as inactive.'
+        );
+    }
+
     public function updateScanAds(Request $request)
     {
         $request->validate([
@@ -240,7 +335,7 @@ class NotificationManagerController extends Controller
         $linkUrls = $request->ad_link_urls ?? [];
 
         for ($i = 0; $i < count($imageUrls); $i++) {
-            if (!empty($imageUrls[$i])) {
+            if (! empty($imageUrls[$i])) {
                 $ads[] = [
                     'adImageUrl' => $imageUrls[$i],
                     'adLinkUrl' => $linkUrls[$i] ?? '',
@@ -269,7 +364,7 @@ class NotificationManagerController extends Controller
         $data = $this->loadJson();
         $ads = $data['scanAds'] ?? [];
 
-        if (!isset($ads[$index])) {
+        if (! isset($ads[$index])) {
             return redirect()->back()->with('error', 'Ad not found.');
         }
 
@@ -284,10 +379,10 @@ class NotificationManagerController extends Controller
     {
         try {
             $ext = $file->getClientOriginalExtension() ?: 'png';
-            $filename = 'ad_' . time() . '_' . mt_rand(100, 999) . '.' . $ext;
+            $filename = 'ad_'.time().'_'.mt_rand(100, 999).'.'.$ext;
 
             $uploadDir = public_path('data/images');
-            if (!is_dir($uploadDir)) {
+            if (! is_dir($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
 
@@ -296,7 +391,7 @@ class NotificationManagerController extends Controller
             // Also copy to public_html on server
             $serverDir = '/home5/halalapp/public_html/data/images';
             if (is_dir('/home5/halalapp/public_html/data')) {
-                if (!is_dir($serverDir)) {
+                if (! is_dir($serverDir)) {
                     @mkdir($serverDir, 0775, true);
                 }
                 @copy("{$uploadDir}/{$filename}", "{$serverDir}/{$filename}");
@@ -312,10 +407,10 @@ class NotificationManagerController extends Controller
     {
         try {
             $ext = $file->getClientOriginalExtension() ?: 'png';
-            $filename = 'notification_' . time() . '.' . $ext;
+            $filename = 'notification_'.time().'.'.$ext;
 
             $uploadDir = public_path('data/images/notifications');
-            if (!is_dir($uploadDir)) {
+            if (! is_dir($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
 
@@ -324,7 +419,7 @@ class NotificationManagerController extends Controller
             // Also copy to public_html on server
             $serverDir = '/home5/halalapp/public_html/data/images/notifications';
             if (is_dir('/home5/halalapp/public_html/data/images')) {
-                if (!is_dir($serverDir)) {
+                if (! is_dir($serverDir)) {
                     @mkdir($serverDir, 0775, true);
                 }
                 @copy("{$uploadDir}/{$filename}", "{$serverDir}/{$filename}");
