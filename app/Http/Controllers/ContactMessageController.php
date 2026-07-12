@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\Api\ContactRequest;
 use App\Mail\ContactUsEmail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class ContactMessageController extends Controller
@@ -21,8 +22,14 @@ class ContactMessageController extends Controller
 
             Mail::to('appsupport@halalkiwi.com')->send(new ContactUsEmail($request, $attachmentPath));
             return response()->json(['message' => 'Mail Sent']);
-        } catch (\Exception $e) {
-            return response()->json($e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Contact email could not be sent.', [
+                'exception' => $e,
+            ]);
+
+            return response()->json([
+                'message' => 'Your message could not be sent. Please try again.',
+            ], 500);
         }
     }
 }
