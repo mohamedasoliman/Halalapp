@@ -41,10 +41,10 @@
                                                     <div class="form-group row">
                                                         <label class="col-sm-3 col-form-label">Active</label>
                                                         <div class="col-sm-9">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input" id="activeToggle" name="active" value="1"
+                                                            <div class="form-check form-switch">
+                                                                <input type="checkbox" class="form-check-input" id="activeToggle" name="active" value="1" role="switch"
                                                                     {{ $notification['active'] ? 'checked' : '' }}>
-                                                                <label class="custom-control-label" for="activeToggle">Show notification dialog to users</label>
+                                                                <label class="form-check-label" for="activeToggle">Show notification dialog to users</label>
                                                             </div>
                                                         </div>
                                                     </div>
