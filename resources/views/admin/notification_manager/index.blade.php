@@ -494,12 +494,18 @@
                                                     @csrf
 
                                                     <div class="form-group mb-3">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="scanAdsToggle" name="scan_ads_active" value="1"
+                                                        <div class="form-check form-switch">
+                                                            <input type="checkbox" class="form-check-input" id="scanAdsToggle" name="scan_ads_active" value="1" role="switch"
                                                                 {{ $scanAdsActive ? 'checked' : '' }}>
-                                                            <label class="custom-control-label" for="scanAdsToggle">Show ads after barcode scan results</label>
+                                                            <label class="form-check-label" for="scanAdsToggle">Show ads after barcode scan results</label>
                                                         </div>
                                                     </div>
+
+                                                    @if($scanAdsActive && count($scanAds) === 0)
+                                                        <div class="alert alert-warning" role="alert">
+                                                            Scan ads are active, but no ad is configured. Add an image below before an ad can appear in the app.
+                                                        </div>
+                                                    @endif
 
                                                     @if(count($scanAds) > 0)
                                                         <div class="table-responsive mb-3">
