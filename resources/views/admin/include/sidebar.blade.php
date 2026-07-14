@@ -112,7 +112,7 @@
 					<li class="@if (\Request::route()->getName() == 'restaurant.tiers') active @endif">
 						<a href="{{ route('restaurant.tiers') }}">
 							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-							<span class="pcoded-mtext">Manage Tiers</span>
+							<span class="pcoded-mtext">Manage Memberships</span>
 						</a>
 					</li>
 				</ul>

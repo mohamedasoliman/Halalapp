@@ -84,6 +84,11 @@ class BrandsOutreach extends Command
 
                     // Notify watchers
                     foreach ($request->watchers as $watcher) {
+                        if ($this->shouldSkipWatcherEmail($watcher->user_email)) {
+                            $this->line("  Skipped placeholder watcher email: {$watcher->user_email}");
+                            continue;
+                        }
+
                         try {
                             Mail::to($watcher->user_email)->send(
                                 new UserNotificationEmail('contacted', $request->product_name ?? 'your requested product', $request->barcode)
@@ -106,5 +111,14 @@ class BrandsOutreach extends Command
         }
 
         return 0;
+    }
+
+    private function shouldSkipWatcherEmail(?string $email): bool
+    {
+        if (!$email) {
+            return true;
+        }
+
+        return str_ends_with(strtolower($email), '@halalkiwi.com');
     }
 }

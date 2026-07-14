@@ -1,4 +1,20 @@
 @extends('admin.layouts.app')
+
+@php
+    $tierButtonClasses = [
+        'free' => 'btn-secondary',
+        'starter' => 'btn-success',
+        'growth' => 'btn-info',
+        'premium' => 'btn-warning',
+    ];
+    $tierBadgeClasses = [
+        'free' => 'badge-free',
+        'starter' => 'badge-starter',
+        'growth' => 'badge-growth',
+        'premium' => 'badge-premium',
+    ];
+@endphp
+
 @section('content')
     <div class="pcoded-main-container">
         @include('admin.include.sidebar')
@@ -9,14 +25,14 @@
                         <div class="page-wrapper">
                             <div class="page-header">
                                 <div class="page-header-title">
-                                    <h4>Restaurant Tiers</h4>
+                                    <h4>Restaurant Memberships</h4>
                                 </div>
                                 <div class="page-header-breadcrumb">
                                     <ul class="breadcrumb-title">
                                         <li class="breadcrumb-item">
                                             <a href="{{ route('admin.dashboard') }}"><i class="icofont icofont-home"></i></a>
                                         </li>
-                                        <li class="breadcrumb-item"><a href="javascript:;">Restaurant Tiers</a></li>
+                                        <li class="breadcrumb-item"><a href="javascript:;">Restaurant Memberships</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -32,22 +48,20 @@
                                                class="btn btn-sm {{ $tierFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }}">
                                                 All <span class="badge bg-light text-dark">{{ $counts['all'] }}</span>
                                             </a>
-                                            <a href="{{ route('restaurant.tiers', ['tier' => 'premium']) }}"
-                                               class="btn btn-sm {{ $tierFilter === 'premium' ? 'btn-warning' : 'btn-outline-warning' }}">
-                                                Premium ($15/wk) <span class="badge bg-light text-dark">{{ $counts['premium'] }}</span>
-                                            </a>
-                                            <a href="{{ route('restaurant.tiers', ['tier' => 'featured']) }}"
-                                               class="btn btn-sm {{ $tierFilter === 'featured' ? 'btn-info' : 'btn-outline-info' }}">
-                                                Featured ($10/wk) <span class="badge bg-light text-dark">{{ $counts['featured'] }}</span>
-                                            </a>
-                                            <a href="{{ route('restaurant.tiers', ['tier' => 'verified']) }}"
-                                               class="btn btn-sm {{ $tierFilter === 'verified' ? 'btn-success' : 'btn-outline-success' }}">
-                                                Verified ($5/wk) <span class="badge bg-light text-dark">{{ $counts['verified'] }}</span>
-                                            </a>
-                                            <a href="{{ route('restaurant.tiers', ['tier' => 'free']) }}"
-                                               class="btn btn-sm {{ $tierFilter === 'free' ? 'btn-secondary' : 'btn-outline-secondary' }}">
-                                                Free <span class="badge bg-light text-dark">{{ $counts['free'] }}</span>
-                                            </a>
+                                            @foreach(['premium', 'growth', 'starter', 'free'] as $filterTier)
+                                                @php
+                                                    $buttonClass = $tierButtonClasses[$filterTier];
+                                                    $option = $tierOptions[$filterTier];
+                                                    $price = $option['weekly_price'] > 0
+                                                        ? ' ($'.$option['weekly_price'].'/wk)'
+                                                        : '';
+                                                @endphp
+                                                <a href="{{ route('restaurant.tiers', ['tier' => $filterTier]) }}"
+                                                   class="btn btn-sm {{ $tierFilter === $filterTier ? $buttonClass : str_replace('btn-', 'btn-outline-', $buttonClass) }}">
+                                                    {{ $option['label'] }}{{ $price }}
+                                                    <span class="badge bg-light text-dark">{{ $counts[$filterTier] }}</span>
+                                                </a>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
@@ -83,28 +97,46 @@
                                                         <th>Restaurant</th>
                                                         <th>Category</th>
                                                         <th>Area</th>
-                                                        <th>Tier</th>
-                                                        <th>Verified</th>
+                                                        <th>Partner Tier</th>
+                                                        <th>Trading Status</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach($restaurants as $r)
                                                         @php
-                                                            $tier = $r['membership_tier'] ?? '';
-                                                            if (empty($tier) || $tier === 'none') $tier = 'free';
-                                                            $tierBadge = match($tier) {
-                                                                'premium' => 'badge-premium',
-                                                                'featured' => 'badge-featured',
-                                                                'verified' => 'badge-verified',
-                                                                default => 'badge-free',
-                                                            };
+                                                            $tier = $r['_tier'] ?? 'free';
+                                                            $tierBadge = $tierBadgeClasses[$tier];
                                                             $address = $r['ADDRESS'] ?? '';
                                                             $area = '';
+                                                            $businessStatus = strtoupper($r['BUSINESS_STATUS'] ?? 'OPERATIONAL');
+                                                            $statusClass = match($businessStatus) {
+                                                                'OPERATIONAL' => 'bg-success',
+                                                                'CLOSED_TEMPORARILY' => 'bg-warning text-dark',
+                                                                'REVIEW_REQUIRED' => 'bg-danger',
+                                                                default => 'bg-secondary',
+                                                            };
+                                                            $statusLabel = match($businessStatus) {
+                                                                'OPERATIONAL' => 'Operational',
+                                                                'CLOSED_TEMPORARILY' => 'Temporarily closed',
+                                                                'REVIEW_REQUIRED' => 'Review required',
+                                                                default => 'Not confirmed',
+                                                            };
                                                             if (str_contains($address, ',')) {
                                                                 $parts = explode(',', $address);
                                                                 $area = trim(end($parts));
                                                             }
+                                                            $dealRows = is_array($r['Deals'] ?? null) ? $r['Deals'] : [];
+                                                            if ($dealRows === [] && !empty($r['DealTitle'])) {
+                                                                $dealRows[] = [
+                                                                    'Title' => $r['DealTitle'],
+                                                                    'Description' => $r['DealDescription'] ?? '',
+                                                                    'Code' => $r['DealCode'] ?? '',
+                                                                    'Expiry' => $r['DealExpiry'] ?? '',
+                                                                ];
+                                                            }
+                                                            $dealRows = array_values($dealRows);
+                                                            while (count($dealRows) < 5) $dealRows[] = [];
                                                         @endphp
                                                         <tr>
                                                             <td>
@@ -115,14 +147,12 @@
                                                             </td>
                                                             <td>{{ $r['CATEGORY'] ?? '-' }}</td>
                                                             <td>{{ $area }}</td>
-                                                            <td><span class="badge {{ $tierBadge }}">{{ ucfirst($tier) }}</span></td>
                                                             <td>
-                                                                @if(!empty($r['is_verified']))
-                                                                    <span class="badge badge-verified">Yes</span>
-                                                                @else
-                                                                    <span class="text-muted">No</span>
-                                                                @endif
+                                                                <span class="badge {{ $tierBadge }}">
+                                                                    {{ $tierOptions[$tier]['label'] }}{{ $tier !== 'free' ? ' Partner' : '' }}
+                                                                </span>
                                                             </td>
+                                                            <td><span class="badge {{ $statusClass }}">{{ $statusLabel }}</span></td>
                                                             <td>
                                                                 <button type="button" class="btn btn-sm btn-primary"
                                                                     data-bs-toggle="modal"
@@ -196,6 +226,35 @@
                                                                                 <label>Certified</label>
                                                                                 <input type="text" name="certified" class="form-control" value="{{ $r['Certified'] ?? '' }}" placeholder="Certification info">
                                                                             </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Trading status</label>
+                                                                                        <select name="business_status" class="form-control" required>
+                                                                                            @foreach([
+                                                                                                'OPERATIONAL' => 'Operational',
+                                                                                                'CLOSED_TEMPORARILY' => 'Temporarily closed',
+                                                                                                'UNKNOWN' => 'Not confirmed',
+                                                                                                'REVIEW_REQUIRED' => 'Conflicting evidence - review required',
+                                                                                            ] as $value => $label)
+                                                                                                <option value="{{ $value }}" @selected($businessStatus === $value)>{{ $label }}</option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Last reviewed</label>
+                                                                                        <input type="date" name="last_reviewed_at" class="form-control" value="{{ $r['LAST_REVIEWED_AT'] ?? '' }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <div class="form-group mb-3">
+                                                                                        <label>Public status note</label>
+                                                                                        <textarea name="status_note" class="form-control" rows="2" maxlength="500">{{ $r['STATUS_NOTE'] ?? '' }}</textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
 
                                                                             <hr>
                                                                             <h6>Opening Hours</h6>
@@ -211,35 +270,75 @@
                                                                             </div>
 
                                                                             <hr>
-                                                                            <h6>Tier & Verification</h6>
+                                                                            <h6>Membership</h6>
                                                                             <div class="row">
-                                                                                <div class="col-md-4">
+                                                                                <div class="col-md-6">
                                                                                     <div class="form-group mb-3">
                                                                                         <label>Membership Tier</label>
-                                                                                        <select name="membership_tier" class="form-control">
-                                                                                            <option value="free" {{ $tier === 'free' ? 'selected' : '' }}>Free</option>
-                                                                                            <option value="verified" {{ $tier === 'verified' ? 'selected' : '' }}>Verified ($5/wk)</option>
-                                                                                            <option value="featured" {{ $tier === 'featured' ? 'selected' : '' }}>Featured ($10/wk)</option>
-                                                                                            <option value="premium" {{ $tier === 'premium' ? 'selected' : '' }}>Premium ($15/wk)</option>
+                                                                                        <select name="tier" class="form-control membership-tier-select">
+                                                                                            @foreach($tierOptions as $value => $option)
+                                                                                                <option value="{{ $value }}" {{ $tier === $value ? 'selected' : '' }}>
+                                                                                                    {{ $option['label'] }}{{ $option['weekly_price'] > 0 ? ' ($'.$option['weekly_price'].'/wk)' : '' }}
+                                                                                                </option>
+                                                                                            @endforeach
                                                                                         </select>
+                                                                                        <small class="text-muted">Paid tiers automatically receive their matching partner badge. Free has no partner badge.</small>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="col-md-4">
-                                                                                    <div class="form-group mb-3">
-                                                                                        <label>Verified</label>
-                                                                                        <select name="is_verified" class="form-control">
-                                                                                            <option value="0" {{ empty($r['is_verified']) ? 'selected' : '' }}>No</option>
-                                                                                            <option value="1" {{ !empty($r['is_verified']) ? 'selected' : '' }}>Yes</option>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-md-4">
+                                                                                <div class="col-md-6">
                                                                                     <div class="form-group mb-3">
                                                                                         <label>Menu URL</label>
-                                                                                        <input type="text" name="menu_url" class="form-control" value="{{ $r['menu_url'] ?? '' }}" placeholder="https://...">
+                                                                                        <input type="url" name="menu_url" class="form-control" data-membership-menu value="{{ $r['menu_url'] ?? $r['MenuUrl'] ?? '' }}" placeholder="https://...">
+                                                                                        <small class="text-muted membership-menu-help">Menus are available on Growth and Premium.</small>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+
+                                                                            <div class="membership-promotion-fields">
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="form-group mb-3">
+                                                                                            <label>Direct enquiry email</label>
+                                                                                            <input type="email" name="enquiry_email" class="form-control" data-membership-enquiry value="{{ $r['EnquiryEmail'] ?? '' }}" placeholder="hello@example.com">
+                                                                                            <small class="text-muted membership-enquiry-help">Direct enquiries are available on Growth and Premium.</small>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <h6>Halal Kiwi Deals</h6>
+                                                                            <p class="text-muted membership-deal-help">Starter allows 1 active deal, Growth 3, and Premium 5.</p>
+                                                                            @foreach($dealRows as $dealIndex => $deal)
+                                                                                <div class="border rounded p-3 mb-3" data-deal-slot="{{ $dealIndex }}">
+                                                                                    <strong>Deal {{ $dealIndex + 1 }}</strong>
+                                                                                    <div class="row mt-2">
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="form-group mb-3">
+                                                                                                <label>Deal title</label>
+                                                                                                <input type="text" name="deals[{{ $dealIndex }}][title]" class="form-control" data-membership-deal maxlength="120" value="{{ $deal['Title'] ?? $deal['title'] ?? '' }}">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-3">
+                                                                                            <div class="form-group mb-3">
+                                                                                                <label>Deal code</label>
+                                                                                                <input type="text" name="deals[{{ $dealIndex }}][code]" class="form-control" data-membership-deal maxlength="50" value="{{ $deal['Code'] ?? $deal['code'] ?? '' }}">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-3">
+                                                                                            <div class="form-group mb-3">
+                                                                                                <label>Deal end date</label>
+                                                                                                <input type="date" name="deals[{{ $dealIndex }}][expiry]" class="form-control" data-membership-deal value="{{ $deal['Expiry'] ?? $deal['expiry'] ?? '' }}">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-12">
+                                                                                            <div class="form-group mb-3">
+                                                                                                <label>Deal details</label>
+                                                                                                <textarea name="deals[{{ $dealIndex }}][description]" class="form-control" data-membership-deal rows="2" maxlength="500">{{ $deal['Description'] ?? $deal['description'] ?? '' }}</textarea>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endforeach
 
                                                                             <hr>
                                                                             <h6>Images</h6>
@@ -257,7 +356,7 @@
 
                                                                             @php
                                                                                 $existingImages = [];
-                                                                                for ($i = 1; $i <= 6; $i++) {
+                                                                                for ($i = 1; $i <= 5; $i++) {
                                                                                     $img = $r["Image_{$i}"] ?? '';
                                                                                     if (!empty($img) && $img !== 'null') $existingImages[] = $img;
                                                                                 }
@@ -274,9 +373,9 @@
                                                                             @endif
 
                                                                             <div class="form-group mb-3">
-                                                                                <label>Upload Images (up to 6)</label>
-                                                                                <input type="file" name="images[]" class="form-control" accept="image/*" multiple>
-                                                                                <small class="text-muted">New uploads will replace existing images starting from Image 1.</small>
+                                                                                <label>Upload Gallery Images</label>
+                                                                                <input type="file" name="images[]" class="form-control" data-membership-gallery accept="image/*" multiple>
+                                                                                <small class="text-muted">Growth allows 3 images. Premium allows 5. Other tiers do not retain gallery images.</small>
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
@@ -363,6 +462,31 @@
                         <label>Certified</label>
                         <input type="text" name="certified" class="form-control" placeholder="Certification info">
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Trading status</label>
+                                <select name="business_status" class="form-control" required>
+                                    <option value="OPERATIONAL">Operational</option>
+                                    <option value="CLOSED_TEMPORARILY">Temporarily closed</option>
+                                    <option value="UNKNOWN">Not confirmed</option>
+                                    <option value="REVIEW_REQUIRED">Conflicting evidence - review required</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Last reviewed</label>
+                                <input type="date" name="last_reviewed_at" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group mb-3">
+                                <label>Public status note</label>
+                                <textarea name="status_note" class="form-control" rows="2" maxlength="500"></textarea>
+                            </div>
+                        </div>
+                    </div>
 
                     <hr>
                     <h6>Opening Hours</h6>
@@ -378,41 +502,86 @@
                     </div>
 
                     <hr>
-                    <h6>Tier & Verification</h6>
+                    <h6>Membership</h6>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Membership Tier</label>
-                                <select name="membership_tier" class="form-control">
-                                    <option value="free">Free</option>
-                                    <option value="verified">Verified ($5/wk)</option>
-                                    <option value="featured">Featured ($10/wk)</option>
-                                    <option value="premium">Premium ($15/wk)</option>
+                                <select name="tier" class="form-control membership-tier-select">
+                                    @foreach($tierOptions as $value => $option)
+                                        <option value="{{ $value }}">
+                                            {{ $option['label'] }}{{ $option['weekly_price'] > 0 ? ' ($'.$option['weekly_price'].'/wk)' : '' }}
+                                        </option>
+                                    @endforeach
                                 </select>
+                                <small class="text-muted">Paid tiers automatically receive their matching partner badge. Free has no partner badge.</small>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-3">
-                                <label>Verified</label>
-                                <select name="is_verified" class="form-control">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Menu URL</label>
-                                <input type="text" name="menu_url" class="form-control" placeholder="https://...">
+                                <input type="url" name="menu_url" class="form-control" data-membership-menu placeholder="https://...">
+                                <small class="text-muted membership-menu-help">Menus are available on Growth and Premium.</small>
                             </div>
                         </div>
                     </div>
 
+                    <div class="membership-promotion-fields">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Direct enquiry email</label>
+                                    <input type="email" name="enquiry_email" class="form-control" data-membership-enquiry placeholder="hello@example.com">
+                                    <small class="text-muted membership-enquiry-help">Direct enquiries are available on Growth and Premium.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6>Halal Kiwi Deals</h6>
+                    <p class="text-muted membership-deal-help">Starter allows 1 active deal, Growth 3, and Premium 5.</p>
+                    @for($dealIndex = 0; $dealIndex < 5; $dealIndex++)
+                        <div class="border rounded p-3 mb-3" data-deal-slot="{{ $dealIndex }}">
+                            <strong>Deal {{ $dealIndex + 1 }}</strong>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label>Deal title</label>
+                                        <input type="text" name="deals[{{ $dealIndex }}][title]" class="form-control" data-membership-deal maxlength="120">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-3">
+                                        <label>Deal code</label>
+                                        <input type="text" name="deals[{{ $dealIndex }}][code]" class="form-control" data-membership-deal maxlength="50">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-3">
+                                        <label>Deal end date</label>
+                                        <input type="date" name="deals[{{ $dealIndex }}][expiry]" class="form-control" data-membership-deal>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group mb-3">
+                                        <label>Deal details</label>
+                                        <textarea name="deals[{{ $dealIndex }}][description]" class="form-control" data-membership-deal rows="2" maxlength="500"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endfor
+
                     <hr>
-                    <h6>Logo</h6>
+                    <h6>Logo & Gallery</h6>
                     <div class="form-group mb-3">
                         <label>Upload Logo</label>
                         <input type="file" name="logo" class="form-control" accept="image/*">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Upload Gallery Images</label>
+                        <input type="file" name="images[]" class="form-control" data-membership-gallery accept="image/*" multiple>
+                        <small class="text-muted">Growth allows 3 images. Premium allows 5.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -429,8 +598,8 @@
     .gap-2 { gap: 8px; }
     .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
     .badge-premium { background: #f39c12; color: #fff; }
-    .badge-featured { background: #3498db; color: #fff; }
-    .badge-verified { background: #27ae60; color: #fff; }
+    .badge-growth { background: #3498db; color: #fff; }
+    .badge-starter { background: #27ae60; color: #fff; }
     .badge-free { background: #bdc3c7; color: #333; }
 </style>
 @endpush
@@ -450,6 +619,53 @@
                 document.body.appendChild(form);
                 form.submit();
             });
+        });
+
+        document.querySelectorAll('.membership-tier-select').forEach(function(select) {
+            var form = select.closest('form');
+            var updateEntitlements = function() {
+                var tier = select.value;
+                var hasEnquiries = tier === 'growth' || tier === 'premium';
+                var hasGallery = hasEnquiries;
+                var hasMenu = hasEnquiries;
+                var dealLimits = { free: 0, starter: 1, growth: 3, premium: 5 };
+                var dealLimit = dealLimits[tier];
+
+                form.querySelectorAll('[data-membership-menu]').forEach(function(input) {
+                    input.disabled = !hasMenu;
+                });
+                form.querySelectorAll('[data-membership-enquiry]').forEach(function(input) {
+                    input.disabled = !hasEnquiries;
+                });
+                form.querySelectorAll('[data-membership-gallery]').forEach(function(input) {
+                    input.disabled = !hasGallery;
+                });
+                form.querySelectorAll('[data-deal-slot]').forEach(function(slot) {
+                    var enabled = Number(slot.dataset.dealSlot) < dealLimit;
+                    slot.hidden = !enabled;
+                    slot.querySelectorAll('[data-membership-deal]').forEach(function(input) {
+                        input.disabled = !enabled;
+                    });
+                });
+                form.querySelectorAll('.membership-enquiry-help').forEach(function(help) {
+                    help.textContent = hasEnquiries
+                        ? 'This tier can receive direct enquiries.'
+                        : 'Direct enquiries are available on Growth and Premium.';
+                });
+                form.querySelectorAll('.membership-deal-help').forEach(function(help) {
+                    help.textContent = dealLimit === 0
+                        ? 'Deals are available on Starter, Growth, and Premium.'
+                        : 'This tier can publish up to ' + dealLimit + ' active deal' + (dealLimit === 1 ? '' : 's') + '. Leave a title empty to remove that slot.';
+                });
+                form.querySelectorAll('.membership-menu-help').forEach(function(help) {
+                    help.textContent = hasMenu
+                        ? 'This tier can publish a menu link.'
+                        : 'Menus are available on Growth and Premium.';
+                });
+            };
+
+            select.addEventListener('change', updateEntitlements);
+            updateEntitlements();
         });
     });
 </script>

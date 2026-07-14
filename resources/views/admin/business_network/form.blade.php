@@ -2,18 +2,34 @@
 
 @php
     $isEdit = $index !== null;
-    $rawTier = strtolower($business['Tier'] ?? 'community');
+    $rawTier = strtolower($business['Tier'] ?? 'free');
     $tier = match($rawTier) {
         'gold', 'premium' => 'premium',
         'silver', 'featured', 'growth' => 'growth',
         'verified', 'starter' => 'starter',
-        default => 'community',
+        default => 'free',
     };
     $hours = $business['hours'] ?? [];
     $active = !array_key_exists('IsActive', $business) || (bool) $business['IsActive'];
     $featuredInCarousel = array_key_exists('FeatureInCarousel', $business)
         ? (bool) $business['FeatureInCarousel']
-        : $tier === 'premium';
+        : in_array($tier, ['growth', 'premium'], true);
+    $isServiceArea = (bool) ($business['IsServiceAreaBusiness'] ?? false);
+    $businessStatus = $business['BusinessStatus'] ?? 'unknown';
+    $dealRows = old('deals');
+    if (!is_array($dealRows)) {
+        $dealRows = is_array($business['Deals'] ?? null) ? $business['Deals'] : [];
+        if ($dealRows === [] && !empty($business['DealTitle'])) {
+            $dealRows[] = [
+                'Title' => $business['DealTitle'],
+                'Description' => $business['DealDescription'] ?? '',
+                'Code' => $business['DealCode'] ?? '',
+                'Expiry' => $business['DealExpiry'] ?? '',
+            ];
+        }
+    }
+    $dealRows = array_values($dealRows);
+    while (count($dealRows) < 5) $dealRows[] = [];
 @endphp
 
 @section('content')
@@ -91,25 +107,29 @@
                                                            value="{{ old('address', $business['Address'] ?? '') }}">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <label for="business_type" class="form-label">Business status *</label>
-                                                    <select id="business_type" name="business_type" class="form-control" required>
-                                                        @foreach([
-                                                            'muslim_owned' => 'Muslim-owned',
-                                                            'halal_certified' => 'Halal-certified',
-                                                            'muslim_friendly' => 'Muslim-friendly',
-                                                            'community_organisation' => 'Mosque or community organisation',
-                                                        ] as $value => $label)
-                                                            <option value="{{ $value }}" @selected(old('business_type', $business['BusinessType'] ?? 'muslim_owned') === $value)>
-                                                                {{ $label }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label for="additional_addresses" class="form-label">Additional locations</label>
+                                                    <textarea id="additional_addresses" name="additional_addresses" class="form-control" rows="3"
+                                                              placeholder="One full address per line">{{ old('additional_addresses', implode("\n", $business['AdditionalAddresses'] ?? [])) }}</textarea>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="google_maps_url" class="form-label">Audited Google Maps URL</label>
+                                                    <input id="google_maps_url" name="google_maps_url" type="url" class="form-control"
+                                                           placeholder="https://maps.google.com/..."
+                                                           value="{{ old('google_maps_url', $business['GoogleMapsUrl'] ?? '') }}">
+                                                    <div class="form-check mt-2">
+                                                        <input type="hidden" name="is_service_area_business" value="0">
+                                                        <input id="is_service_area_business" name="is_service_area_business" type="checkbox" value="1" class="form-check-input"
+                                                               @checked((bool) old('is_service_area_business', $isServiceArea))>
+                                                        <label for="is_service_area_business" class="form-check-label">Service-area business (do not show directions)</label>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label for="menu_url" class="form-label">Menu or services URL</label>
                                                     <input id="menu_url" name="menu_url" type="url" class="form-control"
+                                                           data-membership-menu
                                                            placeholder="https://"
                                                            value="{{ old('menu_url', $business['MenuUrl'] ?? '') }}">
+                                                    <small id="menu-help" class="text-muted">Menus are available on Growth and Premium.</small>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label for="bio" class="form-label">Short summary</label>
@@ -134,6 +154,10 @@
                                                     <input id="phone" name="phone" class="form-control" value="{{ old('phone', $business['Phone'] ?? '') }}">
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <label for="alternate_phone" class="form-label">Alternate phone</label>
+                                                    <input id="alternate_phone" name="alternate_phone" class="form-control" value="{{ old('alternate_phone', $business['AlternatePhone'] ?? '') }}">
+                                                </div>
+                                                <div class="col-md-6">
                                                     <label for="email" class="form-label">Public enquiry email</label>
                                                     <input id="email" name="email" type="email" class="form-control" value="{{ old('email', $business['Email'] ?? '') }}">
                                                 </div>
@@ -154,26 +178,50 @@
                                     </div>
 
                                     <div class="card mb-3">
+                                        <div class="card-header"><h5>Trading status and audit</h5></div>
+                                        <div class="card-block">
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <label for="business_status" class="form-label">Trading status *</label>
+                                                    <select id="business_status" name="business_status" class="form-control" required>
+                                                        @foreach([
+                                                            'operational' => 'Operational',
+                                                            'temporarily_closed' => 'Temporarily closed',
+                                                            'unknown' => 'Not confirmed',
+                                                            'review_required' => 'Conflicting evidence - review required',
+                                                        ] as $value => $label)
+                                                            <option value="{{ $value }}" @selected(old('business_status', $businessStatus) === $value)>{{ $label }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="last_reviewed_at" class="form-label">Last reviewed</label>
+                                                    <input id="last_reviewed_at" name="last_reviewed_at" type="date" class="form-control"
+                                                           value="{{ old('last_reviewed_at', $business['LastReviewedAt'] ?? now()->toDateString()) }}">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="status_note" class="form-label">Public status note</label>
+                                                    <textarea id="status_note" name="status_note" class="form-control" rows="2" maxlength="500">{{ old('status_note', $business['StatusNote'] ?? '') }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-3">
                                         <div class="card-header"><h5>Membership and visibility</h5></div>
                                         <div class="card-block">
                                             <div class="row g-3 align-items-start">
                                                 <div class="col-md-5">
                                                     <label for="tier" class="form-label">MBN tier *</label>
                                                     <select id="tier" name="tier" class="form-control" required>
-                                                        <option value="community" @selected(old('tier', $tier) === 'community')>Community (legacy free listing)</option>
-                                                        <option value="starter" @selected(old('tier', $tier) === 'starter')>Starter ($5/week) - logo only</option>
+                                                        <option value="free" @selected(old('tier', $tier) === 'free')>Free ($0/week)</option>
+                                                        <option value="starter" @selected(old('tier', $tier) === 'starter')>Starter ($5/week) - partner priority</option>
                                                         <option value="growth" @selected(old('tier', $tier) === 'growth')>Growth ($15/week) - up to 3 photos</option>
                                                         <option value="premium" @selected(old('tier', $tier) === 'premium')>Premium ($30/week) - up to 5 photos</option>
                                                     </select>
                                                     <small id="tier-help" class="text-muted d-block mt-2"></small>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <div class="form-check mb-2">
-                                                        <input type="hidden" name="verified" value="0">
-                                                        <input id="verified" name="verified" type="checkbox" value="1" class="form-check-input"
-                                                               @checked((bool) old('verified', $business['Verified'] ?? false))>
-                                                        <label for="verified" class="form-check-label">Show Halal Kiwi verified badge</label>
-                                                    </div>
                                                     <div class="form-check mb-2">
                                                         <input type="hidden" name="is_active" value="0">
                                                         <input id="is_active" name="is_active" type="checkbox" value="1" class="form-check-input"
@@ -235,31 +283,36 @@
                                     </div>
 
                                     <div class="card mb-3">
-                                        <div class="card-header"><h5>Halal Kiwi Deal</h5></div>
+                                        <div class="card-header"><h5>Halal Kiwi Deals</h5></div>
                                         <div class="card-block">
-                                            <p class="text-muted">Leave the title empty when the business has no active offer.</p>
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label for="deal_title" class="form-label">Offer title</label>
-                                                    <input id="deal_title" name="deal_title" class="form-control" maxlength="120"
-                                                           placeholder="20% off your first service"
-                                                           value="{{ old('deal_title', $business['DealTitle'] ?? '') }}">
+                                            <p id="deal-help" class="text-muted">Starter allows 1 active deal, Growth 3, and Premium 5.</p>
+                                            @foreach($dealRows as $dealIndex => $deal)
+                                                <div class="border rounded p-3 mb-3" data-deal-slot="{{ $dealIndex }}">
+                                                    <h6>Deal {{ $dealIndex + 1 }}</h6>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                            <label for="deals_{{ $dealIndex }}_title" class="form-label">Offer title</label>
+                                                            <input id="deals_{{ $dealIndex }}_title" name="deals[{{ $dealIndex }}][title]" class="form-control" data-membership-deal maxlength="120"
+                                                                   placeholder="20% off your first service"
+                                                                   value="{{ old("deals.{$dealIndex}.title", $deal['Title'] ?? $deal['title'] ?? '') }}">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label for="deals_{{ $dealIndex }}_code" class="form-label">Promo code</label>
+                                                            <input id="deals_{{ $dealIndex }}_code" name="deals[{{ $dealIndex }}][code]" class="form-control" data-membership-deal maxlength="50"
+                                                                   value="{{ old("deals.{$dealIndex}.code", $deal['Code'] ?? $deal['code'] ?? '') }}">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label for="deals_{{ $dealIndex }}_expiry" class="form-label">End date</label>
+                                                            <input id="deals_{{ $dealIndex }}_expiry" name="deals[{{ $dealIndex }}][expiry]" type="date" class="form-control" data-membership-deal
+                                                                   value="{{ old("deals.{$dealIndex}.expiry", $deal['Expiry'] ?? $deal['expiry'] ?? '') }}">
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <label for="deals_{{ $dealIndex }}_description" class="form-label">Offer details</label>
+                                                            <textarea id="deals_{{ $dealIndex }}_description" name="deals[{{ $dealIndex }}][description]" class="form-control" data-membership-deal rows="2" maxlength="500">{{ old("deals.{$dealIndex}.description", $deal['Description'] ?? $deal['description'] ?? '') }}</textarea>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <label for="deal_code" class="form-label">Promo code</label>
-                                                    <input id="deal_code" name="deal_code" class="form-control" maxlength="50"
-                                                           value="{{ old('deal_code', $business['DealCode'] ?? '') }}">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label for="deal_expiry" class="form-label">End date</label>
-                                                    <input id="deal_expiry" name="deal_expiry" type="date" class="form-control"
-                                                           value="{{ old('deal_expiry', $business['DealExpiry'] ?? '') }}">
-                                                </div>
-                                                <div class="col-12">
-                                                    <label for="deal_description" class="form-label">Offer details</label>
-                                                    <textarea id="deal_description" name="deal_description" class="form-control" rows="2" maxlength="500">{{ old('deal_description', $business['DealDescription'] ?? '') }}</textarea>
-                                                </div>
-                                            </div>
+                                            @endforeach
                                         </div>
                                     </div>
 
@@ -320,18 +373,42 @@
             var galleryInput = document.getElementById('images');
             var galleryHelp = document.getElementById('gallery-help');
             var tierHelp = document.getElementById('tier-help');
+            var carouselInput = document.getElementById('feature_in_carousel');
+            var menuInput = document.getElementById('menu_url');
+            var menuHelp = document.getElementById('menu-help');
+            var dealHelp = document.getElementById('deal-help');
+            var dealSlots = document.querySelectorAll('[data-deal-slot]');
 
             function updateTierRules() {
                 var tier = tierSelect.value;
-                var limits = { community: 0, starter: 0, growth: 3, premium: 5 };
+                var limits = { free: 0, starter: 0, growth: 3, premium: 5 };
+                var dealLimits = { free: 0, starter: 1, growth: 3, premium: 5 };
                 var limit = limits[tier];
+                var dealLimit = dealLimits[tier];
+                var hasPromotions = tier === 'growth' || tier === 'premium';
+                var hasMenu = tier === 'growth' || tier === 'premium';
                 galleryInput.disabled = limit === 0;
+                carouselInput.disabled = !hasPromotions;
+                menuInput.disabled = !hasMenu;
+                dealSlots.forEach(function (slot) {
+                    var enabled = Number(slot.dataset.dealSlot) < dealLimit;
+                    slot.hidden = !enabled;
+                    slot.querySelectorAll('[data-membership-deal]').forEach(function (input) {
+                        input.disabled = !enabled;
+                    });
+                });
                 galleryHelp.textContent = limit === 0
                     ? 'This tier uses one logo only and has no gallery photos.'
                     : 'You can upload up to ' + limit + ' gallery photos for this tier.';
-                tierHelp.textContent = tier === 'community'
-                    ? 'Legacy directory listing without a paid MBN badge.'
-                    : tier.charAt(0).toUpperCase() + tier.slice(1) + ' listings receive an Official Halal Kiwi Partner badge.';
+                tierHelp.textContent = tier === 'free'
+                    ? 'Standard listing with complete public business details and no partner badge.'
+                    : tier.charAt(0).toUpperCase() + tier.slice(1) + ' listings automatically receive their matching Halal Kiwi Partner badge.';
+                dealHelp.textContent = dealLimit === 0
+                    ? 'Deals are available on Starter, Growth, and Premium tiers.'
+                    : 'This tier can publish up to ' + dealLimit + ' active deal' + (dealLimit === 1 ? '' : 's') + '. Leave a title empty to remove that slot.';
+                menuHelp.textContent = hasMenu
+                    ? 'This tier can publish a menu or services link.'
+                    : 'Menus are available on Growth and Premium tiers.';
             }
 
             tierSelect.addEventListener('change', updateTierRules);

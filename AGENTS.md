@@ -2,6 +2,12 @@
 
 Guidance for Codex when working in `AdminPanelFinal/Halalapp/`.
 
+## CLAUDE.md Alignment
+
+- If this repo/folder has a local `CLAUDE.md`, read and follow it first.
+- If no local `CLAUDE.md` exists, use `../../CLAUDE.md` as the fallback reference.
+- If `AGENTS.md` and `CLAUDE.md` conflict, follow the more specific instruction for this folder and flag the conflict in your response.
+
 ## Project Snapshot
 
 - App: HalalApp admin panel + API
@@ -32,6 +38,7 @@ php artisan test
 
 - `halal_status`: `0 = Halal`, `1 = Not Halal`, `2 = Unreviewed`
 - Use strict PHP checks (`=== '0'`), never loose comparisons for status
+- Watcher/user emails ending in `@halalkiwi.com` are placeholders for users who did not provide an email; do not send user notifications to them
 - Present findings and get explicit approval before destructive DB changes
 - HostGator cannot perform outgoing HTTP reliably; plan tasks accordingly
 

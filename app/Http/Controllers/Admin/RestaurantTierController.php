@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\MembershipDeal;
+use App\Support\MembershipTier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
 
 class RestaurantTierController extends Controller
 {
@@ -21,9 +24,10 @@ class RestaurantTierController extends Controller
     private function loadRestaurants(): array
     {
         $path = $this->jsonPath();
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return [];
         }
+
         return json_decode(File::get($path), true) ?? [];
     }
 
@@ -40,56 +44,61 @@ class RestaurantTierController extends Controller
 
     public function index(Request $request)
     {
-        $restaurants = $this->loadRestaurants();
-        $tierFilter = $request->get('tier', 'all');
-        $search = $request->get('search', '');
+        $allRestaurants = $this->loadRestaurants();
+        $requestedTier = strtolower(trim((string) $request->get('tier', 'all')));
+        $tierFilter = in_array($requestedTier, MembershipTier::VALUES, true)
+            ? $requestedTier
+            : 'all';
+        $search = trim((string) $request->get('search', ''));
+        $counts = array_fill_keys(['all', ...MembershipTier::VALUES], 0);
+        $restaurants = [];
 
-        // Add index for identification
-        foreach ($restaurants as $i => &$r) {
-            $r['_index'] = $i;
-        }
-        unset($r);
-
-        // Apply search filter
-        if (!empty($search)) {
-            $searchLower = strtolower($search);
-            $restaurants = array_filter($restaurants, function ($r) use ($searchLower) {
-                return str_contains(strtolower($r['NAME'] ?? ''), $searchLower)
-                    || str_contains(strtolower($r['CATEGORY'] ?? ''), $searchLower)
-                    || str_contains(strtolower($r['ADDRESS'] ?? ''), $searchLower);
-            });
-        }
-
-        if ($tierFilter !== 'all') {
-            $restaurants = array_filter($restaurants, function ($r) use ($tierFilter) {
-                $tier = $r['membership_tier'] ?? 'free';
-                if ($tierFilter === 'free') {
-                    return empty($tier) || $tier === 'free' || $tier === 'none';
-                }
-                return $tier === $tierFilter;
-            });
-        }
-
-        $counts = ['all' => 0, 'free' => 0, 'verified' => 0, 'featured' => 0, 'premium' => 0];
-        foreach ($this->loadRestaurants() as $r) {
+        foreach ($allRestaurants as $index => $restaurant) {
+            $tier = $this->restaurantTier($restaurant);
             $counts['all']++;
-            $tier = $r['membership_tier'] ?? 'free';
-            if (empty($tier) || $tier === 'none' || $tier === 'free') {
-                $counts['free']++;
-            } elseif (isset($counts[$tier])) {
-                $counts[$tier]++;
+            $counts[$tier]++;
+
+            if ($tierFilter !== 'all' && $tier !== $tierFilter) {
+                continue;
             }
+
+            if ($search !== '' && ! $this->matchesSearch($restaurant, $search)) {
+                continue;
+            }
+
+            $restaurant['_index'] = $index;
+            $restaurant['_tier'] = $tier;
+            $restaurants[] = $restaurant;
         }
 
-        return view('admin.restaurant_tiers.index', compact('restaurants', 'counts', 'tierFilter', 'search'));
+        $tierOptions = $this->tierOptions();
+
+        return view('admin.restaurant_tiers.index', compact(
+            'restaurants',
+            'counts',
+            'tierFilter',
+            'tierOptions',
+            'search'
+        ));
     }
 
     public function update(Request $request, int $index)
     {
         $request->validate([
-            'membership_tier' => 'required|in:free,verified,featured,premium',
-            'is_verified' => 'required|in:0,1',
-            'menu_url' => 'nullable|string|max:500',
+            'tier' => ['required', Rule::in(MembershipTier::VALUES)],
+            'menu_url' => 'nullable|url|max:500',
+            'enquiry_email' => 'nullable|email|max:255',
+            'deal_title' => 'nullable|string|max:120',
+            'deal_description' => 'nullable|string|max:500',
+            'deal_code' => 'nullable|string|max:50',
+            'deal_expiry' => 'nullable|date',
+            'deals' => 'nullable|array|max:5',
+            'deals.*' => 'array',
+            'deals.*.title' => 'nullable|string|max:120',
+            'deals.*.description' => 'nullable|string|max:500',
+            'deals.*.code' => 'nullable|string|max:50',
+            'deals.*.expiry' => 'nullable|date',
+            'images' => 'nullable|array|max:5',
             'images.*' => 'nullable|image|max:5120',
             'logo' => 'nullable|image|max:5120',
             'name' => 'nullable|string|max:255',
@@ -100,6 +109,14 @@ class RestaurantTierController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'certified' => 'nullable|string|max:255',
+            'business_status' => ['required', Rule::in([
+                'OPERATIONAL',
+                'CLOSED_TEMPORARILY',
+                'UNKNOWN',
+                'REVIEW_REQUIRED',
+            ])],
+            'status_note' => 'nullable|string|max:500',
+            'last_reviewed_at' => 'nullable|date',
             'monday' => 'nullable|string|max:100',
             'tuesday' => 'nullable|string|max:100',
             'wednesday' => 'nullable|string|max:100',
@@ -111,7 +128,7 @@ class RestaurantTierController extends Controller
 
         $restaurants = $this->loadRestaurants();
 
-        if (!isset($restaurants[$index])) {
+        if (! isset($restaurants[$index])) {
             return redirect()->back()->with('error', 'Restaurant not found.');
         }
 
@@ -140,6 +157,9 @@ class RestaurantTierController extends Controller
         if ($request->has('certified')) {
             $restaurants[$index]['Certified'] = $request->certified ?? '';
         }
+        $restaurants[$index]['BUSINESS_STATUS'] = $request->business_status;
+        $restaurants[$index]['STATUS_NOTE'] = trim((string) $request->status_note);
+        $restaurants[$index]['LAST_REVIEWED_AT'] = $request->last_reviewed_at ?? '';
 
         // Update opening hours
         $days = ['monday' => 'MONDAY', 'tuesday' => 'TUESDAY', 'wednesday' => 'WEDNESDAY', 'thursday' => 'THURSDAY', 'friday' => 'FRIDAY', 'saturday' => 'SATURDAY', 'sunday' => 'SUNDAY'];
@@ -149,15 +169,12 @@ class RestaurantTierController extends Controller
             }
         }
 
-        $tier = $request->membership_tier;
-        $restaurants[$index]['membership_tier'] = $tier === 'free' ? '' : $tier;
-        $restaurants[$index]['is_verified'] = (int) $request->is_verified;
+        $tier = MembershipTier::normalise($request->tier);
+        $this->applyMembershipTier($restaurants[$index], $tier);
 
-        if ($request->menu_url) {
-            $restaurants[$index]['menu_url'] = $request->menu_url;
-        } else {
-            unset($restaurants[$index]['menu_url']);
-        }
+        $this->applyMenuField($restaurants[$index], $request, $tier);
+        $this->applyDealFields($restaurants[$index], $request, $tier);
+        $this->applyEnquiryField($restaurants[$index], $request, $tier);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
@@ -167,22 +184,13 @@ class RestaurantTierController extends Controller
             }
         }
 
-        // Handle image uploads (up to 6)
-        if ($request->hasFile('images')) {
-            $imgNum = 1;
-            foreach ($request->file('images') as $image) {
-                if ($imgNum > 6) break;
-                $imgUrl = $this->uploadImage($image, $restaurants[$index]['NAME'] ?? 'restaurant', "img{$imgNum}");
-                if ($imgUrl) {
-                    $restaurants[$index]["Image_{$imgNum}"] = $imgUrl;
-                }
-                $imgNum++;
-            }
-        }
+        $this->applyUploadedImages($restaurants[$index], $request, $tier);
+        $this->enforceGalleryLimit($restaurants[$index], $tier);
 
         $this->saveRestaurants($restaurants);
 
         $name = $restaurants[$index]['NAME'] ?? 'Restaurant';
+
         return redirect()->back()->with('success', "{$name} updated.");
     }
 
@@ -197,9 +205,29 @@ class RestaurantTierController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'certified' => 'nullable|string|max:255',
-            'membership_tier' => 'required|in:free,verified,featured,premium',
-            'is_verified' => 'required|in:0,1',
-            'menu_url' => 'nullable|string|max:500',
+            'business_status' => ['required', Rule::in([
+                'OPERATIONAL',
+                'CLOSED_TEMPORARILY',
+                'UNKNOWN',
+                'REVIEW_REQUIRED',
+            ])],
+            'status_note' => 'nullable|string|max:500',
+            'last_reviewed_at' => 'nullable|date',
+            'tier' => ['required', Rule::in(MembershipTier::VALUES)],
+            'menu_url' => 'nullable|url|max:500',
+            'enquiry_email' => 'nullable|email|max:255',
+            'deal_title' => 'nullable|string|max:120',
+            'deal_description' => 'nullable|string|max:500',
+            'deal_code' => 'nullable|string|max:50',
+            'deal_expiry' => 'nullable|date',
+            'deals' => 'nullable|array|max:5',
+            'deals.*' => 'array',
+            'deals.*.title' => 'nullable|string|max:120',
+            'deals.*.description' => 'nullable|string|max:500',
+            'deals.*.code' => 'nullable|string|max:50',
+            'deals.*.expiry' => 'nullable|date',
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'nullable|image|max:5120',
             'monday' => 'nullable|string|max:100',
             'tuesday' => 'nullable|string|max:100',
             'wednesday' => 'nullable|string|max:100',
@@ -212,7 +240,7 @@ class RestaurantTierController extends Controller
 
         $restaurants = $this->loadRestaurants();
 
-        $tier = $request->membership_tier;
+        $tier = MembershipTier::normalise($request->tier);
         $restaurant = [
             'CATEGORY' => $request->category ?? '',
             'NAME' => $request->name,
@@ -230,13 +258,16 @@ class RestaurantTierController extends Controller
             'WEBSITEURL' => $request->website ?? '',
             'LOGOURL' => '',
             'Certified' => $request->certified ?? '',
-            'membership_tier' => $tier === 'free' ? '' : $tier,
-            'is_verified' => (int) $request->is_verified,
+            'BUSINESS_STATUS' => $request->business_status,
+            'STATUS_NOTE' => trim((string) $request->status_note),
+            'LAST_REVIEWED_AT' => $request->last_reviewed_at ?? '',
+            'Tier' => MembershipTier::label($tier),
+            'membership_tier' => MembershipTier::legacyRestaurantValue($tier),
         ];
 
-        if ($request->menu_url) {
-            $restaurant['menu_url'] = $request->menu_url;
-        }
+        $this->applyMenuField($restaurant, $request, $tier);
+        $this->applyDealFields($restaurant, $request, $tier);
+        $this->applyEnquiryField($restaurant, $request, $tier);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {
@@ -245,6 +276,9 @@ class RestaurantTierController extends Controller
                 $restaurant['LOGOURL'] = $logoUrl;
             }
         }
+
+        $this->applyUploadedImages($restaurant, $request, $tier);
+        $this->enforceGalleryLimit($restaurant, $tier);
 
         $restaurants[] = $restaurant;
         $this->saveRestaurants($restaurants);
@@ -256,7 +290,7 @@ class RestaurantTierController extends Controller
     {
         $restaurants = $this->loadRestaurants();
 
-        if (!isset($restaurants[$index])) {
+        if (! isset($restaurants[$index])) {
             return redirect()->back()->with('error', 'Restaurant not found.');
         }
 
@@ -265,6 +299,120 @@ class RestaurantTierController extends Controller
         $this->saveRestaurants($restaurants);
 
         return redirect()->back()->with('success', "{$name} deleted successfully.");
+    }
+
+    private function restaurantTier(array $restaurant): string
+    {
+        $canonicalTier = trim((string) ($restaurant['Tier'] ?? ''));
+
+        return MembershipTier::normalise(
+            $canonicalTier !== ''
+                ? $canonicalTier
+                : ($restaurant['membership_tier'] ?? null)
+        );
+    }
+
+    private function applyMembershipTier(array &$restaurant, string $tier): void
+    {
+        $restaurant['Tier'] = MembershipTier::label($tier);
+        $restaurant['membership_tier'] = MembershipTier::legacyRestaurantValue($tier);
+        unset($restaurant['is_verified']);
+    }
+
+    private function matchesSearch(array $restaurant, string $search): bool
+    {
+        $haystack = implode(' ', [
+            $restaurant['NAME'] ?? '',
+            $restaurant['CATEGORY'] ?? '',
+            $restaurant['ADDRESS'] ?? '',
+        ]);
+
+        return str_contains(mb_strtolower($haystack), mb_strtolower($search));
+    }
+
+    private function tierOptions(): array
+    {
+        $options = [];
+
+        foreach (MembershipTier::VALUES as $tier) {
+            $options[$tier] = [
+                'label' => MembershipTier::label($tier),
+                'weekly_price' => MembershipTier::weeklyPrice($tier),
+                'gallery_limit' => MembershipTier::galleryLimit($tier),
+                'deal_limit' => MembershipTier::dealLimit($tier),
+                'can_publish_menu' => MembershipTier::canPublishMenu($tier),
+                'can_publish_deal' => MembershipTier::canPublishDeal($tier),
+                'can_receive_enquiries' => MembershipTier::canReceiveEnquiries($tier),
+            ];
+        }
+
+        return $options;
+    }
+
+    private function applyUploadedImages(array &$restaurant, Request $request, string $tier): void
+    {
+        $limit = MembershipTier::galleryLimit($tier);
+        if ($limit === 0 || ! $request->hasFile('images')) {
+            return;
+        }
+
+        foreach (array_slice($request->file('images'), 0, $limit) as $position => $image) {
+            $imageNumber = $position + 1;
+            $imageUrl = $this->uploadImage(
+                $image,
+                $restaurant['NAME'] ?? 'restaurant',
+                "img{$imageNumber}"
+            );
+
+            if ($imageUrl) {
+                $restaurant["Image_{$imageNumber}"] = $imageUrl;
+            }
+        }
+    }
+
+    private function applyMenuField(array &$restaurant, Request $request, string $tier): void
+    {
+        if (MembershipTier::canPublishMenu($tier) && $request->filled('menu_url')) {
+            $restaurant['menu_url'] = trim((string) $request->menu_url);
+            unset($restaurant['MenuUrl']);
+
+            return;
+        }
+
+        unset($restaurant['menu_url'], $restaurant['MenuUrl']);
+    }
+
+    private function applyDealFields(array &$restaurant, Request $request, string $tier): void
+    {
+        MembershipDeal::applyToRecord(
+            $restaurant,
+            MembershipDeal::fromRequest($request->all(), $tier),
+            $tier
+        );
+    }
+
+    private function applyEnquiryField(array &$restaurant, Request $request, string $tier): void
+    {
+        if (MembershipTier::canReceiveEnquiries($tier) && $request->filled('enquiry_email')) {
+            $restaurant['EnquiryEmail'] = trim((string) $request->enquiry_email);
+        } else {
+            unset($restaurant['EnquiryEmail'], $restaurant['enquiry_email']);
+        }
+    }
+
+    private function enforceGalleryLimit(array &$restaurant, string $tier): void
+    {
+        $limit = MembershipTier::galleryLimit($tier);
+
+        foreach (array_keys($restaurant) as $key) {
+            if (preg_match('/^Image_(\d+)$/', $key, $matches) !== 1) {
+                continue;
+            }
+
+            if ((int) $matches[1] > $limit) {
+                unset($restaurant[$key]);
+            }
+        }
     }
 
     private function uploadImage($file, string $restaurantName, string $suffix): ?string
@@ -276,7 +424,7 @@ class RestaurantTierController extends Controller
 
             // Store in public upload directory
             $uploadDir = public_path('upload/resturant');
-            if (!is_dir($uploadDir)) {
+            if (! is_dir($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
 
@@ -285,7 +433,7 @@ class RestaurantTierController extends Controller
             // Also copy to public_html on server
             $serverDir = '/home5/halalapp/public_html/upload/resturant';
             if (is_dir('/home5/halalapp/public_html/upload')) {
-                if (!is_dir($serverDir)) {
+                if (! is_dir($serverDir)) {
                     @mkdir($serverDir, 0775, true);
                 }
                 @copy("{$uploadDir}/{$filename}", "{$serverDir}/{$filename}");

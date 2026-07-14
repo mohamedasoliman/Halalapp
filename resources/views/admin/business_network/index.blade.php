@@ -33,7 +33,7 @@
                                                 'premium' => 'Premium ($30/wk)',
                                                 'growth' => 'Growth ($15/wk)',
                                                 'starter' => 'Starter ($5/wk)',
-                                                'community' => 'Community',
+                                                'free' => 'Free',
                                             ] as $tierKey => $tierLabel)
                                                 <a href="{{ route('business-network.index', ['tier' => $tierKey]) }}"
                                                    class="btn btn-sm {{ $tierFilter === $tierKey ? 'btn-primary' : 'btn-outline-primary' }}">
@@ -101,9 +101,22 @@
                                                                 'premium' => 'tier-premium',
                                                                 'growth' => 'tier-growth',
                                                                 'starter' => 'tier-starter',
-                                                                default => 'tier-community',
+                                                                default => 'tier-free',
                                                             };
                                                             $active = !array_key_exists('IsActive', $business) || (bool) $business['IsActive'];
+                                                            $businessStatus = $business['BusinessStatus'] ?? 'unknown';
+                                                            $statusClass = match($businessStatus) {
+                                                                'operational' => 'bg-success',
+                                                                'temporarily_closed' => 'bg-warning text-dark',
+                                                                'review_required' => 'bg-danger',
+                                                                default => 'bg-secondary',
+                                                            };
+                                                            $statusLabel = match($businessStatus) {
+                                                                'operational' => 'Operational',
+                                                                'temporarily_closed' => 'Temporarily closed',
+                                                                'review_required' => 'Review required',
+                                                                default => 'Not confirmed',
+                                                            };
                                                         @endphp
                                                         <tr>
                                                             <td>
@@ -127,14 +140,16 @@
                                                                 {{ $business['Category'] ?? '-' }}
                                                                 <div class="text-muted small">{{ $business['SubCategory'] ?? '' }}</div>
                                                             </td>
-                                                            <td><span class="tier-badge {{ $tierClass }}">{{ ucfirst($tier) }}</span></td>
+                                                            <td>
+                                                                <span class="tier-badge {{ $tierClass }}">
+                                                                    {{ ucfirst($tier) }}{{ $tier !== 'free' ? ' Partner' : '' }}
+                                                                </span>
+                                                            </td>
                                                             <td>
                                                                 <span class="badge {{ $active ? 'bg-success' : 'bg-secondary' }}">
                                                                     {{ $active ? 'Active' : 'Hidden' }}
                                                                 </span>
-                                                                @if(!empty($business['Verified']))
-                                                                    <div class="mt-1"><span class="badge bg-info">Verified</span></div>
-                                                                @endif
+                                                                <div class="mt-1"><span class="badge {{ $statusClass }}">{{ $statusLabel }}</span></div>
                                                                 @if(!empty($business['FeatureInCarousel']) || (!array_key_exists('FeatureInCarousel', $business) && $tier === 'premium'))
                                                                     <div class="mt-1"><span class="badge bg-warning text-dark">Featured</span></div>
                                                                 @endif
@@ -201,11 +216,11 @@
             overflow: hidden;
             width: 48px;
         }
-        .business-logo img { height: 100%; object-fit: cover; width: 100%; }
+        .business-logo img { height: 100%; object-fit: contain; padding: 4px; width: 100%; }
         .tier-badge { border-radius: 4px; display: inline-block; font-size: 12px; font-weight: 700; padding: 5px 9px; }
         .tier-premium { background: #fff3cd; color: #755800; }
         .tier-growth { background: #dbeafe; color: #174f7a; }
         .tier-starter { background: #d8f1ec; color: #024543; }
-        .tier-community { background: #e9ecef; color: #495057; }
+        .tier-free { background: #e9ecef; color: #495057; }
     </style>
 @endpush

@@ -74,7 +74,10 @@ class RequestsResolve extends Command
         }
 
         // 4. Notify unique watchers
-        $uniqueEmails = $watcherEmails->unique()->filter();
+        $uniqueEmails = $watcherEmails
+            ->unique()
+            ->filter(fn ($email) => !$this->shouldSkipWatcherEmail($email));
+
         $this->info("Resolved {$requests->count()} request(s). Notifying {$uniqueEmails->count()} user(s).");
 
         foreach ($uniqueEmails as $email) {
@@ -90,5 +93,14 @@ class RequestsResolve extends Command
 
         $this->info('Done.');
         return 0;
+    }
+
+    private function shouldSkipWatcherEmail(?string $email): bool
+    {
+        if (!$email) {
+            return true;
+        }
+
+        return str_ends_with(strtolower($email), '@halalkiwi.com');
     }
 }

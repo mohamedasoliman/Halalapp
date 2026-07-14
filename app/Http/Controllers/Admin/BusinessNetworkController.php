@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\MembershipDeal;
+use App\Support\MembershipTier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class BusinessNetworkController extends Controller
 {
-    private const TIERS = ['community', 'starter', 'growth', 'premium'];
-
     public function __construct()
     {
         $this->middleware('auth:admin');
@@ -21,7 +22,7 @@ class BusinessNetworkController extends Controller
         $allBusinesses = $this->loadBusinesses();
         $tierFilter = $request->string('tier', 'all')->toString();
         $search = trim($request->string('search')->toString());
-        $counts = array_fill_keys(['all', ...self::TIERS], 0);
+        $counts = array_fill_keys(['all', ...MembershipTier::VALUES], 0);
 
         foreach ($allBusinesses as $business) {
             $counts['all']++;
@@ -45,8 +46,8 @@ class BusinessNetworkController extends Controller
         }
 
         usort($businesses, function (array $a, array $b): int {
-            $order = ['premium' => 0, 'growth' => 1, 'starter' => 2, 'community' => 3];
-            $tierComparison = $order[$a['_tier']] <=> $order[$b['_tier']];
+            $tierComparison = MembershipTier::sortOrder($a['_tier'])
+                <=> MembershipTier::sortOrder($b['_tier']);
 
             return $tierComparison !== 0
                 ? $tierComparison
@@ -133,22 +134,27 @@ class BusinessNetworkController extends Controller
             'category' => ['required', 'string', 'max:100'],
             'sub_category' => ['required', 'string', 'max:100'],
             'address' => ['nullable', 'string', 'max:500'],
+            'additional_addresses' => ['nullable', 'string', 'max:2000'],
             'phone' => ['nullable', 'string', 'max:100'],
+            'alternate_phone' => ['nullable', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:255'],
             'website' => ['nullable', 'url', 'max:500'],
+            'google_maps_url' => ['nullable', 'url', 'max:500'],
             'instagram' => ['nullable', 'url', 'max:500'],
             'facebook' => ['nullable', 'url', 'max:500'],
             'bio' => ['nullable', 'string', 'max:300'],
             'description' => ['nullable', 'string', 'max:3000'],
-            'business_type' => ['required', Rule::in([
-                'muslim_owned',
-                'halal_certified',
-                'muslim_friendly',
-                'community_organisation',
-            ])],
-            'tier' => ['required', Rule::in(self::TIERS)],
-            'verified' => ['required', 'boolean'],
+            'tier' => ['required', Rule::in(MembershipTier::VALUES)],
             'is_active' => ['required', 'boolean'],
+            'is_service_area_business' => ['required', 'boolean'],
+            'business_status' => ['required', Rule::in([
+                'operational',
+                'temporarily_closed',
+                'unknown',
+                'review_required',
+            ])],
+            'status_note' => ['nullable', 'string', 'max:500'],
+            'last_reviewed_at' => ['nullable', 'date'],
             'feature_in_carousel' => ['required', 'boolean'],
             'permission_granted' => [$creating ? 'accepted' : 'nullable', 'boolean'],
             'logo' => ['nullable', 'image', 'max:5120'],
@@ -160,6 +166,12 @@ class BusinessNetworkController extends Controller
             'deal_description' => ['nullable', 'string', 'max:500'],
             'deal_code' => ['nullable', 'string', 'max:50'],
             'deal_expiry' => ['nullable', 'date'],
+            'deals' => ['nullable', 'array', 'max:5'],
+            'deals.*' => ['array'],
+            'deals.*.title' => ['nullable', 'string', 'max:120'],
+            'deals.*.description' => ['nullable', 'string', 'max:500'],
+            'deals.*.code' => ['nullable', 'string', 'max:50'],
+            'deals.*.expiry' => ['nullable', 'date'],
             'monday' => ['nullable', 'string', 'max:100'],
             'tuesday' => ['nullable', 'string', 'max:100'],
             'wednesday' => ['nullable', 'string', 'max:100'],
@@ -177,25 +189,48 @@ class BusinessNetworkController extends Controller
         $business['Category'] = $data['category'];
         $business['SubCategory'] = $data['sub_category'];
         $business['Address'] = $data['address'] ?? '';
+        $business['AdditionalAddresses'] = array_values(array_unique(array_filter(array_map(
+            'trim',
+            preg_split('/\R/', $data['additional_addresses'] ?? '') ?: []
+        ))));
         $business['Phone'] = $data['phone'] ?? '';
+        $business['AlternatePhone'] = $data['alternate_phone'] ?? '';
         $business['Email'] = $data['email'] ?? '';
         $business['website'] = $data['website'] ?? '';
+        $business['GoogleMapsUrl'] = $data['google_maps_url'] ?? '';
         $business['Instagram'] = $data['instagram'] ?? '';
         $business['Facebook'] = $data['facebook'] ?? '';
         $business['Bio'] = $data['bio'] ?? '';
         $business['Desc'] = $data['description'] ?? '';
-        $business['BusinessType'] = $data['business_type'];
-        $business['Tier'] = ucfirst($data['tier']);
-        $business['Verified'] = (bool) $data['verified'];
+        $tier = MembershipTier::normalise($data['tier']);
+        $business['Tier'] = MembershipTier::label($tier);
+        unset(
+            $business['BusinessType'],
+            $business['Verified'],
+            $business['IsVerified']
+        );
         $business['IsActive'] = (bool) $data['is_active'];
-        $business['FeatureInCarousel'] = (bool) $data['feature_in_carousel'];
+        $business['IsServiceAreaBusiness'] = (bool) $data['is_service_area_business'];
+        $business['BusinessStatus'] = $data['business_status'];
+        $business['StatusNote'] = $data['status_note'] ?? '';
+        $business['LastReviewedAt'] = $data['last_reviewed_at'] ?? '';
+        $business['FeatureInCarousel'] = MembershipTier::canAppearInCarousel($tier)
+            && $data['business_status'] === 'operational'
+            && (bool) $data['feature_in_carousel'];
         $business['PermissionGranted'] = $request->boolean('permission_granted')
             || (bool) ($existing['PermissionGranted'] ?? false);
-        $business['MenuUrl'] = $data['menu_url'] ?? '';
-        $business['DealTitle'] = $data['deal_title'] ?? '';
-        $business['DealDescription'] = $data['deal_description'] ?? '';
-        $business['DealCode'] = $data['deal_code'] ?? '';
-        $business['DealExpiry'] = $data['deal_expiry'] ?? '';
+        if (MembershipTier::canPublishMenu($tier)) {
+            $business['MenuUrl'] = $data['menu_url'] ?? '';
+            unset($business['menu_url']);
+        } else {
+            unset($business['MenuUrl'], $business['menu_url']);
+        }
+
+        MembershipDeal::applyToRecord(
+            $business,
+            MembershipDeal::fromRequest($data, $tier),
+            $tier
+        );
 
         $business['hours'] = [
             'Monday' => $data['monday'] ?? '',
@@ -217,11 +252,7 @@ class BusinessNetworkController extends Controller
             $business['Logo'] = '';
         }
 
-        $galleryLimit = match ($data['tier']) {
-            'growth' => 3,
-            'premium' => 5,
-            default => 0,
-        };
+        $galleryLimit = MembershipTier::galleryLimit($data['tier']);
 
         $images = $request->boolean('clear_gallery')
             ? []
@@ -262,12 +293,7 @@ class BusinessNetworkController extends Controller
 
     private function normaliseTier(mixed $tier): string
     {
-        return match (strtolower(trim((string) $tier))) {
-            'premium', 'gold' => 'premium',
-            'growth', 'silver', 'featured' => 'growth',
-            'starter', 'verified' => 'starter',
-            default => 'community',
-        };
+        return MembershipTier::normalise($tier);
     }
 
     private function categories(): array
@@ -311,20 +337,83 @@ class BusinessNetworkController extends Controller
     private function uploadImage($file, string $businessName, string $suffix): string
     {
         $slug = trim(preg_replace('/[^a-z0-9]+/', '_', strtolower($businessName)), '_');
-        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
-        $filename = $slug.'_'.time().'_'.$suffix.'.'.$extension;
         $uploadDirectory = public_path('upload/businesses');
-
         File::ensureDirectoryExists($uploadDirectory, 0775);
-        $file->move($uploadDirectory, $filename);
+
+        $baseFilename = $slug.'_'.time().'_'.$suffix;
+        $filename = $baseFilename.'.webp';
+        $targetPath = $uploadDirectory.'/'.$filename;
+
+        try {
+            $this->writeOptimisedWebp(
+                $file->getRealPath(),
+                $targetPath,
+                $suffix === 'logo' ? 800 : 1600,
+                $suffix === 'logo' ? 90 : 84
+            );
+        } catch (\Throwable $error) {
+            Log::warning('Business image WebP optimisation failed; storing original.', [
+                'business' => $businessName,
+                'suffix' => $suffix,
+                'error' => $error->getMessage(),
+            ]);
+
+            $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+            $extension = in_array($extension, ['gif', 'jpeg', 'jpg', 'png', 'webp'], true)
+                ? $extension
+                : 'jpg';
+            $filename = $baseFilename.'.'.$extension;
+            $targetPath = $uploadDirectory.'/'.$filename;
+            $file->move($uploadDirectory, $filename);
+        }
 
         $publicDirectory = '/home5/halalapp/public_html/upload/businesses';
         if (is_dir('/home5/halalapp/public_html/upload')) {
             File::ensureDirectoryExists($publicDirectory, 0775);
-            @copy($uploadDirectory.'/'.$filename, $publicDirectory.'/'.$filename);
+            @copy($targetPath, $publicDirectory.'/'.$filename);
         }
 
         return 'https://halalapp.info/upload/businesses/'.$filename;
+    }
+
+    private function writeOptimisedWebp(
+        string $sourcePath,
+        string $targetPath,
+        int $maxDimension,
+        int $quality
+    ): void {
+        if (! extension_loaded('imagick') || ! in_array('WEBP', \Imagick::queryFormats('WEBP'), true)) {
+            throw new \RuntimeException('ImageMagick WebP support is unavailable.');
+        }
+
+        $image = new \Imagick($sourcePath);
+
+        try {
+            $image->setIteratorIndex(0);
+            if (method_exists($image, 'autoOrient')) {
+                $image->autoOrient();
+            } elseif (method_exists($image, 'autoOrientImage')) {
+                $image->autoOrientImage();
+            }
+
+            if ($image->getImageWidth() > $maxDimension
+                || $image->getImageHeight() > $maxDimension) {
+                $image->thumbnailImage($maxDimension, $maxDimension, true, true);
+            }
+
+            $image->setImagePage(0, 0, 0, 0);
+            $image->setImageFormat('webp');
+            $image->setImageCompressionQuality($quality);
+            $image->setOption('webp:method', '6');
+            $image->stripImage();
+
+            if (! $image->writeImage($targetPath)) {
+                throw new \RuntimeException('ImageMagick could not write the WebP file.');
+            }
+        } finally {
+            $image->clear();
+            $image->destroy();
+        }
     }
 
     private function jsonPath(): string
