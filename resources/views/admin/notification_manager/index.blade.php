@@ -252,10 +252,10 @@
                                                             @csrf
 
                                                             <div class="form-group">
-                                                                <div class="custom-control custom-checkbox">
-                                                                    <input type="checkbox" class="custom-control-input" id="stickyAdActive" name="active" value="1"
+                                                                <div class="form-check form-switch">
+                                                                    <input type="checkbox" class="form-check-input" id="stickyAdActive" name="active" value="1" role="switch"
                                                                         {{ old('active', $stickyAd['active']) ? 'checked' : '' }}>
-                                                                    <label class="custom-control-label" for="stickyAdActive">Show this banner on the app homepage</label>
+                                                                    <label class="form-check-label" for="stickyAdActive">Show this banner on the app homepage</label>
                                                                 </div>
                                                             </div>
 
