@@ -411,7 +411,7 @@
                                                                         <th style="width:120px;">Preview</th>
                                                                         <th>Image URL</th>
                                                                         <th>Link URL</th>
-                                                                        <th style="width:100px;">Actions</th>
+                                                                        <th style="width:160px;">Actions</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -432,6 +432,12 @@
                                                                                 <input type="text" class="form-control form-control-sm" name="ad_link_urls[]" value="{{ $ad['adLinkUrl'] ?? '' }}">
                                                                             </td>
                                                                             <td>
+                                                                                <button type="button" class="btn btn-sm btn-outline-secondary reorder-ad-btn" data-index="{{ $i }}" data-direction="up" title="Move up" aria-label="Move ad {{ $i + 1 }} up" {{ $loop->first ? 'disabled' : '' }}>
+                                                                                    <i class="ti-arrow-up"></i>
+                                                                                </button>
+                                                                                <button type="button" class="btn btn-sm btn-outline-secondary reorder-ad-btn" data-index="{{ $i }}" data-direction="down" title="Move down" aria-label="Move ad {{ $i + 1 }} down" {{ $loop->last ? 'disabled' : '' }}>
+                                                                                    <i class="ti-arrow-down"></i>
+                                                                                </button>
                                                                                 <button type="button" class="btn btn-sm btn-danger delete-ad-btn" data-index="{{ $i }}">
                                                                                     <i class="ti-trash"></i>
                                                                                 </button>
@@ -871,6 +877,20 @@
         });
         updateStickyDestinationUI();
         updateStickyPreview();
+
+        // Ad ordering buttons
+        document.querySelectorAll('.reorder-ad-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("ads.reorder") }}';
+                form.innerHTML = '@csrf'
+                    + '<input type="hidden" name="index" value="' + this.getAttribute('data-index') + '">'
+                    + '<input type="hidden" name="direction" value="' + this.getAttribute('data-direction') + '">';
+                document.body.appendChild(form);
+                form.submit();
+            });
+        });
 
         // Ad delete buttons
         document.querySelectorAll('.delete-ad-btn').forEach(function(btn) {

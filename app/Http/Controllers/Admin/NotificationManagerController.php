@@ -241,6 +241,29 @@ class NotificationManagerController extends Controller
         return redirect()->back()->with('success', 'Ad deleted successfully.');
     }
 
+    public function reorderAd(Request $request)
+    {
+        $validated = $request->validate([
+            'index' => 'required|integer|min:0',
+            'direction' => 'required|in:up,down',
+        ]);
+
+        $data = $this->loadJson();
+        $ads = array_values($data['ads'] ?? []);
+        $index = $validated['index'];
+        $targetIndex = $validated['direction'] === 'up' ? $index - 1 : $index + 1;
+
+        if (! isset($ads[$index]) || ! isset($ads[$targetIndex])) {
+            return redirect()->back()->with('error', 'Ad could not be moved.');
+        }
+
+        [$ads[$index], $ads[$targetIndex]] = [$ads[$targetIndex], $ads[$index]];
+        $data['ads'] = $ads;
+        $this->saveJson($data);
+
+        return redirect()->back()->with('success', 'Ad order updated successfully.');
+    }
+
     public function updateUsers(Request $request)
     {
         $request->validate([

@@ -155,6 +155,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::get('notification-manager', [NotificationManagerController::class, 'index'])->name('notification.manager');
     Route::post('notification-manager', [NotificationManagerController::class, 'update'])->name('notification.manager.update');
     Route::post('ads/update', [NotificationManagerController::class, 'updateAds'])->name('ads.update');
+    Route::post('ads/reorder', [NotificationManagerController::class, 'reorderAd'])->name('ads.reorder');
     Route::delete('ads/{index}', [NotificationManagerController::class, 'deleteAd'])->name('ads.delete');
     Route::post('users-count/update', [NotificationManagerController::class, 'updateUsers'])->name('users.count.update');
     Route::post('sticky-ad/update', [NotificationManagerController::class, 'updateStickyAd'])->name('sticky-ad.update');
