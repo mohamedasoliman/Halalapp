@@ -63,7 +63,7 @@ ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
     php ~/.composer/2022-10-27_14-39-29-2.4.4-old.phar install --no-dev --optimize-autoloader --no-interaction
 
     echo "Running migrations..."
-    php artisan migrate --force 2>&1 || echo "Note: Migration had warnings (tables may already exist)"
+    php artisan migrate --force --no-interaction
 
     echo "Clearing caches..."
     php artisan config:clear
