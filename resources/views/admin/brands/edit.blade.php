@@ -46,6 +46,11 @@
                                                             <option value="form" {{ $brand->contact_type === 'form' ? 'selected' : '' }}>Contact Form</option>
                                                         </select>
                                                     </div>
+                                                    <div class="form-group mb-3">
+                                                        <label>Contact Source</label>
+                                                        <input type="text" name="contact_source" class="form-control" value="{{ $brand->contact_source }}" placeholder="Official contact page URL or research note">
+                                                        <small class="text-muted">Status: {{ ucfirst($brand->contact_research_status ?? 'pending') }}{{ $brand->contact_verified_at ? ' (verified '.$brand->contact_verified_at->format('Y-m-d').')' : '' }}</small>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group mb-3">

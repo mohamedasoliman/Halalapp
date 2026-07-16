@@ -49,6 +49,15 @@ php artisan test
 - Scheduled commands (daily auto-processing/backup)
 - Any bulk data replacement (must be user-approved first)
 
+## Manufacturer Outreach Safety
+
+- Use `/admin/outreach` to prepare and review manufacturer email batches.
+- `php artisan brands:outreach --prepare` creates research records and drafts only; it never sends.
+- Plain `php artisan brands:outreach` is preview-only. Queue only explicitly approved IDs with `--queue --batch=ID`.
+- Keep `OUTREACH_ENABLED=false` until the `products@halalkiwi.com` SMTP path and SPF, DKIM, and DMARC are verified.
+- Sending is throttled through the `outreach` database queue. Failed batches require manual review before retrying; do not add automatic SMTP retries.
+- Contact-form-only brands remain manual. Never email placeholder watcher addresses ending in `@halalkiwi.com`.
+
 ## Deployment Notes
 
 - Deploy script: `./deploy.sh`

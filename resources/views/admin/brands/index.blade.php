@@ -24,6 +24,27 @@
                             <div class="page-body">
                                 @include('admin.messages')
 
+                                <div class="card">
+                                    <div class="card-block">
+                                        <form method="GET" action="{{ route('brands.index') }}" class="row g-3 align-items-end">
+                                            <div class="col-md-5">
+                                                <input type="search" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search brand or contact">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select name="research" class="form-control">
+                                                    <option value="">All contact statuses</option>
+                                                    <option value="pending" {{ request('research') === 'pending' ? 'selected' : '' }}>Contact research needed</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="submit" class="btn btn-primary">Filter</button>
+                                                <a href="{{ route('brands.index') }}" class="btn btn-secondary">Clear</a>
+                                                <a href="{{ route('outreach.index') }}" class="btn btn-info">Outreach</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
                                 {{-- Add brand form --}}
                                 <div class="card">
                                     <div class="card-header">
@@ -38,13 +59,16 @@
                                             <div class="col-md-3">
                                                 <input type="text" name="email" class="form-control" placeholder="Email">
                                             </div>
+                                            <div class="col-md-3">
+                                                <input type="text" name="contact_source" class="form-control" placeholder="Contact source URL or note">
+                                            </div>
                                             <div class="col-md-2">
                                                 <select name="contact_type" class="form-control">
                                                     <option value="email">Email</option>
                                                     <option value="form">Contact Form</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <select name="response" class="form-control">
                                                     <option value="">No Response</option>
                                                     <option value="halal">Halal</option>
@@ -52,7 +76,7 @@
                                                     <option value="partial">Partial</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <button type="submit" class="btn btn-primary">Add</button>
                                             </div>
                                         </form>
@@ -69,6 +93,8 @@
                                                         <th>Brand</th>
                                                         <th>Email</th>
                                                         <th>Type</th>
+                                                        <th>Contact Status</th>
+                                                        <th>Requests</th>
                                                         <th>Response</th>
                                                         <th>Scope</th>
                                                         <th>Last Contacted</th>
@@ -82,6 +108,12 @@
                                                             <td>{{ $brand->name }}</td>
                                                             <td>{{ $brand->email ?? '-' }}</td>
                                                             <td>{{ $brand->contact_type }}</td>
+                                                            <td>
+                                                                <span class="badge {{ $brand->contact_research_status === 'verified' ? 'badge-success' : 'badge-warning' }}">
+                                                                    {{ ucfirst($brand->contact_research_status ?? 'pending') }}
+                                                                </span>
+                                                            </td>
+                                                            <td>{{ $brand->active_requests_count }}</td>
                                                             <td>
                                                                 @if($brand->response)
                                                                     @php
@@ -111,7 +143,7 @@
                                                         </tr>
                                                     @empty
                                                         <tr>
-                                                            <td colspan="8" class="text-center">No brands yet.</td>
+                                                            <td colspan="10" class="text-center">No brands found.</td>
                                                         </tr>
                                                     @endforelse
                                                 </tbody>

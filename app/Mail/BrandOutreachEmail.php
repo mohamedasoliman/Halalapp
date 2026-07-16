@@ -10,19 +10,21 @@ class BrandOutreachEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $brandName;
-    public array $products;
-
-    public function __construct(string $brandName, array $products)
-    {
-        $this->brandName = $brandName;
-        $this->products = $products;
-    }
+    public function __construct(
+        public string $brandName,
+        public array $products,
+        public string $reference,
+        public string $kind = 'initial',
+        public int $followUpNumber = 0,
+    ) {}
 
     public function build()
     {
-        return $this->subject("Halal Suitability Inquiry - {$this->brandName}")
-            ->from('products@halalkiwi.com', 'Halal Kiwi Products')
+        $prefix = $this->kind === 'follow_up' ? 'Follow-up: ' : '';
+
+        return $this->subject("{$prefix}Halal Suitability Inquiry [{$this->reference}] - {$this->brandName}")
+            ->from(config('outreach.from_address'), config('outreach.from_name'))
+            ->replyTo(config('outreach.reply_to'), config('outreach.from_name'))
             ->view('brand_outreach_email');
     }
 }

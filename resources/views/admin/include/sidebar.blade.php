@@ -42,7 +42,7 @@
 		</ul>
 
 		<ul class="pcoded-item pcoded-left-item">
-			<li class="pcoded-hasmenu @if (in_array(\Request::route()->getName(), ['prioritisation.index', 'prioritisation.show', 'brands.index', 'brands.edit'])) active pcoded-trigger @endif">
+			<li class="pcoded-hasmenu @if (in_array(\Request::route()->getName(), ['prioritisation.index', 'prioritisation.show', 'brands.index', 'brands.edit', 'outreach.index'])) active pcoded-trigger @endif">
 				<a href="javascript:void(0)">
 					<span class="pcoded-micon"><i class="ti-clipboard"></i></span>
 					<span class="pcoded-mtext">Prioritisation</span>
@@ -59,6 +59,12 @@
 						<a href="{{ route('brands.index') }}">
 							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
 							<span class="pcoded-mtext">Brands</span>
+						</a>
+					</li>
+					<li class="@if (\Request::route()->getName() === 'outreach.index') active @endif">
+						<a href="{{ route('outreach.index') }}">
+							<span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+							<span class="pcoded-mtext">Manufacturer Outreach</span>
 						</a>
 					</li>
 				</ul>

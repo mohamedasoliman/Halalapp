@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementControlle
 use App\Http\Controllers\JsondataController;
 use App\Http\Controllers\Admin\PrioritisationController;
 use App\Http\Controllers\Admin\BrandsController;
+use App\Http\Controllers\Admin\BrandOutreachController;
 use App\Http\Controllers\Admin\RestaurantTierController;
 use App\Http\Controllers\Admin\NotificationManagerController;
 use App\Http\Controllers\Admin\BusinessNetworkController;
@@ -168,6 +169,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::get('prioritisation/{id}', [PrioritisationController::class, 'show'])->name('prioritisation.show');
     Route::post('prioritisation/{id}/status', [PrioritisationController::class, 'updateStatus'])->name('prioritisation.status');
     Route::post('prioritisation/{id}/resolve', [PrioritisationController::class, 'resolve'])->name('prioritisation.resolve');
+
+    // Manufacturer Outreach Routes
+    Route::get('outreach', [BrandOutreachController::class, 'index'])->name('outreach.index');
+    Route::post('outreach/prepare', [BrandOutreachController::class, 'prepare'])->name('outreach.prepare');
+    Route::post('outreach/queue', [BrandOutreachController::class, 'queue'])->name('outreach.queue');
+    Route::post('outreach/{batch}/cancel', [BrandOutreachController::class, 'cancel'])->name('outreach.cancel');
+    Route::post('outreach/{batch}/retry', [BrandOutreachController::class, 'retry'])->name('outreach.retry');
 
     // Brands Routes
     Route::get('brands', [BrandsController::class, 'index'])->name('brands.index');
