@@ -76,7 +76,8 @@ ssh ${SERVER_USER}@${SERVER_HOST} << 'ENDSSH'
     php artisan route:cache
 
     echo "Setting permissions..."
-    chmod -R 775 storage bootstrap/cache
+    find storage bootstrap/cache -type d -exec chmod 775 {} +
+    find storage bootstrap/cache -type f -exec chmod 664 {} +
 
     echo "Syncing JSON data files to public_html..."
     mkdir -p /home5/halalapp/public_html/data/DirectoryJsons
