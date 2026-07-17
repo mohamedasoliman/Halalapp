@@ -23,21 +23,25 @@ class BrandOutreachService
         $readyRequests = 0;
         $missingContacts = 0;
 
-        $brandNames = PrioritisationRequest::query()
+        $requestsByBrand = PrioritisationRequest::query()
             ->active()
             ->where('status', 'pending')
             ->whereNotNull('brand_name')
             ->where('brand_name', '!=', '')
-            ->distinct()
             ->orderBy('brand_name')
-            ->pluck('brand_name');
+            ->get(['id', 'brand_name'])
+            ->filter(fn (PrioritisationRequest $request) => $this->isUsableBrandName($request->brand_name))
+            ->groupBy(fn (PrioritisationRequest $request) => $this->normalizeBrandName($request->brand_name));
 
-        foreach ($brandNames as $brandName) {
-            if (! $this->isUsableBrandName($brandName)) {
-                continue;
-            }
+        // Group case, spacing, and smart-punctuation variants before creating outreach.
+        $brandsByName = Brand::query()
+            ->orderByDesc('id')
+            ->get()
+            ->keyBy(fn (Brand $brand) => $this->normalizeBrandName($brand->name));
 
-            $brand = Brand::where('name', $brandName)->first();
+        foreach ($requestsByBrand as $normalizedName => $requests) {
+            $brandName = trim((string) $requests->first()->brand_name);
+            $brand = $brandsByName->get($normalizedName);
             if (! $brand) {
                 $brand = Brand::create([
                     'name' => $brandName,
@@ -45,6 +49,7 @@ class BrandOutreachService
                     'contact_research_status' => 'pending',
                     'notes' => 'Created from pending prioritisation requests. Contact research required.',
                 ]);
+                $brandsByName->put($normalizedName, $brand);
                 $createdBrands++;
             }
 
@@ -59,9 +64,7 @@ class BrandOutreachService
             }
 
             $readyRequests += PrioritisationRequest::query()
-                ->active()
-                ->where('status', 'pending')
-                ->where('brand_name', $brand->name)
+                ->whereIn('id', $requests->pluck('id'))
                 ->update(['status' => 'ready_for_outreach']);
         }
 
@@ -78,7 +81,12 @@ class BrandOutreachService
             ->whereNotNull('brand_name')
             ->orderBy('created_at')
             ->get()
-            ->groupBy('brand_name');
+            ->groupBy(fn (PrioritisationRequest $request) => $this->normalizeBrandName($request->brand_name));
+
+        $brandsByName = Brand::query()
+            ->orderByDesc('id')
+            ->get()
+            ->keyBy(fn (Brand $brand) => $this->normalizeBrandName($brand->name));
 
         $openRequestIds = BrandOutreachBatch::query()
             ->whereIn('status', ['draft', 'queued'])
@@ -88,8 +96,8 @@ class BrandOutreachService
             ->unique();
 
         $created = 0;
-        foreach ($requestsByBrand as $brandName => $requests) {
-            $brand = Brand::where('name', $brandName)->first();
+        foreach ($requestsByBrand as $normalizedName => $requests) {
+            $brand = $brandsByName->get($normalizedName);
             if (! $brand
                 || ! $this->hasVerifiedEmail($brand)
                 || $brand->response !== null
@@ -352,8 +360,20 @@ class BrandOutreachService
 
     private function isUsableBrandName(?string $brandName): bool
     {
-        $brandName = strtolower(trim((string) $brandName));
+        $brandName = $this->normalizeBrandName($brandName);
 
         return $brandName !== '' && ! in_array($brandName, ['?', 'unknown', 'n/a', 'na', 'none'], true);
+    }
+
+    private function normalizeBrandName(?string $brandName): string
+    {
+        $brandName = strtr((string) $brandName, [
+            "\u{2018}" => "'",
+            "\u{2019}" => "'",
+            "\u{2013}" => '-',
+            "\u{2014}" => '-',
+        ]);
+
+        return Str::lower(Str::squish($brandName));
     }
 }

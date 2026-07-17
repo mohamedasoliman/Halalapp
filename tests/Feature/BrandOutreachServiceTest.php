@@ -73,6 +73,31 @@ class BrandOutreachServiceTest extends TestCase
         $this->assertDatabaseMissing('brand_outreach_batches', ['recipient_email' => null]);
     }
 
+    public function test_prepare_groups_brand_name_variants_into_one_draft(): void
+    {
+        $brand = Brand::create([
+            'name' => "Ingham's",
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+
+        $first = $this->createRequest("Ingham's", '9400000000010', 'First product');
+        $second = $this->createRequest('  INGHAM\'S  ', '9400000000011', 'Second product');
+
+        $result = app(BrandOutreachService::class)->prepareInitialOutreach();
+
+        $this->assertSame(0, $result['createdBrands']);
+        $this->assertSame(2, $result['readyRequests']);
+        $this->assertSame(1, $result['draftsCreated']);
+        $this->assertSame(0, $result['missingContacts']);
+
+        $batch = BrandOutreachBatch::sole();
+        $this->assertSame($brand->id, $batch->brand_id);
+        $this->assertCount(2, $batch->products);
+        $this->assertEqualsCanonicalizing([$first->id, $second->id], $batch->request_ids);
+    }
+
     public function test_queueing_requires_explicit_enablement_and_obeys_daily_limit(): void
     {
         Queue::fake();
