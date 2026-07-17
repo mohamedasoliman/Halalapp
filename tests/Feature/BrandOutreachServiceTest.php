@@ -26,9 +26,11 @@ class BrandOutreachServiceTest extends TestCase
             'database.default' => 'sqlite',
             'database.connections.sqlite.database' => ':memory:',
             'outreach.enabled' => false,
+            'outreach.mailer' => 'outreach',
             'outreach.daily_limit' => 20,
             'outreach.spacing_minutes' => 3,
             'outreach.products_per_email' => 10,
+            'mail.mailers.outreach' => ['transport' => 'array'],
         ]);
         DB::purge('sqlite');
 
@@ -161,6 +163,32 @@ class BrandOutreachServiceTest extends TestCase
         Queue::assertPushed(SendBrandOutreachBatch::class, 2);
     }
 
+    public function test_enabled_queueing_rejects_a_mismatched_smtp_identity(): void
+    {
+        config([
+            'outreach.enabled' => true,
+            'outreach.from_address' => 'products@halalkiwi.com',
+            'mail.mailers.outreach' => [
+                'transport' => 'smtp',
+                'username' => 'info@halalapp.info',
+                'password' => 'configured',
+            ],
+        ]);
+        $brand = Brand::create([
+            'name' => 'Identity Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('must authenticate as');
+
+        app(BrandOutreachService::class)->queueDrafts(collect([
+            $this->createBatch($brand, 'HK-IDENTITY-1'),
+        ]));
+    }
+
     public function test_successful_job_records_delivery_before_marking_requests_contacted(): void
     {
         Mail::fake();
@@ -185,6 +213,20 @@ class BrandOutreachServiceTest extends TestCase
             'direction' => 'outbound',
             'subject' => $batch->subject,
         ]);
+    }
+
+    public function test_outreach_email_requests_meat_and_regional_manufacturer_details(): void
+    {
+        $email = new BrandOutreachEmail(
+            'Test Brand',
+            [['name' => 'Test product', 'barcode' => '9400000000013']],
+            'HK-TEST-CONTENT',
+        );
+
+        $body = $email->render();
+
+        $this->assertStringContainsString('halal slaughter method', $body);
+        $this->assertStringContainsString('another regional team, licensee, or manufacturer', $body);
     }
 
     private function createRequest(

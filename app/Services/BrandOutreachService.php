@@ -163,6 +163,8 @@ class BrandOutreachService
             throw new LogicException('Manufacturer outreach is disabled. Verify SMTP, SPF, DKIM and DMARC, then set OUTREACH_ENABLED=true.');
         }
 
+        $this->assertDeliveryConfiguration();
+
         $dailyLimit = max(1, (int) config('outreach.daily_limit', 20));
         $timezone = config('outreach.timezone', 'Pacific/Auckland');
         $localDay = now($timezone);
@@ -356,6 +358,25 @@ class BrandOutreachService
     private function shouldSkipWatcherEmail(?string $email): bool
     {
         return ! $email || str_ends_with(strtolower($email), '@halalkiwi.com');
+    }
+
+    private function assertDeliveryConfiguration(): void
+    {
+        $mailer = config('outreach.mailer');
+        $mailerConfig = is_string($mailer) ? config("mail.mailers.{$mailer}") : null;
+        if (! is_array($mailerConfig)) {
+            throw new LogicException('The dedicated manufacturer outreach mailer is not configured.');
+        }
+
+        if (($mailerConfig['transport'] ?? null) !== 'smtp') {
+            return;
+        }
+
+        $username = strtolower(trim((string) ($mailerConfig['username'] ?? '')));
+        $fromAddress = strtolower(trim((string) config('outreach.from_address')));
+        if ($username === '' || $username !== $fromAddress || empty($mailerConfig['password'])) {
+            throw new LogicException('Outreach SMTP must authenticate as the configured manufacturer From address.');
+        }
     }
 
     private function isUsableBrandName(?string $brandName): bool

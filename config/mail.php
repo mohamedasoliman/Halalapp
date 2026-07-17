@@ -49,6 +49,18 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'outreach' => [
+            'transport' => 'smtp',
+            'url' => env('OUTREACH_MAIL_URL'),
+            'host' => env('OUTREACH_MAIL_HOST', 'mail.halalkiwi.com'),
+            'port' => env('OUTREACH_MAIL_PORT', 587),
+            'encryption' => env('OUTREACH_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('OUTREACH_MAIL_USERNAME'),
+            'password' => env('OUTREACH_MAIL_PASSWORD'),
+            'timeout' => 30,
+            'local_domain' => env('OUTREACH_MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

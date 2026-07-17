@@ -2,6 +2,7 @@
 
 return [
     'enabled' => (bool) env('OUTREACH_ENABLED', false),
+    'mailer' => env('OUTREACH_MAILER', 'outreach'),
     'queue_connection' => env('OUTREACH_QUEUE_CONNECTION', 'database'),
     'queue' => env('OUTREACH_QUEUE', 'outreach'),
     'daily_limit' => (int) env('OUTREACH_DAILY_LIMIT', 20),

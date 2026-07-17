@@ -19,8 +19,11 @@ For each product, I would appreciate confirmation of the following:
 3. Whether the product is halal certified. If so, please provide the certifying body, certificate number, expiry date, and the products or facilities covered.
 4. Whether it is made on equipment shared with non-halal products and, if so, what cleaning controls are used between runs.
 5. Whether your response applies only to the products listed above or to a wider product range.
+6. For any meat or poultry product or ingredient, please confirm the species, slaughter facility, halal slaughter method and certifier, any stunning method used, and the source of any casing.
 
 Ingredient specifications, certificates, or other supporting documents would be very helpful. This information helps us provide accurate guidance to consumers using Halal Kiwi.
+
+If another regional team, licensee, or manufacturer handles any listed barcode, please forward this enquiry or provide the correct contact details.
 
 Thank you for your time and assistance. Please let me know if you require any further information.
 

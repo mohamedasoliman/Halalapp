@@ -36,7 +36,7 @@ class SendBrandOutreachBatch implements ShouldQueue
             return;
         }
 
-        Mail::to($batch->recipient_email)->send(new BrandOutreachEmail(
+        Mail::mailer(config('outreach.mailer'))->to($batch->recipient_email)->send(new BrandOutreachEmail(
             brandName: $batch->brand->name,
             products: $batch->products,
             reference: $batch->reference,
