@@ -8,6 +8,10 @@ Artisan::command('inspire', function () {
 })->describe('Display an inspiring quote');
 
 Schedule::command('db:backup')->daily()->at('03:00');
+Schedule::command('requests:auto-process')
+    ->dailyAt('03:15')
+    ->timezone('Pacific/Auckland')
+    ->withoutOverlapping();
 Schedule::command('analytics:prune --days=90')->daily()->at('04:30');
 Schedule::command('brands:follow-up --prepare')
     ->dailyAt('08:00')
