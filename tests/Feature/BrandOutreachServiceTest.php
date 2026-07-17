@@ -98,6 +98,26 @@ class BrandOutreachServiceTest extends TestCase
         $this->assertEqualsCanonicalizing([$first->id, $second->id], $batch->request_ids);
     }
 
+    public function test_prepare_matches_accented_brand_name_variants(): void
+    {
+        $brand = Brand::create([
+            'name' => 'Nestle',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+
+        $request = $this->createRequest('Nestlé', '9400000000012', 'Accented product');
+
+        $result = app(BrandOutreachService::class)->prepareInitialOutreach();
+
+        $this->assertSame(0, $result['createdBrands']);
+        $this->assertSame(1, $result['readyRequests']);
+        $this->assertSame(1, $result['draftsCreated']);
+        $this->assertSame($brand->id, BrandOutreachBatch::sole()->brand_id);
+        $this->assertSame([$request->id], BrandOutreachBatch::sole()->request_ids);
+    }
+
     public function test_queueing_requires_explicit_enablement_and_obeys_daily_limit(): void
     {
         Queue::fake();

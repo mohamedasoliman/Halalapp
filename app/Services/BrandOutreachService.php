@@ -374,6 +374,6 @@ class BrandOutreachService
             "\u{2014}" => '-',
         ]);
 
-        return Str::lower(Str::squish($brandName));
+        return Str::lower(Str::squish(Str::ascii($brandName)));
     }
 }
