@@ -130,7 +130,7 @@ class SyncRestaurantMembershipTiers extends Command
             return;
         }
 
-        // Missing, empty, "free", and "none" all resolve to Free in current apps.
+        // Missing, empty, "free", and "none" remain compatible with the app's entry tier.
         $currentValue = strtolower(trim((string) ($restaurant['membership_tier'] ?? '')));
         if (! in_array($currentValue, ['', 'free', 'none'], true)) {
             $restaurant['membership_tier'] = '';

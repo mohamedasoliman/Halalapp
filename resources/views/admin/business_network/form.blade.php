@@ -214,7 +214,7 @@
                                                 <div class="col-md-5">
                                                     <label for="tier" class="form-label">MBN tier *</label>
                                                     <select id="tier" name="tier" class="form-control" required>
-                                                        <option value="free" @selected(old('tier', $tier) === 'free')>Free ($0/week)</option>
+                                                        <option value="free" @selected(old('tier', $tier) === 'free')>Basic ($2/week)</option>
                                                         <option value="starter" @selected(old('tier', $tier) === 'starter')>Starter ($5/week) - partner priority</option>
                                                         <option value="growth" @selected(old('tier', $tier) === 'growth')>Growth ($15/week) - up to 3 photos</option>
                                                         <option value="premium" @selected(old('tier', $tier) === 'premium')>Premium ($30/week) - up to 5 photos</option>
@@ -401,7 +401,7 @@
                     ? 'This tier uses one logo only and has no gallery photos.'
                     : 'You can upload up to ' + limit + ' gallery photos for this tier.';
                 tierHelp.textContent = tier === 'free'
-                    ? 'Standard listing with complete public business details and no partner badge.'
+                    ? 'Basic $2/week listing with complete public business details and no partner badge.'
                     : tier.charAt(0).toUpperCase() + tier.slice(1) + ' listings automatically receive their matching Halal Kiwi Partner badge.';
                 dealHelp.textContent = dealLimit === 0
                     ? 'Deals are available on Starter, Growth, and Premium tiers.'

@@ -27,6 +27,7 @@ final class MembershipTier
             'premium', 'gold' => self::PREMIUM,
             'growth', 'silver', 'featured' => self::GROWTH,
             'starter', 'verified' => self::STARTER,
+            'basic', 'community', 'free' => self::FREE,
             default => self::FREE,
         };
     }
@@ -36,13 +37,20 @@ final class MembershipTier
         return ucfirst(self::normalise($tier));
     }
 
+    public static function adminLabel(mixed $tier): string
+    {
+        $tier = self::normalise($tier);
+
+        return $tier === self::FREE ? 'Basic' : self::label($tier);
+    }
+
     public static function weeklyPrice(mixed $tier): int
     {
         return match (self::normalise($tier)) {
+            self::FREE => 2,
             self::STARTER => 5,
             self::GROWTH => 15,
             self::PREMIUM => 30,
-            default => 0,
         };
     }
 

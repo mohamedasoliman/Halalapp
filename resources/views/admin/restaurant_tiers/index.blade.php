@@ -282,7 +282,7 @@
                                                                                                 </option>
                                                                                             @endforeach
                                                                                         </select>
-                                                                                        <small class="text-muted">Paid tiers automatically receive their matching partner badge. Free has no partner badge.</small>
+                                                                                        <small class="text-muted">Starter, Growth, and Premium receive their matching partner badge. Basic has no partner badge.</small>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="col-md-6">
@@ -514,7 +514,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <small class="text-muted">Paid tiers automatically receive their matching partner badge. Free has no partner badge.</small>
+                                <small class="text-muted">Starter, Growth, and Premium receive their matching partner badge. Basic has no partner badge.</small>
                             </div>
                         </div>
                         <div class="col-md-6">

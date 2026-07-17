@@ -33,7 +33,7 @@
                                                 'premium' => 'Premium ($30/wk)',
                                                 'growth' => 'Growth ($15/wk)',
                                                 'starter' => 'Starter ($5/wk)',
-                                                'free' => 'Free',
+                                                'free' => 'Basic ($2/wk)',
                                             ] as $tierKey => $tierLabel)
                                                 <a href="{{ route('business-network.index', ['tier' => $tierKey]) }}"
                                                    class="btn btn-sm {{ $tierFilter === $tierKey ? 'btn-primary' : 'btn-outline-primary' }}">
@@ -142,7 +142,7 @@
                                                             </td>
                                                             <td>
                                                                 <span class="tier-badge {{ $tierClass }}">
-                                                                    {{ ucfirst($tier) }}{{ $tier !== 'free' ? ' Partner' : '' }}
+                                                                    {{ \App\Support\MembershipTier::adminLabel($tier) }}{{ $tier !== 'free' ? ' Partner' : '' }}
                                                                 </span>
                                                             </td>
                                                             <td>

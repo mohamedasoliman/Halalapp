@@ -19,6 +19,7 @@ class MembershipTierTest extends TestCase
     public static function tierAliases(): array
     {
         return [
+            'basic' => ['basic', MembershipTier::FREE],
             'community' => ['community', MembershipTier::FREE],
             'free' => ['free', MembershipTier::FREE],
             'empty' => ['', MembershipTier::FREE],
@@ -39,7 +40,10 @@ class MembershipTierTest extends TestCase
             MembershipTier::VALUES
         );
 
-        $this->assertSame(0, MembershipTier::weeklyPrice('community'));
+        $this->assertSame('Free', MembershipTier::label('free'));
+        $this->assertSame('Basic', MembershipTier::adminLabel('free'));
+        $this->assertSame('Basic', MembershipTier::adminLabel('basic'));
+        $this->assertSame(2, MembershipTier::weeklyPrice('community'));
         $this->assertSame(5, MembershipTier::weeklyPrice('starter'));
         $this->assertSame(15, MembershipTier::weeklyPrice('growth'));
         $this->assertSame(30, MembershipTier::weeklyPrice('premium'));

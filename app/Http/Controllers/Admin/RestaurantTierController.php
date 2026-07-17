@@ -336,7 +336,7 @@ class RestaurantTierController extends Controller
 
         foreach (MembershipTier::VALUES as $tier) {
             $options[$tier] = [
-                'label' => MembershipTier::label($tier),
+                'label' => MembershipTier::adminLabel($tier),
                 'weekly_price' => MembershipTier::weeklyPrice($tier),
                 'gallery_limit' => MembershipTier::galleryLimit($tier),
                 'deal_limit' => MembershipTier::dealLimit($tier),
