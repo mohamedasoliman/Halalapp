@@ -12,6 +12,11 @@ class Product extends Model
 
     protected $table = 'products';
     protected $guarded = [];
+
+    protected $attributes = [
+        'halal_status' => '2',
+    ];
+
 	protected $casts = [
 		'created_at' => 'datetime',
 		'updated_at' => 'datetime',

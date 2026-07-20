@@ -242,6 +242,7 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'product_name' => 'required',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image input
+            'halal_status' => 'nullable|in:0,1,2',
         ], $messages);
 
         $originalImage = $request->file('product_image');
@@ -267,7 +268,7 @@ class ProductController extends Controller
         Product::create([
             'product_name' => $request->product_name, // Make sure to use the correct input name
             'product_image' => $imageName,
-            'halal_status' => $request->halal_status,
+            'halal_status' => $request->filled('halal_status') ? $request->halal_status : '2',
             'status' => 1,
             'Barcode' => $request->Barcode,
             'Certification_Status' => $request->Certification_Status,
@@ -312,6 +313,7 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'product_name' => 'required',
+            'halal_status' => 'nullable|in:0,1,2',
         ], $messages);
 
         $originalImage = $request->file('product_image');
@@ -336,7 +338,6 @@ class ProductController extends Controller
         // Prepare the update data
         $updateData = [
             'product_name' => $request->product_name, // Ensure you're using the correct field name
-            'halal_status' => $request->halal_status,
             'status' => $request->status ? $request->status : 0,
             'Barcode' => $request->Barcode,
             'Certification_Status' => $request->Certification_Status,
@@ -344,6 +345,10 @@ class ProductController extends Controller
             'notes' => $request->notes,
             'ingredient' => $request->ingredient,
         ];
+
+        if ($request->filled('halal_status')) {
+            $updateData['halal_status'] = $request->halal_status;
+        }
 
         // If a new image was uploaded, add it to the update data
         if (!empty($originalImage)) {

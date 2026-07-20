@@ -142,7 +142,7 @@ class PrioritisationController extends Controller
                 Product::create([
                     'product_name' => $productName,
                     'Barcode' => $barcode,
-                    'halal_status' => null,
+                    'halal_status' => '2',
                     'status' => 1,
                     'category' => '',
                 ]);
