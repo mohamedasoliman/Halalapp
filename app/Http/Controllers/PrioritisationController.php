@@ -46,7 +46,7 @@ class PrioritisationController extends Controller
             }
 
             // 2. Check for existing active request with same barcode
-            $existingRequest = PrioritisationRequest::where('barcode', $barcode)
+            $existingRequest = PrioritisationRequest::matchingBarcode($barcode)
                 ->active()
                 ->first();
 

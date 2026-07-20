@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\ProductBarcode;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class PrioritisationRequest extends Model
@@ -33,5 +35,18 @@ class PrioritisationRequest extends Model
     public function scopeActive($query)
     {
         return $query->whereNotIn('status', ['resolved', 'dead_end']);
+    }
+
+    public function scopeMatchingBarcode(Builder $query, string $barcode): Builder
+    {
+        $barcode = ProductBarcode::clean($barcode);
+        $key = ProductBarcode::key($barcode);
+
+        return $query->where(function (Builder $query) use ($barcode, $key) {
+            $query->where('barcode', $barcode);
+            if ($key !== null) {
+                $query->orWhere('barcode_key', $key);
+            }
+        });
     }
 }

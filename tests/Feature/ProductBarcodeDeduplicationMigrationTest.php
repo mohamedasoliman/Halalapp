@@ -151,7 +151,8 @@ class ProductBarcodeDeduplicationMigrationTest extends TestCase
             'updated_at' => $now,
         ]);
 
-        $this->migration()->up();
+        $this->productMigration()->up();
+        $this->requestMigration()->up();
 
         $survivor = DB::table('products')->where('id', 10)->first();
         $this->assertSame('078895743050', $survivor->Barcode);
@@ -162,16 +163,19 @@ class ProductBarcodeDeduplicationMigrationTest extends TestCase
         $this->assertSame(10, Product::matchingBarcode('0078895743050')->value('id'));
         $this->assertSame(10, Product::matchingBarcode('78895743050')->value('id'));
 
-        $activeRequest = DB::table('prioritisation_requests')
+        $activeRequests = DB::table('prioritisation_requests')
             ->whereIn('status', ['pending', 'ready_for_outreach', 'contacted', 'ready_for_review'])
-            ->first();
-        $this->assertSame(21, $activeRequest->id);
-        $this->assertSame('078895743050', $activeRequest->barcode);
-        $this->assertSame('dead_end', DB::table('prioritisation_requests')->where('id', 20)->value('status'));
+            ->orderBy('id')
+            ->get();
+        $this->assertCount(2, $activeRequests);
+        $this->assertSame(['078895743050'], $activeRequests->pluck('barcode')->unique()->values()->all());
+        $this->assertSame('ready_for_outreach', DB::table('prioritisation_requests')->where('id', 20)->value('status'));
+        $this->assertSame('ready_for_outreach', DB::table('prioritisation_requests')->where('id', 21)->value('status'));
         $this->assertDatabaseHas('request_watchers', [
             'request_id' => 21,
             'user_email' => 'watcher@example.com',
         ]);
+        $this->assertSame(20, \App\Models\PrioritisationRequest::matchingBarcode('0078895743050')->orderBy('id')->value('id'));
 
         $this->expectException(QueryException::class);
         DB::table('products')->insert([
@@ -204,11 +208,16 @@ class ProductBarcodeDeduplicationMigrationTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('conflicting halal statuses');
 
-        $this->migration()->up();
+        $this->productMigration()->up();
     }
 
-    private function migration(): object
+    private function productMigration(): object
     {
         return require database_path('migrations/2026_07_20_000003_merge_leading_zero_product_duplicates.php');
+    }
+
+    private function requestMigration(): object
+    {
+        return require database_path('migrations/2026_07_20_000004_normalize_prioritisation_request_barcodes.php');
     }
 }

@@ -38,6 +38,7 @@ class ProductHalalStatusDefaultTest extends TestCase
         Schema::create('prioritisation_requests', function (Blueprint $table) {
             $table->id();
             $table->string('barcode', 20);
+            $table->string('barcode_key', 20)->nullable();
             $table->string('product_name')->nullable();
             $table->string('brand_name')->nullable();
             $table->string('user_email')->nullable();
