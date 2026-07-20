@@ -30,6 +30,8 @@ class RequestsAutoProcessTest extends TestCase
             $table->string('Barcode');
             $table->string('product_name')->nullable();
             $table->string('halal_status')->default('2');
+            $table->text('proof')->nullable();
+            $table->text('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -41,6 +43,7 @@ class RequestsAutoProcessTest extends TestCase
             $table->string('user_email')->nullable();
             $table->string('status')->default('pending');
             $table->tinyInteger('resolved_status')->nullable();
+            $table->unsignedBigInteger('resolution_communication_id')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });
@@ -51,6 +54,7 @@ class RequestsAutoProcessTest extends TestCase
             $table->string('user_name')->nullable();
             $table->timestamps();
         });
+        $this->createNotificationTable();
     }
 
     protected function tearDown(): void
@@ -59,12 +63,12 @@ class RequestsAutoProcessTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_dry_run_does_not_resolve_or_notify(): void
+    public function test_default_preview_does_not_resolve_or_notify(): void
     {
         Mail::fake();
         $request = $this->resolvedProductRequest();
 
-        $exitCode = Artisan::call('requests:auto-process', ['--dry-run' => true]);
+        $exitCode = Artisan::call('requests:auto-process');
 
         $this->assertSame(0, $exitCode);
         $this->assertSame('pending', $request->fresh()->status);
@@ -83,7 +87,7 @@ class RequestsAutoProcessTest extends TestCase
         RequestWatcher::create(['request_id' => $request->id, 'user_email' => 'customer@example.com']);
         RequestWatcher::create(['request_id' => $duplicate->id, 'user_email' => 'anonymous@halalkiwi.com']);
 
-        $exitCode = Artisan::call('requests:auto-process');
+        $exitCode = Artisan::call('requests:auto-process', ['--apply' => true]);
 
         $this->assertSame(0, $exitCode);
         $this->assertSame('resolved', $request->fresh()->status);
@@ -109,7 +113,7 @@ class RequestsAutoProcessTest extends TestCase
             'status' => 'pending',
         ]);
 
-        Artisan::call('requests:auto-process');
+        Artisan::call('requests:auto-process', ['--apply' => true]);
 
         $this->assertSame('pending', $request->fresh()->status);
     }
@@ -128,5 +132,31 @@ class RequestsAutoProcessTest extends TestCase
             'user_email' => $email,
             'status' => 'pending',
         ]);
+    }
+
+    private function createNotificationTable(): void
+    {
+        Schema::create('request_notification_deliveries', function (Blueprint $table) {
+            $table->id();
+            $table->char('event_key', 64);
+            $table->string('event_reference');
+            $table->json('request_ids')->nullable();
+            $table->unsignedBigInteger('brand_communication_id')->nullable();
+            $table->string('notification_type');
+            $table->string('recipient_email');
+            $table->string('normalized_email');
+            $table->char('recipient_hash', 64);
+            $table->string('product_name');
+            $table->string('barcode');
+            $table->tinyInteger('halal_status')->nullable();
+            $table->string('status')->default('pending');
+            $table->unsignedInteger('attempts')->default(0);
+            $table->timestamp('last_attempted_at')->nullable();
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamp('uncertain_at')->nullable();
+            $table->text('error')->nullable();
+            $table->timestamps();
+            $table->unique(['event_key', 'recipient_hash']);
+        });
     }
 }

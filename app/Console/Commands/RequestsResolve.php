@@ -2,105 +2,100 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\UserNotificationEmail;
-use App\Models\PrioritisationRequest;
-use App\Models\ProductModel\Product;
+use App\Services\ProductResolutionService;
+use App\Services\RequestNotificationService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use InvalidArgumentException;
 
 class RequestsResolve extends Command
 {
     protected $signature = 'requests:resolve
-        {barcode : Product barcode}
-        {status : 0=halal, 1=not_halal}
-        {--notes= : Resolution notes}';
+        {barcode? : Product barcode}
+        {status? : 0=halal, 1=not_halal}
+        {--notes= : Resolution notes}
+        {--proof= : Saved proof path}
+        {--communication-id= : Approved inbound brand communication ID}
+        {--event= : Stable notification event reference}
+        {--retry-event= : Retry only failed/pending notifications; uncertain/sending rows require review}';
 
-    protected $description = 'Resolve a product and notify all requesting users';
+    protected $description = 'Resolve an exact-barcode product and notify all eligible requesting users safely';
 
-    public function handle(): int
-    {
-        $barcode = $this->argument('barcode');
-        $status = $this->argument('status');
-        $notes = $this->option('notes') ?? '';
+    public function handle(
+        ProductResolutionService $resolutions,
+        RequestNotificationService $notifications,
+    ): int {
+        if ($retryEvent = $this->option('retry-event')) {
+            $result = $notifications->deliverEvent((string) $retryEvent);
+            $this->displayDeliveryResult((string) $retryEvent, $result);
 
-        if (!in_array($status, ['0', '1'])) {
-            $this->error('Status must be 0 (halal) or 1 (not halal).');
-            return 1;
+            return $result['failed'] === 0 && $result['uncertain'] === 0 && $result['sending'] === 0
+                ? self::SUCCESS
+                : self::FAILURE;
         }
 
-        $statusLabel = $status === '0' ? 'Halal' : 'Not Halal';
+        if ($this->argument('barcode') === null || $this->argument('status') === null) {
+            $this->error('Barcode and status are required unless --retry-event is used.');
 
-        // 1. Update product in database
-        $product = Product::where('Barcode', $barcode)->first();
-        if ($product) {
-            $product->update([
-                'halal_status' => $status,
-                'notes' => $notes,
-            ]);
-            $this->info("Updated product: {$product->product_name} → {$statusLabel}");
-        } else {
-            $this->warn("Product with barcode {$barcode} not found in products table.");
+            return self::FAILURE;
         }
 
-        // 2. Invalidate product cache
-        Cache::increment('products_cache_version');
-        $this->info('Product cache invalidated.');
+        try {
+            $result = $resolutions->resolve(
+                (string) $this->argument('barcode'),
+                (string) $this->argument('status'),
+                (string) ($this->option('notes') ?? ''),
+                $this->option('proof') ? (string) $this->option('proof') : null,
+                $this->option('communication-id') ? (int) $this->option('communication-id') : null,
+                $this->option('event') ? (string) $this->option('event') : null,
+            );
+        } catch (InvalidArgumentException $exception) {
+            $this->error($exception->getMessage());
 
-        // 3. Resolve all matching prioritisation requests
-        $requests = PrioritisationRequest::where('barcode', $barcode)
-            ->whereNotIn('status', ['resolved', 'dead_end'])
-            ->get();
+            return self::FAILURE;
+        } catch (ModelNotFoundException) {
+            $this->error('Exact-barcode product was not found. No requests were resolved and no emails were sent.');
 
-        if ($requests->isEmpty()) {
-            $this->info('No pending prioritisation requests for this barcode.');
-            return 0;
+            return self::FAILURE;
         }
 
-        $productName = $product?->product_name ?? $requests->first()->product_name ?? 'Unknown Product';
-        $watcherEmails = collect();
+        $this->info(sprintf(
+            'Resolved %d request(s) for %s. Prepared %d unique recipient(s).',
+            $result['requests_resolved'],
+            $result['product_name'],
+            $result['recipients_prepared'],
+        ));
+        $this->displayDeliveryResult($result['event_reference'], $result['delivery']);
 
-        foreach ($requests as $request) {
-            $request->update([
-                'status' => 'resolved',
-                'resolved_status' => (int) $status,
-                'notes' => "Marked {$statusLabel}. {$notes}",
-            ]);
-
-            // Collect all watcher emails
-            foreach ($request->watchers as $watcher) {
-                $watcherEmails->push($watcher->user_email);
-            }
-        }
-
-        // 4. Notify unique watchers
-        $uniqueEmails = $watcherEmails
-            ->unique()
-            ->filter(fn ($email) => !$this->shouldSkipWatcherEmail($email));
-
-        $this->info("Resolved {$requests->count()} request(s). Notifying {$uniqueEmails->count()} user(s).");
-
-        foreach ($uniqueEmails as $email) {
-            try {
-                Mail::to($email)->send(
-                    new UserNotificationEmail('resolved', $productName, $barcode, $status)
-                );
-                $this->line("  Notified: {$email}");
-            } catch (\Exception $e) {
-                $this->warn("  Failed to notify {$email}: {$e->getMessage()}");
-            }
-        }
-
-        $this->info('Done.');
-        return 0;
+        return $result['delivery']['failed'] === 0
+            && $result['delivery']['uncertain'] === 0
+            && $result['delivery']['sending'] === 0
+            ? self::SUCCESS
+            : self::FAILURE;
     }
 
-    private function shouldSkipWatcherEmail(?string $email): bool
+    private function displayDeliveryResult(string $eventReference, array $result): void
     {
-        if (!$email) {
-            return true;
+        $this->line("Notification event: {$eventReference}");
+        $this->line(sprintf(
+            'Notifications sent: %d; failed: %d; uncertain: %d; sending: %d; skipped/already claimed: %d.',
+            $result['sent'],
+            $result['failed'],
+            $result['uncertain'],
+            $result['sending'],
+            $result['skipped'],
+        ));
+
+        if ($result['failed'] > 0) {
+            $this->warn("Retry safely with --retry-event='{$eventReference}'. Successfully sent recipients will be skipped.");
         }
 
-        return str_ends_with(strtolower($email), '@halalkiwi.com');
+        if ($result['uncertain'] > 0) {
+            $this->warn('Uncertain deliveries may already have been accepted by SMTP. Reconcile them manually; --retry-event will not resend them.');
+        }
+
+        if ($result['sending'] > 0) {
+            $this->warn('Sending deliveries are still in progress or were left by an interrupted process. Reconcile them manually before changing their state.');
+        }
     }
 }

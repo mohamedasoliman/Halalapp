@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\UserNotificationEmail;
-use App\Models\Brand;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
+use App\Services\ProductResolutionService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use InvalidArgumentException;
 
 class PrioritisationController extends Controller
 {
@@ -69,62 +68,46 @@ class PrioritisationController extends Controller
         return redirect()->back()->with('success', 'Status updated.');
     }
 
-    public function resolve(Request $request, $id)
+    public function resolve(Request $request, $id, ProductResolutionService $resolutions)
     {
         $request->validate([
             'halal_status' => 'required|in:0,1',
             'notes' => 'nullable|string|max:5000',
+            'proof_path' => 'nullable|string|max:5000',
+            'brand_communication_id' => 'nullable|integer|exists:brand_communications,id',
         ]);
 
         $prioRequest = PrioritisationRequest::findOrFail($id);
-        $barcode = $prioRequest->barcode;
-        $status = $request->halal_status;
-        $notes = $request->notes ?? '';
-        $statusLabel = $status === '0' ? 'Halal' : 'Not Halal';
-
-        // 1. Update product
-        $product = Product::where('Barcode', $barcode)->first();
-        if ($product) {
-            $product->update([
-                'halal_status' => $status,
-                'notes' => $notes,
+        try {
+            $result = $resolutions->resolve(
+                (string) $prioRequest->barcode,
+                (string) $request->halal_status,
+                (string) ($request->notes ?? ''),
+                $request->proof_path,
+                $request->brand_communication_id ? (int) $request->brand_communication_id : null,
+            );
+        } catch (ModelNotFoundException) {
+            return redirect()->back()->withErrors([
+                'halal_status' => 'Exact-barcode product was not found. Nothing was resolved or emailed.',
+            ]);
+        } catch (InvalidArgumentException $exception) {
+            return redirect()->back()->withErrors([
+                'halal_status' => $exception->getMessage(),
             ]);
         }
 
-        // 2. Invalidate cache
-        Cache::increment('products_cache_version');
-
-        // 3. Resolve ALL requests for this barcode
-        $allRequests = PrioritisationRequest::where('barcode', $barcode)
-            ->where('status', '!=', 'resolved')
-            ->get();
-
-        $watcherEmails = collect();
-        foreach ($allRequests as $req) {
-            $req->update([
-                'status' => 'resolved',
-                'resolved_status' => (int) $status,
-                'notes' => "Marked {$statusLabel}. {$notes}",
-            ]);
-            foreach ($req->watchers as $watcher) {
-                $watcherEmails->push($watcher->user_email);
-            }
-        }
-
-        // 4. Notify watchers
-        $productName = $product?->product_name ?? $prioRequest->product_name ?? 'Unknown Product';
-        foreach ($watcherEmails->unique()->filter() as $email) {
-            try {
-                Mail::to($email)->send(
-                    new UserNotificationEmail('resolved', $productName, $barcode, $status)
-                );
-            } catch (\Exception $e) {
-                // Log but don't fail
-            }
-        }
+        $delivery = $result['delivery'];
 
         return redirect()->route('prioritisation.index')
-            ->with('success', "Resolved: {$productName} marked as {$statusLabel}. {$watcherEmails->unique()->count()} user(s) notified.");
+            ->with('success', sprintf(
+                'Resolved %s. Notifications sent: %d; failed: %d; uncertain: %d; sending: %d. Event: %s',
+                $result['product_name'],
+                $delivery['sent'],
+                $delivery['failed'],
+                $delivery['uncertain'],
+                $delivery['sending'],
+                $result['event_reference'],
+            ));
     }
 
     public function researchUnknown()
@@ -153,18 +136,18 @@ class PrioritisationController extends Controller
                         $product = $data['product'] ?? [];
                         $updates = [];
 
-                        if (!empty($product['product_name'])) {
+                        if (! empty($product['product_name'])) {
                             $updates['product_name'] = $product['product_name'];
                         }
-                        if (!empty($product['brands']) && empty($request->brand_name)) {
+                        if (! empty($product['brands']) && empty($request->brand_name)) {
                             $updates['brand_name'] = $product['brands'];
                         }
 
-                        if (!empty($updates)) {
+                        if (! empty($updates)) {
                             $request->update($updates);
 
                             // Also update the product in DB if it exists
-                            if (!empty($updates['product_name'])) {
+                            if (! empty($updates['product_name'])) {
                                 $dbProduct = Product::where('Barcode', $request->barcode)->first();
                                 if ($dbProduct && empty($dbProduct->product_name)) {
                                     $dbProduct->update(['product_name' => $updates['product_name']]);

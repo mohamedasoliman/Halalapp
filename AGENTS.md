@@ -55,8 +55,34 @@ php artisan test
 - `php artisan brands:outreach --prepare` creates research records and drafts only; it never sends.
 - Plain `php artisan brands:outreach` is preview-only. Queue only explicitly approved IDs with `--queue --batch=ID`.
 - Keep `OUTREACH_ENABLED=false` until the `products@halalkiwi.com` SMTP path and SPF, DKIM, and DMARC are verified.
-- Sending is throttled through the `outreach` database queue. Failed batches require manual review before retrying; do not add automatic SMTP retries.
+- Sending is throttled through the `outreach` database queue. `sending` and `uncertain` batches are visible but never retryable; reconcile them manually. Failed batches require review before returning them to draft. Do not add automatic SMTP retries.
 - Contact-form-only brands remain manual. Never email placeholder watcher addresses ending in `@halalkiwi.com`.
+
+## Manufacturer Reply Processing
+
+- The authoritative procedure is **Flow: Check Manufacturer Emails** in `../../AGENTS.md`; read it before accessing the products mailbox or resolving requests.
+- Use Message-ID / `brand_communications.email_message_id` for idempotency. Do not use the mailbox Seen flag as proof that a reply was processed.
+- Prefer the `[HK-...]` outreach reference to map replies to `brand_outreach_batches`; otherwise require exact barcodes and verified brand/thread evidence.
+- Save the original email and attachments before changing a verdict. Log every substantive inbound reply in `brand_communications`.
+- Present per-barcode recommendations and obtain explicit approval before changing `halal_status`, updating brand response scope, sending follow-ups, or notifying users.
+- Linked-user lookup must union `prioritisation_requests.user_email` with `request_watchers.user_email`, validate/deduplicate addresses, and exclude `@halalkiwi.com` placeholders.
+- Record approved inbound evidence with `brands:record-reply`, then resolve exact barcodes with `requests:resolve --communication-id=...`; this shared path preserves notes, requires proof for inbound evidence, includes direct and watcher emails, and records retry-safe delivery state.
+- Retry failed/pending recipients with `requests:resolve --retry-event='...'`; sent recipients are not resent.
+- SMTP transport exceptions are recorded as `uncertain`, not retryable failures. Reconcile them manually before changing their state; an uncertain message may already have been accepted by the mail server.
+- Notification deliveries left in `sending` are reported by the retry command but excluded from retry; they may represent an interrupted process after SMTP acceptance.
+- Mark/move a mailbox message as processed only after proof storage, inbound logging, approved DB changes, and notification attempts are recorded.
+
+## Daily Prioritisation Workflow
+
+- The authoritative operating procedure is **Flow: Daily Prioritisation Processing** in `../../AGENTS.md`; read it before processing a daily batch.
+- Keep product discovery separate from manufacturer outreach:
+  - Plain `silent` and `new_product` records are identity-research work. High-confidence identities may only be proposed as active, unreviewed products (`halal_status = 2`).
+  - `prioritise` records are manufacturer-outreach work for existing products.
+  - A `silent` request with a later watcher is effectively deliberate because the current API does not promote its type. Include watcher creation timestamps in daily classification.
+- Freeze one complete `Pacific/Auckland` day and retain the request/watcher cutoff throughout the run.
+- Present the research and outreach plan before any DB write or email send. Never send drafts, resolve verdicts, or classify halal/not halal without the required approval.
+- HostGator is for DB/Laravel operations only; perform Open Food Facts and web research locally or from Hetzner.
+- Daily audit artifacts belong under `Halal Kiwi/Products/Prioritisation_Daily/{YYYY-MM-DD}/` in the Halal Kiwi Google Drive.
 
 ## Deployment Notes
 

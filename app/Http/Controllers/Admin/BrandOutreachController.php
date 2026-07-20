@@ -29,6 +29,8 @@ class BrandOutreachController extends Controller
             'ready_requests' => PrioritisationRequest::active()->where('status', 'ready_for_outreach')->count(),
             'drafts' => BrandOutreachBatch::where('status', 'draft')->count(),
             'queued' => BrandOutreachBatch::where('status', 'queued')->count(),
+            'sending' => BrandOutreachBatch::where('status', 'sending')->count(),
+            'uncertain' => BrandOutreachBatch::where('status', 'uncertain')->count(),
             'sent' => BrandOutreachBatch::where('status', 'sent')->count(),
             'failed' => BrandOutreachBatch::where('status', 'failed')->count(),
         ];

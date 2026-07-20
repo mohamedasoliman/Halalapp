@@ -4,16 +4,21 @@ namespace Tests\Feature;
 
 use App\Jobs\SendBrandOutreachBatch;
 use App\Mail\BrandOutreachEmail;
+use App\Mail\UserNotificationEmail;
 use App\Models\Brand;
 use App\Models\BrandOutreachBatch;
 use App\Models\PrioritisationRequest;
+use App\Models\RequestWatcher;
 use App\Services\BrandOutreachService;
+use App\Services\RequestNotificationService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use LogicException;
+use Mockery;
+use RuntimeException;
 use Tests\TestCase;
 
 class BrandOutreachServiceTest extends TestCase
@@ -200,11 +205,16 @@ class BrandOutreachServiceTest extends TestCase
             'contact_research_status' => 'verified',
         ]);
         $request = $this->createRequest('Sent Brand', '9400000000003', 'Sent product', 'ready_for_outreach');
+        $request->update(['user_email' => 'Customer@Example.com']);
+        RequestWatcher::create(['request_id' => $request->id, 'user_email' => 'customer@example.com']);
+        RequestWatcher::create(['request_id' => $request->id, 'user_email' => 'anonymous@halalkiwi.com']);
         $batch = $this->createBatch($brand, 'HK-SENT-1', 'queued', [$request->id]);
 
         (new SendBrandOutreachBatch($batch->id))->handle(app(BrandOutreachService::class));
 
         Mail::assertSent(BrandOutreachEmail::class, fn (BrandOutreachEmail $mail) => $mail->reference === 'HK-SENT-1');
+        Mail::assertSent(UserNotificationEmail::class, 1);
+        Mail::assertSent(UserNotificationEmail::class, fn (UserNotificationEmail $mail) => $mail->hasTo('customer@example.com'));
         $this->assertSame('sent', $batch->fresh()->status);
         $this->assertSame('contacted', $request->fresh()->status);
         $this->assertNotNull($brand->fresh()->last_contacted_at);
@@ -213,6 +223,69 @@ class BrandOutreachServiceTest extends TestCase
             'direction' => 'outbound',
             'subject' => $batch->subject,
         ]);
+    }
+
+    public function test_requester_notification_preparation_failure_does_not_downgrade_sent_batch(): void
+    {
+        Mail::fake();
+        config(['outreach.enabled' => true]);
+        $brand = Brand::create([
+            'name' => 'Post-send Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+        $request = $this->createRequest('Post-send Brand', '9400000000014', 'Post-send product', 'ready_for_outreach');
+        $request->update(['user_email' => 'customer@example.com']);
+        $batch = $this->createBatch($brand, 'HK-POST-SEND-1', 'queued', [$request->id]);
+        $notifications = Mockery::mock(RequestNotificationService::class);
+        $notifications->shouldReceive('prepareEvent')->once()->andThrow(new RuntimeException('Delivery ledger unavailable.'));
+        $service = new BrandOutreachService($notifications);
+
+        (new SendBrandOutreachBatch($batch->id))->handle($service);
+
+        Mail::assertSent(BrandOutreachEmail::class, 1);
+        $this->assertSame('sent', $batch->fresh()->status);
+        $this->assertStringContainsString('requester notification processing requires review', $batch->fresh()->error);
+        $this->assertSame('contacted', $request->fresh()->status);
+        $this->assertDatabaseHas('brand_communications', [
+            'brand_id' => $brand->id,
+            'direction' => 'outbound',
+            'subject' => $batch->subject,
+        ]);
+    }
+
+    public function test_failure_after_send_attempt_marks_manufacturer_batch_uncertain(): void
+    {
+        $brand = Brand::create([
+            'name' => 'Uncertain Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+        $batch = $this->createBatch($brand, 'HK-UNCERTAIN-1', 'sending');
+
+        (new SendBrandOutreachBatch($batch->id))->failed(new RuntimeException('SMTP connection ended unexpectedly.'));
+
+        $this->assertSame('uncertain', $batch->fresh()->status);
+        $this->assertStringContainsString('do not retry without reconciliation', $batch->fresh()->error);
+        $this->assertNull($batch->fresh()->failed_at);
+    }
+
+    public function test_job_failure_callback_never_downgrades_a_sent_manufacturer_batch(): void
+    {
+        $brand = Brand::create([
+            'name' => 'Already Sent Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+        $batch = $this->createBatch($brand, 'HK-ALREADY-SENT-1', 'sent');
+
+        (new SendBrandOutreachBatch($batch->id))->failed(new RuntimeException('Post-send notification failure.'));
+
+        $this->assertSame('sent', $batch->fresh()->status);
+        $this->assertStringContainsString('Post-send processing requires review', $batch->fresh()->error);
     }
 
     public function test_outreach_email_requests_meat_and_regional_manufacturer_details(): void
@@ -291,6 +364,7 @@ class BrandOutreachServiceTest extends TestCase
             $table->string('type')->default('prioritise');
             $table->string('status')->default('pending');
             $table->tinyInteger('resolved_status')->nullable();
+            $table->unsignedBigInteger('resolution_communication_id')->nullable();
             $table->text('notes')->nullable();
             $table->string('source')->nullable();
             $table->timestamps();
@@ -303,6 +377,10 @@ class BrandOutreachServiceTest extends TestCase
             $table->text('body_preview')->nullable();
             $table->json('barcodes_mentioned')->nullable();
             $table->text('action_taken')->nullable();
+            $table->string('email_message_id')->nullable();
+            $table->text('proof_path')->nullable();
+            $table->string('processing_status')->nullable();
+            $table->timestamp('processed_at')->nullable();
             $table->timestamps();
         });
         Schema::create('request_watchers', function (Blueprint $table) {
@@ -328,6 +406,33 @@ class BrandOutreachServiceTest extends TestCase
             $table->timestamp('failed_at')->nullable();
             $table->text('error')->nullable();
             $table->timestamps();
+        });
+        $this->createNotificationTable();
+    }
+
+    private function createNotificationTable(): void
+    {
+        Schema::create('request_notification_deliveries', function (Blueprint $table) {
+            $table->id();
+            $table->char('event_key', 64);
+            $table->string('event_reference');
+            $table->json('request_ids')->nullable();
+            $table->unsignedBigInteger('brand_communication_id')->nullable();
+            $table->string('notification_type');
+            $table->string('recipient_email');
+            $table->string('normalized_email');
+            $table->char('recipient_hash', 64);
+            $table->string('product_name');
+            $table->string('barcode');
+            $table->tinyInteger('halal_status')->nullable();
+            $table->string('status')->default('pending');
+            $table->unsignedInteger('attempts')->default(0);
+            $table->timestamp('last_attempted_at')->nullable();
+            $table->timestamp('sent_at')->nullable();
+            $table->timestamp('uncertain_at')->nullable();
+            $table->text('error')->nullable();
+            $table->timestamps();
+            $table->unique(['event_key', 'recipient_hash']);
         });
     }
 }

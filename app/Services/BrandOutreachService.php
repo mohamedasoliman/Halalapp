@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Jobs\SendBrandOutreachBatch;
-use App\Mail\UserNotificationEmail;
 use App\Models\Brand;
 use App\Models\BrandCommunication;
 use App\Models\BrandOutreachBatch;
@@ -11,12 +10,13 @@ use App\Models\PrioritisationRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use LogicException;
 
 class BrandOutreachService
 {
+    public function __construct(private readonly RequestNotificationService $notifications) {}
+
     public function prepareInitialOutreach(): array
     {
         $createdBrands = 0;
@@ -89,7 +89,7 @@ class BrandOutreachService
             ->keyBy(fn (Brand $brand) => $this->normalizeBrandName($brand->name));
 
         $openRequestIds = BrandOutreachBatch::query()
-            ->whereIn('status', ['draft', 'queued'])
+            ->whereIn('status', ['draft', 'queued', 'sending', 'uncertain'])
             ->get(['request_ids'])
             ->flatMap(fn (BrandOutreachBatch $batch) => $batch->request_ids ?? [])
             ->map(fn ($id) => (int) $id)
@@ -135,7 +135,7 @@ class BrandOutreachService
 
             $hasOpenFollowUp = $brand->outreachBatches()
                 ->where('kind', 'follow_up')
-                ->whereIn('status', ['draft', 'queued'])
+                ->whereIn('status', ['draft', 'queued', 'sending', 'uncertain'])
                 ->exists();
             if ($hasOpenFollowUp) {
                 continue;
@@ -169,7 +169,7 @@ class BrandOutreachService
         $timezone = config('outreach.timezone', 'Pacific/Auckland');
         $localDay = now($timezone);
         $alreadyScheduled = BrandOutreachBatch::query()
-            ->whereIn('status', ['queued', 'sent'])
+            ->whereIn('status', ['queued', 'sending', 'uncertain', 'sent'])
             ->whereBetween('scheduled_at', [
                 $localDay->copy()->startOfDay()->utc(),
                 $localDay->copy()->endOfDay()->utc(),
@@ -217,12 +217,32 @@ class BrandOutreachService
         return $queued;
     }
 
+    public function claimForSending(BrandOutreachBatch $batch): bool
+    {
+        $claimed = BrandOutreachBatch::query()
+            ->whereKey($batch->id)
+            ->where('status', 'queued')
+            ->update([
+                'status' => 'sending',
+                'error' => null,
+            ]);
+
+        if ($claimed === 1) {
+            $batch->refresh();
+        }
+
+        return $claimed === 1;
+    }
+
     public function recordSent(BrandOutreachBatch $batch): void
     {
         DB::transaction(function () use ($batch) {
             $batch = BrandOutreachBatch::query()->lockForUpdate()->findOrFail($batch->id);
             if ($batch->status === 'sent') {
                 return;
+            }
+            if ($batch->status !== 'sending') {
+                throw new LogicException("Outreach batch {$batch->reference} is not claimed for sending.");
             }
 
             $batch->update([
@@ -259,28 +279,35 @@ class BrandOutreachService
         });
     }
 
-    public function notifyWatchers(BrandOutreachBatch $batch): void
+    public function notifyWatchers(BrandOutreachBatch $batch): array
     {
         if ($batch->kind !== 'initial') {
-            return;
+            return ['sent' => 0, 'failed' => 0, 'uncertain' => 0, 'sending' => 0, 'skipped' => 0];
         }
 
         $requests = PrioritisationRequest::with('watchers')->whereIn('id', $batch->request_ids)->get();
-        foreach ($requests as $request) {
-            foreach ($request->watchers as $watcher) {
-                if ($this->shouldSkipWatcherEmail($watcher->user_email)) {
-                    continue;
-                }
+        if ($requests->isEmpty()) {
+            return ['sent' => 0, 'failed' => 0, 'uncertain' => 0, 'sending' => 0, 'skipped' => 0];
+        }
 
-                try {
-                    Mail::to($watcher->user_email)->send(
-                        new UserNotificationEmail('contacted', $request->product_name ?? 'your requested product', $request->barcode)
-                    );
-                } catch (\Throwable) {
-                    // Manufacturer delivery is authoritative; a watcher notification must not undo it.
-                }
+        $result = ['sent' => 0, 'failed' => 0, 'uncertain' => 0, 'sending' => 0, 'skipped' => 0];
+        foreach ($requests->groupBy(fn (PrioritisationRequest $request) => (string) $request->barcode) as $barcode => $barcodeRequests) {
+            $first = $barcodeRequests->first();
+            $eventReference = "outreach-contacted:{$batch->reference}:barcode:{$barcode}";
+            $this->notifications->prepareEvent(
+                $eventReference,
+                $barcodeRequests,
+                'contacted',
+                $first->product_name ?? 'your requested product',
+                (string) $barcode,
+            );
+            $delivery = $this->notifications->deliverEvent($eventReference);
+            foreach ($result as $key => $count) {
+                $result[$key] += $delivery[$key];
             }
         }
+
+        return $result;
     }
 
     public function hasVerifiedEmail(Brand $brand): bool
@@ -353,11 +380,6 @@ class BrandOutreachService
         $previousDay = $completedFollowUps === 0 ? 0 : $days[$completedFollowUps - 1];
 
         return now()->addDays(max(1, $days[$completedFollowUps] - $previousDay));
-    }
-
-    private function shouldSkipWatcherEmail(?string $email): bool
-    {
-        return ! $email || str_ends_with(strtolower($email), '@halalkiwi.com');
     }
 
     private function assertDeliveryConfiguration(): void

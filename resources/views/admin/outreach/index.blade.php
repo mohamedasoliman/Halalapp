@@ -29,6 +29,8 @@
                                         'Ready requests' => $stats['ready_requests'],
                                         'Drafts' => $stats['drafts'],
                                         'Queued' => $stats['queued'],
+                                        'Sending' => $stats['sending'],
+                                        'Uncertain' => $stats['uncertain'],
                                         'Sent' => $stats['sent'],
                                         'Failed' => $stats['failed'],
                                     ] as $label => $value)
@@ -46,7 +48,7 @@
                                         </form>
                                         <a href="{{ route('brands.index', ['research' => 'pending']) }}" class="btn btn-info">Research Missing Contacts</a>
                                         <a href="{{ route('outreach.index') }}" class="btn btn-secondary">All</a>
-                                        @foreach(['draft', 'queued', 'sent', 'failed', 'cancelled'] as $status)
+                                        @foreach(['draft', 'queued', 'sending', 'uncertain', 'sent', 'failed', 'cancelled'] as $status)
                                             <a href="{{ route('outreach.index', ['status' => $status]) }}" class="btn btn-secondary">{{ ucfirst($status) }}</a>
                                         @endforeach
                                     </div>
@@ -138,6 +140,8 @@
     .badge { padding: 4px 8px; border-radius: 4px; color: #fff; }
     .badge-draft { background: #6c757d; }
     .badge-queued { background: #17a2b8; }
+    .badge-sending { background: #0069d9; }
+    .badge-uncertain { background: #fd7e14; }
     .badge-sent { background: #28a745; }
     .badge-failed { background: #dc3545; }
     .badge-cancelled { background: #343a40; }

@@ -10,6 +10,7 @@ class BrandCommunication extends Model
 
     protected $casts = [
         'barcodes_mentioned' => 'array',
+        'processed_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

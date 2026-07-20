@@ -10,6 +10,7 @@ class PrioritisationRequest extends Model
 
     protected $casts = [
         'resolved_status' => 'integer',
+        'resolution_communication_id' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
