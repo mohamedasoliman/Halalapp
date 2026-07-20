@@ -2,6 +2,8 @@
 
 namespace App\Models\ProductModel;
 
+use App\Support\ProductBarcode;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,6 +18,19 @@ class Product extends Model
     protected $attributes = [
         'halal_status' => '2',
     ];
+
+    public function scopeMatchingBarcode(Builder $query, string $barcode): Builder
+    {
+        $barcode = ProductBarcode::clean($barcode);
+        $key = ProductBarcode::key($barcode);
+
+        return $query->where(function (Builder $query) use ($barcode, $key) {
+            $query->where('Barcode', $barcode);
+            if ($key !== null) {
+                $query->orWhere('barcode_key', $key);
+            }
+        });
+    }
 
 	protected $casts = [
 		'created_at' => 'datetime',

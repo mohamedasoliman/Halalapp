@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ProductModel\Product;
+use App\Support\ProductBarcode;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use League\Csv\Reader;
@@ -31,9 +32,10 @@ class ReplaceProducts extends Command
 
         foreach ($csv->getRecords() as $record) {
             try {
+                $rawBarcode = ! empty($record['Barcode']) ? $record['Barcode'] : '0';
                 Product::create([
                     'product_name' => $record['Product Name'] ?? 'Unnamed Product',
-                    'Barcode' => !empty($record['Barcode']) ? $record['Barcode'] : '0',
+                    'Barcode' => ProductBarcode::canonical($rawBarcode),
                     'product_image' => $record['Product Image'] ?? null,
                     'halal_status' => (isset($record['Halal Status']) && $record['Halal Status'] !== '') ? $record['Halal Status'] : 2,
                     'Certification_Status' => !empty($record['Certification Status']) ? $record['Certification Status'] : '_',

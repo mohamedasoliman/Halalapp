@@ -164,21 +164,11 @@ class ApiController extends Controller
 
                 // Try exact barcode match first (uses index)
                 $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
-                    ->where('Barcode', $searchTerm)
+                    ->matchingBarcode($searchTerm)
                     ->where('status', 1)
                     ->orderBy('product_name');
 
                 $products = $query->paginate($perPage);
-
-                // Fallback: strip leading zeros from both sides if exact match found nothing
-                if ($products->total() === 0) {
-                    $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
-                        ->whereRaw("TRIM(LEADING '0' FROM Barcode) = TRIM(LEADING '0' FROM ?)", [$searchTerm])
-                        ->where('status', 1)
-                        ->orderBy('product_name');
-
-                    $products = $query->paginate($perPage);
-                }
             } else {
                 $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                     ->where('status', 1);

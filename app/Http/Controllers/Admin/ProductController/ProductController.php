@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\ProductModel\Product;
+use App\Support\ProductBarcode;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
 use League\Csv\Reader;
@@ -50,10 +52,18 @@ class ProductController extends Controller
                 $csv = Reader::createFromPath($path);
                 $csv->setHeaderOffset(0);
 
+                $skippedDuplicates = 0;
                 foreach ($csv->getRecords() as $record) {
+                    $rawBarcode = ! empty($record['Barcode']) ? $record['Barcode'] : '0';
+                    $barcode = ProductBarcode::canonical($rawBarcode);
+                    if (Product::matchingBarcode($barcode)->exists()) {
+                        $skippedDuplicates++;
+                        continue;
+                    }
+
                     Product::create([
                         'product_name' => $record['Product Name'] ?? 'Unnamed Product',
-                        'Barcode' => !empty($record['Barcode']) ? $record['Barcode'] : '0',
+                        'Barcode' => $barcode,
                         'product_image' => $record['Product Image'] ?? null,
                         'halal_status' => (isset($record['Halal Status']) && $record['Halal Status'] !== '') ? $record['Halal Status'] : 2,
                         'Certification_Status' => !empty($record['Certification Status']) ? $record['Certification Status'] : '_',
@@ -64,7 +74,10 @@ class ProductController extends Controller
                 }
                 
                 Cache::increment('products_cache_version');
-                return redirect()->back()->with('success', 'CSV file imported successfully.');
+                return redirect()->back()->with(
+                    'success',
+                    "CSV file imported successfully. Skipped {$skippedDuplicates} duplicate barcode(s)."
+                );
             } else {
                 return redirect()->back()->with('error', 'Please select a valid CSV file.');
             }
@@ -243,7 +256,15 @@ class ProductController extends Controller
             'product_name' => 'required',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image input
             'halal_status' => 'nullable|in:0,1,2',
+            'Barcode' => 'required|string|max:20',
         ], $messages);
+
+        $barcode = ProductBarcode::canonical($request->Barcode);
+        if (Product::matchingBarcode($barcode)->exists()) {
+            throw ValidationException::withMessages([
+                'Barcode' => 'A product with this barcode already exists.',
+            ]);
+        }
 
         $originalImage = $request->file('product_image');
         $imageName = '';
@@ -270,7 +291,7 @@ class ProductController extends Controller
             'product_image' => $imageName,
             'halal_status' => $request->filled('halal_status') ? $request->halal_status : '2',
             'status' => 1,
-            'Barcode' => $request->Barcode,
+            'Barcode' => $barcode,
             'Certification_Status' => $request->Certification_Status,
             'category' => $request->category,
             'notes' => $request->notes,
@@ -314,7 +335,15 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'product_name' => 'required',
             'halal_status' => 'nullable|in:0,1,2',
+            'Barcode' => 'required|string|max:20',
         ], $messages);
+
+        $barcode = ProductBarcode::canonical($request->Barcode);
+        if (Product::matchingBarcode($barcode)->where('id', '!=', $categoryId)->exists()) {
+            throw ValidationException::withMessages([
+                'Barcode' => 'A product with this barcode already exists.',
+            ]);
+        }
 
         $originalImage = $request->file('product_image');
         $imageName = '';
@@ -339,7 +368,7 @@ class ProductController extends Controller
         $updateData = [
             'product_name' => $request->product_name, // Ensure you're using the correct field name
             'status' => $request->status ? $request->status : 0,
-            'Barcode' => $request->Barcode,
+            'Barcode' => $barcode,
             'Certification_Status' => $request->Certification_Status,
             'category' => $request->category,
             'notes' => $request->notes,

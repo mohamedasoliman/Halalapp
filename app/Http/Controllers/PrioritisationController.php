@@ -9,6 +9,7 @@ use App\Models\BrandCommunication;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
 use App\Models\RequestWatcher;
+use App\Support\ProductBarcode;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -17,19 +18,22 @@ class PrioritisationController extends Controller
     public function store(PrioritiseRequest $request)
     {
         try {
-            $barcode = $request->barcode;
+            $barcode = ProductBarcode::canonical($request->barcode);
             $type = $request->type ?? 'prioritise';
             $userEmail = $request->user_email;
             $isAnonymous = empty($userEmail) || str_contains(strtolower($userEmail), 'noreply');
 
             // 1. Check if product already has a verdict (lookup by barcode, fallback to ID)
-            $product = Product::where('Barcode', $barcode)->first();
+            $product = Product::matchingBarcode($barcode)->first();
             if (!$product && is_numeric($barcode)) {
                 $product = Product::find($barcode);
                 // Use the actual barcode from the product if found by ID
                 if ($product && $product->Barcode) {
                     $barcode = $product->Barcode;
                 }
+            }
+            if ($product) {
+                $barcode = (string) $product->Barcode;
             }
             if ($product && ($product->halal_status === '0' || $product->halal_status === '1')) {
                 return response()->json([

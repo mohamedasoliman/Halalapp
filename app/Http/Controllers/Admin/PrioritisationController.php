@@ -47,7 +47,7 @@ class PrioritisationController extends Controller
     {
         $request = PrioritisationRequest::with('watchers')->findOrFail($id);
         $brand = $request->brand();
-        $product = Product::where('Barcode', $request->barcode)->first();
+        $product = Product::matchingBarcode((string) $request->barcode)->first();
 
         return view('admin.prioritisation.show', compact('request', 'brand', 'product'));
     }

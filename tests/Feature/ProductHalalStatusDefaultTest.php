@@ -27,6 +27,7 @@ class ProductHalalStatusDefaultTest extends TestCase
             $table->id();
             $table->string('product_name');
             $table->string('Barcode', 20);
+            $table->string('barcode_key', 20)->nullable();
             $table->string('halal_status')->nullable();
             $table->boolean('status')->default(true);
             $table->string('category')->nullable();
