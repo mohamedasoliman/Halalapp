@@ -160,7 +160,7 @@ class ProductResolutionService
         if (Str::length($note) > 255) {
             throw new InvalidArgumentException('The user-facing product note must not exceed 255 characters.');
         }
-        if (preg_match('/\b20\d{2}-\d{2}-\d{2}\b|Proof:|Brand_Proofs|\/Users\/|Inbound communication #/i', $note)) {
+        if (preg_match('/\b20\d{2}\b|Proof:|Brand_Proofs|\/Users\/|https?:\/\/|Inbound communication #/i', $note)) {
             throw new InvalidArgumentException(
                 'The user-facing product note cannot contain dates, proof locations, or internal communication IDs.'
             );
