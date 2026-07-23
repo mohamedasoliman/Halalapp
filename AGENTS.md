@@ -36,7 +36,8 @@ php artisan test
 
 ## Critical Domain Rules
 
-- `halal_status`: `0 = Halal`, `1 = Not Halal`, `2 = Unreviewed`
+- `halal_status`: `0 = Halal`, `1 = Not Halal`, `2 = Unreviewed`, `3 = Mashbooh`
+- Mashbooh is an investigated but unresolved concern, not a final verdict. Do not resolve requests or send final-verdict notifications for status `3`.
 - Use strict PHP checks (`=== '0'`), never loose comparisons for status
 - Watcher/user emails ending in `@halalkiwi.com` are placeholders for users who did not provide an email; do not send user notifications to them
 - Present findings and get explicit approval before destructive DB changes

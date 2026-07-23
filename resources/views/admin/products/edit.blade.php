@@ -41,7 +41,11 @@
 		</div>
 		<div class="radio radio-inline">
 			<input type="radio" name="halal_status" value="2" @if($Product->halal_status == 2) checked @endif>
-			Not Sure
+			Unreviewed
+		</div>
+		<div class="radio radio-inline">
+			<input type="radio" name="halal_status" value="3" @if($Product->halal_status == 3) checked @endif>
+			Mashbooh
 		</div>
 		@if ($errors->has('halal_status'))
 			<span style="color:red;">{{$errors->first('halal_status')}}</span>

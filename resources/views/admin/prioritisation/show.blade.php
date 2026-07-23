@@ -73,6 +73,8 @@
                                                                     <span class="badge badge-success">Halal</span>
                                                                 @elseif($product->halal_status === '1' || $product->halal_status === 1)
                                                                     <span class="badge badge-danger">Not Halal</span>
+                                                                @elseif($product->halal_status === '3' || $product->halal_status === 3)
+                                                                    <span class="badge badge-info">Mashbooh</span>
                                                                 @else
                                                                     <span class="badge badge-warning">Unreviewed</span>
                                                                 @endif

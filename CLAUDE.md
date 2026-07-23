@@ -213,7 +213,8 @@ Custom `db:backup` artisan command (`app/Console/Commands/BackupDatabase.php`) s
 - The `.env` file on the server contains production database credentials - never overwrite it
 - `API_KEY` in `.env` is used for mobile API auth (separate from `APP_KEY`); falls back to `APP_KEY` if not set
 - Product search uses MySQL SOUNDEX for fuzzy matching (see `ApiController::allListing`)
-- `halal_status = 0` means halal, `halal_status = 1` means not halal (inverted logic)
+- `halal_status = 0` means Halal, `1` means Not Halal, `2` means Unreviewed, and `3` means Mashbooh
+- Mashbooh is not a final verdict and must not resolve prioritisation requests or trigger final-verdict notifications
 - Admin authentication uses a separate `admin` guard defined in `config/auth.php`
 - User uploads are stored in `public/upload/` and are not tracked in git
 - The admin panel UI uses `public/assets/css/modern-admin.css` for styling (Outfit font, glass-morphic design, dark sidebar)

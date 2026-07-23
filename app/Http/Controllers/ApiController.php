@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Api\ProductSearchRequest;
 use Illuminate\Support\Facades\Cache;
 use App\Models\ProductModel\Product;
+use App\Support\HalalStatus;
 
 class ApiController extends Controller
 {
@@ -44,6 +45,10 @@ class ApiController extends Controller
 
             // Check if halal_only filter is requested
             $halalOnly = $request->get('halal_only');
+            $statusFilter = (string) $request->get('halal_status', '');
+            $statusFilter = in_array($statusFilter, HalalStatus::values(), true)
+                ? $statusFilter
+                : null;
 
             if (!empty($request->search)) {
                 $searchTerm = trim($request->search);
@@ -93,7 +98,9 @@ class ApiController extends Controller
                     ->where('status', 1);
 
                 // Add halal filter if requested
-                if ($halalOnly == '1' || $halalOnly == 'true') {
+                if ($statusFilter !== null) {
+                    $query->where('halal_status', $statusFilter);
+                } elseif ($halalOnly == '1' || $halalOnly == 'true') {
                     $query->where('halal_status', 0);
                 }
 
@@ -104,13 +111,16 @@ class ApiController extends Controller
                 // No search term — cacheable listing
                 $halalFilter = ($halalOnly == '1' || $halalOnly == 'true') ? 1 : 0;
                 $ver = Cache::get('products_cache_version', 1);
-                $cacheKey = "products:v{$ver}:list:{$halalFilter}:{$perPage}:" . ($request->get('page', 1));
+                $cacheStatus = $statusFilter ?? ($halalFilter ? HalalStatus::HALAL : 'all');
+                $cacheKey = "products:v{$ver}:list:{$cacheStatus}:{$perPage}:" . ($request->get('page', 1));
 
-                $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $perPage) {
+                $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $statusFilter, $perPage) {
                     $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                         ->where('status', 1);
 
-                    if ($halalFilter) {
+                    if ($statusFilter !== null) {
+                        $query->where('halal_status', $statusFilter);
+                    } elseif ($halalFilter) {
                         $query->where('halal_status', 0);
                     }
 

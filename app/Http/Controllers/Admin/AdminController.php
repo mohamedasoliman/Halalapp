@@ -49,6 +49,7 @@ class AdminController extends Controller
             $stats['halal_products'] = Product::where('halal_status', 0)->count();
             $stats['not_halal_products'] = Product::where('halal_status', 1)->count();
             $stats['not_sure_products'] = Product::where('halal_status', 2)->count();
+            $stats['mashbooh_products'] = Product::where('halal_status', 3)->count();
             $stats['total_mosques'] = Masjid::count();
             $restaurantJson = public_path('data/HalalRestaurantsList.json');
             $stats['total_restaurants'] = file_exists($restaurantJson) ? count(json_decode(file_get_contents($restaurantJson), true) ?? []) : 0;

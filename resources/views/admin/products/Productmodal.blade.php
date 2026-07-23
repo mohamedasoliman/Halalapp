@@ -96,7 +96,11 @@ aria-labelledby="addServiceTitle" aria-hidden="true">
               </div>
               <div class="radio radio-inline">
                 <input type="radio" id="halal_status3" name="halal_status" value="2">
-                Not Sure
+                Unreviewed
+              </div>
+              <div class="radio radio-inline">
+                <input type="radio" id="halal_status4" name="halal_status" value="3">
+                Mashbooh
               </div>
               <span id="radio-error"></span>
             </div>

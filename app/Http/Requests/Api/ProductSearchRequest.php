@@ -20,6 +20,7 @@ class ProductSearchRequest extends FormRequest
             'per_page' => 'nullable|integer|min:1|max:100',
             'page' => 'nullable|integer|min:1',
             'halal_only' => 'nullable|in:0,1,true,false',
+            'halal_status' => 'nullable|in:0,1,2,3',
         ];
     }
 

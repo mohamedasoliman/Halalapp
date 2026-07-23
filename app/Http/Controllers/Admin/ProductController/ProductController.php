@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\ProductModel\Product;
+use App\Support\HalalStatus;
 use App\Support\ProductBarcode;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
@@ -185,7 +187,12 @@ class ProductController extends Controller
     {
 
         if ($request->ajax()) {
-            $Product = Product::orderBy('status', 'DESC')->orderBy('id', 'DESC')->get();
+            $query = Product::orderBy('status', 'DESC')->orderBy('id', 'DESC');
+            if (in_array((string) $request->halal_status, HalalStatus::values(), true)) {
+                $query->where('halal_status', (string) $request->halal_status);
+            }
+
+            $Product = $query->get();
             return DataTables::of($Product)
                 ->addIndexColumn()
                 ->addColumn('status', function ($user) {
@@ -196,13 +203,10 @@ class ProductController extends Controller
                     }
                 })
                 ->addColumn('halal_status', function ($user) {
-                    if ($user->halal_status == '1') {
-                        return "<label data-id='" . $user->id . "' class='label label-danger'>Not Halal</label>";
-                    } else if ($user->halal_status == '0') {
-                        return "<label data-id='" . $user->id . "' class='label label-success'>Halal</label>";
-                    } else {
-                        return "<label data-id='" . $user->id . "' class='label label-warning'>Not Sure</label>";
-                    }
+                    $label = HalalStatus::label($user->halal_status);
+                    $badgeClass = HalalStatus::badgeClass($user->halal_status);
+
+                    return "<label data-id='{$user->id}' class='label {$badgeClass}'>{$label}</label>";
                 })
                 ->editColumn('product_image', function ($row) {
                     // Support both local filenames and external URLs
@@ -255,7 +259,7 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'product_name' => 'required',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image input
-            'halal_status' => 'nullable|in:0,1,2',
+            'halal_status' => ['nullable', Rule::in(HalalStatus::values())],
             'Barcode' => 'required|string|max:20',
         ], $messages);
 
@@ -334,7 +338,7 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'product_name' => 'required',
-            'halal_status' => 'nullable|in:0,1,2',
+            'halal_status' => ['nullable', Rule::in(HalalStatus::values())],
             'Barcode' => 'required|string|max:20',
         ], $messages);
 

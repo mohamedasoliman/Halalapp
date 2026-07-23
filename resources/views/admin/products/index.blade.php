@@ -33,6 +33,16 @@
                                 <!-- Users Management table start -->
                                 <div class="card">
                                     <div class="card-header table-card-header">
+                                        <div class="form-inline float-left">
+                                            <label for="halal-status-filter" class="mr-2">Halal status</label>
+                                            <select id="halal-status-filter" class="form-control">
+                                                <option value="">All</option>
+                                                <option value="0">Halal</option>
+                                                <option value="1">Not Halal</option>
+                                                <option value="2">Unreviewed</option>
+                                                <option value="3">Mashbooh</option>
+                                            </select>
+                                        </div>
                                         <div class="float-right">
                                             <a href="javascript:;" class="btn btn-primary" id="add-main-category"><i
                                                     class="fa fa-plus"></i>Add Product</a>
@@ -143,7 +153,12 @@
             oTable = $('#users-table').DataTable({
                 "processing": true,
                 "serverSide": true,
-                ajax: "{{ route('product.index') }}",
+                ajax: {
+                    url: "{{ route('product.index') }}",
+                    data: function(data) {
+                        data.halal_status = $('#halal-status-filter').val();
+                    }
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex'
@@ -204,6 +219,10 @@
                 ],
             });
 
+            $('#halal-status-filter').on('change', function() {
+                oTable.ajax.reload();
+            });
+
             $(document).on('click', '.status-update', function() {
                 $.ajax({
                     type: "post",
@@ -242,6 +261,9 @@
         });
         $('#halal_status3').click(function(event) {
             $('#halal_status3').val('2');
+        });
+        $('#halal_status4').click(function(event) {
+            $('#halal_status4').val('3');
         });
 
         $('#add-main-category-form').validate({

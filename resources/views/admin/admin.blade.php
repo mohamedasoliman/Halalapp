@@ -39,7 +39,8 @@
                                     <div class="stat-info">
                                         <h3>{{ number_format($stats['halal_products'] ?? 0) }}</h3>
                                         <p>Halal</p>
-                                        <small>{{ $stats['not_halal_products'] ?? 0 }} not halal</small>
+                                        <small>{{ $stats['not_halal_products'] ?? 0 }} not halal</small><br>
+                                        <small>{{ $stats['mashbooh_products'] ?? 0 }} Mashbooh · {{ $stats['not_sure_products'] ?? 0 }} unreviewed</small>
                                     </div>
                                 </div>
                                 <div class="stat-card">
