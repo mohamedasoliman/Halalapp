@@ -131,11 +131,13 @@ class ManufacturerReplyProcessingTest extends TestCase
         $this->assertSame(['sent' => 2, 'failed' => 0, 'uncertain' => 0, 'sending' => 0, 'skipped' => 0], $result['delivery']);
         $this->assertSame('0', (string) $product->fresh()->halal_status);
         $this->assertSame('/proofs/evidence.txt', $product->fresh()->proof);
-        $this->assertStringContainsString('Existing product history.', $product->fresh()->notes);
-        $this->assertStringContainsString('Inbound communication #'.$communication->id, $product->fresh()->notes);
+        $this->assertSame('Existing product history.', $product->fresh()->notes);
         $this->assertSame('resolved', $request->fresh()->status);
         $this->assertSame($communication->id, $request->fresh()->resolution_communication_id);
         $this->assertStringContainsString('Existing request history.', $request->fresh()->notes);
+        $this->assertStringContainsString('Manufacturer evidence approved.', $request->fresh()->notes);
+        $this->assertStringContainsString('Inbound communication #'.$communication->id, $request->fresh()->notes);
+        $this->assertStringContainsString('Proof: /proofs/evidence.txt.', $request->fresh()->notes);
         $this->assertSame('applied', $communication->fresh()->processing_status);
         $this->assertNotNull($communication->fresh()->processed_at);
         $this->assertSame(2, RequestNotificationDelivery::where('status', 'sent')->count());
@@ -146,6 +148,55 @@ class ManufacturerReplyProcessingTest extends TestCase
             return str_contains($body, 'completed its review')
                 && ! str_contains($body, 'received confirmation');
         });
+    }
+
+    public function test_resolution_stores_only_an_explicit_public_note_on_the_product(): void
+    {
+        Mail::fake();
+        $product = Product::create([
+            'Barcode' => '9400000000010',
+            'product_name' => 'Public note product',
+            'halal_status' => '2',
+            'notes' => 'Old user-facing note.',
+        ]);
+        $request = PrioritisationRequest::create([
+            'barcode' => $product->Barcode,
+            'status' => 'ready_for_review',
+        ]);
+
+        app(ProductResolutionService::class)->resolve(
+            $product->Barcode,
+            '1',
+            'Internal evidence reviewed on 2026-07-23.',
+            '/proofs/private-file.txt',
+            notify: false,
+            publicNote: 'Contains carmine (E120).',
+        );
+
+        $this->assertSame('Contains carmine (E120).', $product->fresh()->notes);
+        $this->assertSame('/proofs/private-file.txt', $product->fresh()->proof);
+        $this->assertStringContainsString('Internal evidence reviewed on 2026-07-23.', $request->fresh()->notes);
+        $this->assertStringContainsString('Proof: /proofs/private-file.txt.', $request->fresh()->notes);
+        $this->assertStringNotContainsString('/proofs/private-file.txt', $product->fresh()->notes);
+    }
+
+    public function test_resolution_rejects_technical_metadata_in_a_public_note(): void
+    {
+        $product = Product::create([
+            'Barcode' => '9400000000011',
+            'product_name' => 'Invalid public note product',
+            'halal_status' => '2',
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot contain dates, proof locations, or internal communication IDs');
+
+        app(ProductResolutionService::class)->resolve(
+            $product->Barcode,
+            '0',
+            notify: false,
+            publicNote: 'Confirmed 2026-07-23. Proof: Brand_Proofs/example.txt',
+        );
     }
 
     public function test_missing_exact_product_does_not_resolve_requests(): void

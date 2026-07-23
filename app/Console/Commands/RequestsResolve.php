@@ -13,7 +13,8 @@ class RequestsResolve extends Command
     protected $signature = 'requests:resolve
         {barcode? : Product barcode}
         {status? : 0=halal, 1=not_halal}
-        {--notes= : Resolution notes}
+        {--notes= : Internal resolution notes}
+        {--public-note= : Optional concise note shown to app users}
         {--proof= : Saved proof path}
         {--communication-id= : Approved inbound brand communication ID}
         {--event= : Stable notification event reference}
@@ -48,6 +49,7 @@ class RequestsResolve extends Command
                 $this->option('proof') ? (string) $this->option('proof') : null,
                 $this->option('communication-id') ? (int) $this->option('communication-id') : null,
                 $this->option('event') ? (string) $this->option('event') : null,
+                publicNote: $this->option('public-note') ? (string) $this->option('public-note') : null,
             );
         } catch (InvalidArgumentException $exception) {
             $this->error($exception->getMessage());

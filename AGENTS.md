@@ -38,6 +38,7 @@ php artisan test
 
 - `halal_status`: `0 = Halal`, `1 = Not Halal`, `2 = Unreviewed`, `3 = Mashbooh`
 - Mashbooh is an investigated but unresolved concern, not a final verdict. Do not resolve requests or send final-verdict notifications for status `3`.
+- `products.notes` is displayed to app users. Keep it optional and concise; never put dates, proof paths, communication IDs, or other audit metadata there.
 - Use strict PHP checks (`=== '0'`), never loose comparisons for status
 - Watcher/user emails ending in `@halalkiwi.com` are placeholders for users who did not provide an email; do not send user notifications to them
 - Present findings and get explicit approval before destructive DB changes

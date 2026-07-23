@@ -23,11 +23,13 @@ class ProductResolutionService
         ?int $brandCommunicationId = null,
         ?string $eventReference = null,
         bool $notify = true,
+        ?string $publicNote = null,
     ): array {
         if (! in_array($status, ['0', '1'], true)) {
             throw new InvalidArgumentException('Status must be 0 (halal) or 1 (not halal).');
         }
 
+        $publicNote = $this->validatedPublicNote($publicNote);
         $eventReference ??= $brandCommunicationId
             ? "resolution:communication:{$brandCommunicationId}:barcode:{$barcode}:status:{$status}"
             : 'resolution:'.Str::uuid();
@@ -39,6 +41,7 @@ class ProductResolutionService
             $proofPath,
             $brandCommunicationId,
             $eventReference,
+            $publicNote,
         ) {
             $product = Product::query()
                 ->where('Barcode', $barcode)
@@ -77,8 +80,10 @@ class ProductResolutionService
             $auditNote = $this->auditNote($statusLabel, $notes, $proofPath, $brandCommunicationId);
             $productUpdates = [
                 'halal_status' => $status,
-                'notes' => $this->appendNote($product->notes, $auditNote),
             ];
+            if (filled($publicNote)) {
+                $productUpdates['notes'] = trim($publicNote);
+            }
             if ($proofPath && empty($product->proof)) {
                 $productUpdates['proof'] = $proofPath;
             }
@@ -144,6 +149,24 @@ class ProductResolutionService
         ])->filter()->implode(' ');
 
         return trim($context);
+    }
+
+    private function validatedPublicNote(?string $note): ?string
+    {
+        $note = trim((string) $note);
+        if ($note === '') {
+            return null;
+        }
+        if (Str::length($note) > 255) {
+            throw new InvalidArgumentException('The user-facing product note must not exceed 255 characters.');
+        }
+        if (preg_match('/\b20\d{2}-\d{2}-\d{2}\b|Proof:|Brand_Proofs|\/Users\/|Inbound communication #/i', $note)) {
+            throw new InvalidArgumentException(
+                'The user-facing product note cannot contain dates, proof locations, or internal communication IDs.'
+            );
+        }
+
+        return $note;
     }
 
     private function appendNote(?string $existing, string $note): string

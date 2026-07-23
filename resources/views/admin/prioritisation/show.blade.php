@@ -155,8 +155,12 @@
                                                         </select>
                                                     </div>
                                                     <div class="form-group mb-2">
-                                                        <label>Notes</label>
-                                                        <textarea name="notes" class="form-control" rows="3" placeholder="Resolution notes..."></textarea>
+                                                        <label>Internal resolution notes</label>
+                                                        <textarea name="notes" class="form-control" rows="3" placeholder="Evidence and audit details (not shown in the app)..."></textarea>
+                                                    </div>
+                                                    <div class="form-group mb-2">
+                                                        <label>User-facing product note <small class="text-muted">(optional)</small></label>
+                                                        <textarea name="public_note" class="form-control" rows="2" maxlength="255" placeholder="Short reason only. Do not include dates or proof locations."></textarea>
                                                     </div>
                                                     <button type="submit" class="btn btn-danger btn-block" onclick="return confirm('Are you sure? This will mark the product and notify all watchers.')">Resolve</button>
                                                 </form>

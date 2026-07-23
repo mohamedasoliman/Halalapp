@@ -73,6 +73,7 @@ class PrioritisationController extends Controller
         $request->validate([
             'halal_status' => 'required|in:0,1',
             'notes' => 'nullable|string|max:5000',
+            'public_note' => 'nullable|string|max:255',
             'proof_path' => 'nullable|string|max:5000',
             'brand_communication_id' => 'nullable|integer|exists:brand_communications,id',
         ]);
@@ -85,6 +86,7 @@ class PrioritisationController extends Controller
                 (string) ($request->notes ?? ''),
                 $request->proof_path,
                 $request->brand_communication_id ? (int) $request->brand_communication_id : null,
+                publicNote: $request->public_note,
             );
         } catch (ModelNotFoundException) {
             return redirect()->back()->withErrors([
