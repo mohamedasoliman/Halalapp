@@ -216,7 +216,7 @@ class AssistantIntentProxyTest extends TestCase
                     'intent' => 'product_search',
                     'prayer' => '',
                     'food_query' => '',
-                    'product_query' => 'chips',
+                    'product_query' => 'crisps',
                     'flavour' => 'salt and vinegar',
                 ])
             ),
