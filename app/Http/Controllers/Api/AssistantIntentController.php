@@ -22,6 +22,9 @@ class AssistantIntentController extends Controller
                     $request->string('query')->toString(),
                     $request->boolean('has_product_context'),
                     $request->string('assistant_context', 'general')->toString(),
+                    is_array($request->input('conversation_context'))
+                        ? $request->input('conversation_context')
+                        : [],
                 )
             );
         } catch (GeminiNotConfiguredException) {

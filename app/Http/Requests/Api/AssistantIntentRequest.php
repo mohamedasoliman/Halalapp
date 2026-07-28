@@ -20,6 +20,8 @@ class AssistantIntentRequest extends FormRequest
             'query' => 'required|string|min:2|max:300',
             'has_product_context' => 'required|boolean',
             'assistant_context' => 'nullable|in:general,restaurants,masjids,halal_list,product,businesses',
+            'conversation_context' => 'nullable|array|max:4',
+            'conversation_context.*' => 'string|min:1|max:300',
         ];
     }
 
