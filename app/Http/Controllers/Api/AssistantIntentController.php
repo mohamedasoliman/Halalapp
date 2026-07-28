@@ -21,6 +21,7 @@ class AssistantIntentController extends Controller
                 $service->interpret(
                     $request->string('query')->toString(),
                     $request->boolean('has_product_context'),
+                    $request->string('assistant_context', 'general')->toString(),
                 )
             );
         } catch (GeminiNotConfiguredException) {

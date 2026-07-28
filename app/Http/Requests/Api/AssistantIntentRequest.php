@@ -19,6 +19,7 @@ class AssistantIntentRequest extends FormRequest
             'model' => 'nullable|in:gemini-3.5-flash-lite',
             'query' => 'required|string|min:2|max:300',
             'has_product_context' => 'required|boolean',
+            'assistant_context' => 'nullable|in:general,restaurants,masjids,halal_list,product',
         ];
     }
 

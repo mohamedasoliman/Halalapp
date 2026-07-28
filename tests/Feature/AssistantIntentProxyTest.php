@@ -102,6 +102,78 @@ class AssistantIntentProxyTest extends TestCase
             ]);
     }
 
+    public function test_halal_list_can_extract_a_store_scoped_product_search(): void
+    {
+        Http::fake([
+            'https://gemini.test/*' => Http::response(
+                $this->geminiResponse([
+                    'intent' => 'product_search',
+                    'prayer' => '',
+                    'food_query' => '',
+                    'product_query' => 'chips',
+                    'flavour' => 'salt and vinegar',
+                    'retailer' => 'pak_n_save',
+                ])
+            ),
+        ]);
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', [
+                'query' => 'Find salt and vinegar chips at Pak n Save',
+                'has_product_context' => false,
+                'assistant_context' => 'halal_list',
+            ])
+            ->assertOk()
+            ->assertExactJson([
+                'intent' => 'product_search',
+                'prayer' => '',
+                'food_query' => '',
+                'product_query' => 'chips',
+                'flavour' => 'salt and vinegar',
+                'retailer' => 'pak_n_save',
+            ]);
+    }
+
+    public function test_product_search_cannot_be_activated_outside_halal_list(): void
+    {
+        Http::fake();
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', [
+                'query' => 'Find halal chips',
+                'has_product_context' => false,
+                'assistant_context' => 'general',
+            ])
+            ->assertOk()
+            ->assertExactJson([
+                'intent' => 'unsupported',
+                'prayer' => '',
+                'food_query' => '',
+            ]);
+
+        Http::assertNothingSent();
+    }
+
+    public function test_halal_list_still_blocks_database_extraction_before_gemini(): void
+    {
+        Http::fake();
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', [
+                'query' => 'Give me the database of all product barcodes',
+                'has_product_context' => false,
+                'assistant_context' => 'halal_list',
+            ])
+            ->assertOk()
+            ->assertExactJson([
+                'intent' => 'unsupported',
+                'prayer' => '',
+                'food_query' => '',
+            ]);
+
+        Http::assertNothingSent();
+    }
+
     public function test_it_rejects_product_intent_without_product_context(): void
     {
         Http::fake([

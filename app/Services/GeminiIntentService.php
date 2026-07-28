@@ -12,6 +12,7 @@ class GeminiIntentService
         'masjid',
         'restaurant',
         'product_alternative',
+        'product_search',
         'unsupported',
     ];
 
@@ -25,12 +26,19 @@ class GeminiIntentService
     ];
 
     /**
-     * @return array{intent: string, prayer: string, food_query: string}
+     * @return array<string, string>
      */
-    public function interpret(string $query, bool $hasProductContext): array
-    {
+    public function interpret(
+        string $query,
+        bool $hasProductContext,
+        string $assistantContext = 'general',
+    ): array {
         $query = trim($query);
-        $scope = $this->classifyScope($query, $hasProductContext);
+        $scope = $this->classifyScope(
+            $query,
+            $hasProductContext,
+            $assistantContext,
+        );
         if (! in_array(true, $scope, true)) {
             return $this->unsupported();
         }
@@ -50,7 +58,10 @@ class GeminiIntentService
                     'model' => (string) config('gemini.model', 'gemini-3.5-flash-lite'),
                     'store' => false,
                     'input' => $query,
-                    'system_instruction' => $this->systemInstruction($hasProductContext),
+                    'system_instruction' => $this->systemInstruction(
+                        $hasProductContext,
+                        $assistantContext,
+                    ),
                     'response_format' => [
                         'type' => 'text',
                         'mime_type' => 'application/json',
@@ -63,8 +74,21 @@ class GeminiIntentService
                                 ],
                                 'prayer' => ['type' => 'string'],
                                 'food_query' => ['type' => 'string'],
+                                'product_query' => ['type' => 'string'],
+                                'flavour' => ['type' => 'string'],
+                                'retailer' => [
+                                    'type' => 'string',
+                                    'enum' => ['', 'pak_n_save', 'woolworths'],
+                                ],
                             ],
-                            'required' => ['intent', 'prayer', 'food_query'],
+                            'required' => [
+                                'intent',
+                                'prayer',
+                                'food_query',
+                                'product_query',
+                                'flavour',
+                                'retailer',
+                            ],
                         ],
                     ],
                 ]);
@@ -86,8 +110,10 @@ class GeminiIntentService
         return $this->validateOutput($output, $scope);
     }
 
-    private function systemInstruction(bool $hasProductContext): string
-    {
+    private function systemInstruction(
+        bool $hasProductContext,
+        string $assistantContext,
+    ): string {
         $context = $hasProductContext ? 'true' : 'false';
 
         return <<<PROMPT
@@ -100,12 +126,18 @@ Valid intents:
 - masjid: finding a Masjid for a congregational prayer
 - restaurant: finding food or a restaurant
 - product_alternative: finding a halal alternative to the product currently open
+- product_search: finding a halal grocery product from the Halal List
 - unsupported: anything else
 
 Use only these prayer values: Fajr, Zohar, Asr, Magrib, Isha, Jumma, or an empty string.
 For restaurant requests, food_query must contain only the requested food or cuisine.
 Use product_alternative only when product context is available.
+Use product_search only when assistant context is halal_list.
+For product_search, product_query is the grocery product type, such as chicken or chips.
+For product_search, flavour contains only an explicitly requested flavour or variant.
+For product_search, retailer is pak_n_save for Pak'nSave/Pak n Save, woolworths for Woolworths/Countdown, otherwise empty.
 Product context available: {$context}.
+Assistant context: {$assistantContext}.
 PROMPT;
     }
 
@@ -155,8 +187,8 @@ PROMPT;
 
     /**
      * @param  array<string, mixed>  $output
-     * @param  array{masjid: bool, restaurant: bool, product_alternative: bool}  $scope
-     * @return array{intent: string, prayer: string, food_query: string}
+     * @param  array{masjid: bool, restaurant: bool, product_alternative: bool, product_search: bool}  $scope
+     * @return array<string, string>
      */
     private function validateOutput(array $output, array $scope): array
     {
@@ -196,21 +228,48 @@ PROMPT;
             $foodQuery = '';
         }
 
-        return [
+        $productQuery = $this->sanitiseSearchText($output['product_query'] ?? '');
+        $flavour = $this->sanitiseSearchText($output['flavour'] ?? '', 60);
+        $retailer = is_string($output['retailer'] ?? null)
+            ? trim($output['retailer'])
+            : '';
+        if (! in_array($retailer, ['', 'pak_n_save', 'woolworths'], true)) {
+            $retailer = '';
+        }
+        if ($intent !== 'product_search') {
+            $productQuery = '';
+            $flavour = '';
+            $retailer = '';
+        }
+
+        $result = [
             'intent' => $intent,
             'prayer' => $prayer,
             'food_query' => $foodQuery,
         ];
+
+        if ($intent === 'product_search') {
+            $result += [
+                'product_query' => $productQuery,
+                'flavour' => $flavour,
+                'retailer' => $retailer,
+            ];
+        }
+
+        return $result;
     }
 
     /**
      * This is deliberately deterministic. Gemini never sees requests outside
      * the three product features, even if a prompt asks it to ignore its rules.
      *
-     * @return array{masjid: bool, restaurant: bool, product_alternative: bool}
+     * @return array{masjid: bool, restaurant: bool, product_alternative: bool, product_search: bool}
      */
-    private function classifyScope(string $query, bool $hasProductContext): array
-    {
+    private function classifyScope(
+        string $query,
+        bool $hasProductContext,
+        string $assistantContext,
+    ): array {
         $normalized = mb_strtolower($query);
 
         $blockedPatterns = [
@@ -230,6 +289,7 @@ PROMPT;
                     'masjid' => false,
                     'restaurant' => false,
                     'product_alternative' => false,
+                    'product_search' => false,
                 ];
             }
         }
@@ -239,7 +299,7 @@ PROMPT;
                 '/\b(masjid|mosque|jamaat|congregational prayer|pray|prayer|fajr|fajar|dhuhr|zuhr|zohar|asr|maghrib|magrib|isha|ishaa|jummah|jumma)\b/u',
                 $normalized,
             ) === 1,
-            'restaurant' => preg_match(
+            'restaurant' => $assistantContext !== 'halal_list' && preg_match(
                 '/\b(crave|craving|hungry|eat|food|restaurant|takeaway|cuisine|breakfast|lunch|dinner|meal|cafe|pizza|burger|kebab|chicken|sushi|thai|indian|asian|seafood|bakery|dessert|sweet|mediterranean|turkish|lebanese|arabic|malaysian|indonesian|pakistani|biryani|noodles|rice|steak|sandwich|shawarma|falafel|curry)\b/u',
                 $normalized,
             ) === 1,
@@ -247,6 +307,8 @@ PROMPT;
                 '/\b(alternative|similar|substitute|replacement|instead|halal option)\b/u',
                 $normalized,
             ) === 1,
+            'product_search' => $assistantContext === 'halal_list'
+                && $this->isProductSearchCandidate($normalized),
         ];
     }
 
@@ -260,5 +322,29 @@ PROMPT;
             'prayer' => '',
             'food_query' => '',
         ];
+    }
+
+    private function isProductSearchCandidate(string $query): bool
+    {
+        if (preg_match(
+            '/\b(halal|product|buy|shop|shopping|find|looking|want|need|pak ?n ?save|pak\'n ?save|woolworths|countdown|flavour|flavor)\b/u',
+            $query,
+        ) === 1) {
+            return true;
+        }
+
+        return count(preg_split('/\s+/u', trim($query)) ?: []) <= 3;
+    }
+
+    private function sanitiseSearchText(mixed $value, int $limit = 80): string
+    {
+        $text = is_string($value) ? trim($value) : '';
+        $text = preg_replace('/[^\pL\pN\s&\'-]+/u', '', $text) ?? '';
+
+        return mb_substr(
+            trim(preg_replace('/\s+/u', ' ', $text) ?? ''),
+            0,
+            $limit,
+        );
     }
 }

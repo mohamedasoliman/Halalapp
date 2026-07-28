@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\Api\ProductSearchRequest;
-use Illuminate\Support\Facades\Cache;
 use App\Models\ProductModel\Product;
 use App\Support\HalalStatus;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ApiController extends Controller
 {
@@ -14,7 +15,7 @@ class ApiController extends Controller
      * Get the full URL for a product image.
      * Supports both local filenames and external URLs.
      *
-     * @param string|null $image
+     * @param  string|null  $image
      * @return string
      */
     private function getProductImageUrl($image)
@@ -29,7 +30,7 @@ class ApiController extends Controller
         }
 
         // Otherwise, it's a local filename - prepend the local path
-        return asset('public/upload/product_images/' . $image);
+        return asset('public/upload/product_images/'.$image);
     }
 
     /**
@@ -49,8 +50,10 @@ class ApiController extends Controller
             $statusFilter = in_array($statusFilter, HalalStatus::values(), true)
                 ? $statusFilter
                 : null;
+            $retailer = $request->string('retailer')->toString();
+            $flavour = $request->string('flavour')->toString();
 
-            if (!empty($request->search)) {
+            if (! empty($request->search)) {
                 $searchTerm = trim($request->search);
 
                 // Fuzzy search implementation with multiple matching strategies
@@ -73,27 +76,27 @@ class ApiController extends Controller
                         END) as relevance_score
                     ', [
                         $searchTerm,                    // Exact match
-                        $searchTerm . '%',              // Starts with
-                        '%' . $searchTerm . '%',        // Contains
-                        '%' . $searchTerm,              // Ends with
+                        $searchTerm.'%',              // Starts with
+                        '%'.$searchTerm.'%',        // Contains
+                        '%'.$searchTerm,              // Ends with
                         $searchTerm,                    // Sounds like (SOUNDEX)
                         $searchTerm,                    // Exact barcode
-                        '%' . $searchTerm . '%',        // Barcode contains
-                        '%' . $searchTerm . '%',        // Category contains
-                        '%' . $searchTerm . '%',        // Ingredient contains
-                        '%' . $searchTerm . '%',        // Notes contains
+                        '%'.$searchTerm.'%',        // Barcode contains
+                        '%'.$searchTerm.'%',        // Category contains
+                        '%'.$searchTerm.'%',        // Ingredient contains
+                        '%'.$searchTerm.'%',        // Notes contains
                         $searchTerm,                    // Category sounds like
-                        $searchTerm                     // Ingredient sounds like
+                        $searchTerm,                     // Ingredient sounds like
                     ])
-                    ->where(function($q) use ($searchTerm) {
-                        $q->where('product_name', 'LIKE', '%' . $searchTerm . '%')
-                          ->orWhere('Barcode', 'LIKE', '%' . $searchTerm . '%')
-                          ->orWhere('category', 'LIKE', '%' . $searchTerm . '%')
-                          ->orWhere('ingredient', 'LIKE', '%' . $searchTerm . '%')
-                          ->orWhere('notes', 'LIKE', '%' . $searchTerm . '%')
-                          ->orWhereRaw('SOUNDEX(product_name) = SOUNDEX(?)', [$searchTerm])
-                          ->orWhereRaw('SOUNDEX(category) = SOUNDEX(?)', [$searchTerm])
-                          ->orWhereRaw('SOUNDEX(ingredient) = SOUNDEX(?)', [$searchTerm]);
+                    ->where(function ($q) use ($searchTerm) {
+                        $q->where('product_name', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('Barcode', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('category', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('ingredient', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhere('notes', 'LIKE', '%'.$searchTerm.'%')
+                            ->orWhereRaw('SOUNDEX(product_name) = SOUNDEX(?)', [$searchTerm])
+                            ->orWhereRaw('SOUNDEX(category) = SOUNDEX(?)', [$searchTerm])
+                            ->orWhereRaw('SOUNDEX(ingredient) = SOUNDEX(?)', [$searchTerm]);
                     })
                     ->where('status', 1);
 
@@ -104,17 +107,20 @@ class ApiController extends Controller
                     $query->where('halal_status', 0);
                 }
 
+                $this->applyAssistantProductFilters($query, $retailer, $flavour);
+
                 // Order by relevance score first, then alphabetically
                 $query->orderByDesc('relevance_score')
-                      ->orderBy('product_name');
+                    ->orderBy('product_name');
             } else {
                 // No search term — cacheable listing
                 $halalFilter = ($halalOnly == '1' || $halalOnly == 'true') ? 1 : 0;
                 $ver = Cache::get('products_cache_version', 1);
                 $cacheStatus = $statusFilter ?? ($halalFilter ? HalalStatus::HALAL : 'all');
-                $cacheKey = "products:v{$ver}:list:{$cacheStatus}:{$perPage}:" . ($request->get('page', 1));
+                $filterKey = sha1($retailer.'|'.$flavour);
+                $cacheKey = "products:v{$ver}:list:{$cacheStatus}:{$filterKey}:{$perPage}:".($request->get('page', 1));
 
-                $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $statusFilter, $perPage) {
+                $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $statusFilter, $retailer, $flavour, $perPage) {
                     $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                         ->where('status', 1);
 
@@ -124,18 +130,22 @@ class ApiController extends Controller
                         $query->where('halal_status', 0);
                     }
 
+                    $this->applyAssistantProductFilters($query, $retailer, $flavour);
+
                     $products = $query->paginate($perPage);
                     $items = $products->items();
                     foreach ($items as $key => $value) {
                         $items[$key]['url'] = $this->getProductImageUrl($value['product_image']);
+                        $items[$key]['retailers'] = $this->inferRetailers($value['product_name']);
                     }
+
                     return [
                         'status' => 'success',
                         'alldata' => $items,
                         'current_page' => $products->currentPage(),
                         'last_page' => $products->lastPage(),
                         'per_page' => $products->perPage(),
-                        'total' => $products->total()
+                        'total' => $products->total(),
                     ];
                 });
 
@@ -150,11 +160,12 @@ class ApiController extends Controller
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
                 'per_page' => $products->perPage(),
-                'total' => $products->total()
+                'total' => $products->total(),
             ];
 
             foreach ($data['alldata'] as $key => $value) {
                 $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
+                $data['alldata'][$key]['retailers'] = $this->inferRetailers($value['product_name']);
             }
 
             return response()->json($data);
@@ -163,13 +174,59 @@ class ApiController extends Controller
         }
     }
 
+    private function applyAssistantProductFilters(
+        Builder $query,
+        string $retailer,
+        string $flavour,
+    ): void {
+        if ($retailer === 'pak_n_save') {
+            $query->where('product_name', 'LIKE', '%Pams%');
+        } elseif ($retailer === 'woolworths') {
+            $query->where('product_name', 'LIKE', '%Woolworths%');
+        }
+
+        $ignoredWords = ['and', 'flavour', 'flavor', 'flavoured', 'flavored'];
+        $words = preg_split('/\s+/u', mb_strtolower(trim($flavour))) ?: [];
+        foreach (array_unique($words) as $word) {
+            if (mb_strlen($word) < 2 || in_array($word, $ignoredWords, true)) {
+                continue;
+            }
+
+            $query->where(function (Builder $query) use ($word) {
+                $query->where('product_name', 'LIKE', '%'.$word.'%')
+                    ->orWhere('ingredient', 'LIKE', '%'.$word.'%')
+                    ->orWhere('notes', 'LIKE', '%'.$word.'%');
+            });
+        }
+    }
+
+    /**
+     * Product names are the only verified retailer signal currently stored.
+     * Keep these mappings strict so one supermarket's house brand is never
+     * presented as belonging to another supermarket.
+     *
+     * @return list<string>
+     */
+    private function inferRetailers(string $productName): array
+    {
+        if (stripos($productName, 'Pams') !== false) {
+            return ['pak_n_save'];
+        }
+
+        if (stripos($productName, 'Woolworths') !== false) {
+            return ['woolworths'];
+        }
+
+        return [];
+    }
+
     public function allListingBarcode(Request $request)
     {
         try {
             // Force pagination: default 50, max 100
             $perPage = min((int) ($request->get('per_page', 50)), 100);
 
-            if (!empty($request->search)) {
+            if (! empty($request->search)) {
                 $searchTerm = trim($request->search);
 
                 // Try exact barcode match first (uses index)
@@ -191,7 +248,7 @@ class ApiController extends Controller
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
                 'per_page' => $products->perPage(),
-                'total' => $products->total()
+                'total' => $products->total(),
             ];
 
             foreach ($data['alldata'] as $key => $value) {
