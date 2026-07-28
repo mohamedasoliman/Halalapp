@@ -115,12 +115,14 @@ class ProductMashboohApiTest extends TestCase
             'flavour' => 'salt and vinegar',
             'retailer' => 'pak_n_save',
             'halal_status' => '0',
+            'assistant_search' => true,
         ]);
         $woolworths = ProductSearchRequest::create('/api/listing', 'POST', [
             'search' => 'chips',
             'flavour' => 'salt and vinegar',
             'retailer' => 'woolworths',
             'halal_status' => '0',
+            'assistant_search' => true,
         ]);
 
         $pakNSaveData = (new ApiController)->allListing($pakNSave)->getData(true);

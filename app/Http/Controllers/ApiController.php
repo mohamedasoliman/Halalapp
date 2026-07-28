@@ -52,6 +52,7 @@ class ApiController extends Controller
                 : null;
             $retailer = $request->string('retailer')->toString();
             $flavour = $request->string('flavour')->toString();
+            $assistantSearch = $request->boolean('assistant_search');
 
             if (! empty($request->search)) {
                 $searchTerm = trim($request->search);
@@ -88,7 +89,18 @@ class ApiController extends Controller
                         $searchTerm,                    // Category sounds like
                         $searchTerm,                     // Ingredient sounds like
                     ])
-                    ->where(function ($q) use ($searchTerm) {
+                    ->where(function ($q) use ($searchTerm, $assistantSearch) {
+                        if ($assistantSearch) {
+                            $words = preg_split('/\s+/u', mb_strtolower($searchTerm)) ?: [];
+                            foreach (array_unique($words) as $word) {
+                                if (mb_strlen($word) >= 2) {
+                                    $q->where('product_name', 'LIKE', '%'.$word.'%');
+                                }
+                            }
+
+                            return;
+                        }
+
                         $q->where('product_name', 'LIKE', '%'.$searchTerm.'%')
                             ->orWhere('Barcode', 'LIKE', '%'.$searchTerm.'%')
                             ->orWhere('category', 'LIKE', '%'.$searchTerm.'%')
