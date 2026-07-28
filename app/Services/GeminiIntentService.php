@@ -91,7 +91,7 @@ class GeminiIntentService
                             'minimal',
                         ),
                         'max_output_tokens' => max(
-                            64,
+                            180,
                             (int) config('gemini.max_output_tokens', 120),
                         ),
                     ],

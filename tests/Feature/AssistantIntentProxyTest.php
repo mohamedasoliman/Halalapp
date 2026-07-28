@@ -75,7 +75,7 @@ class AssistantIntentProxyTest extends TestCase
                 && $payload['generation_config'] === [
                     'temperature' => 0,
                     'thinking_level' => 'minimal',
-                    'max_output_tokens' => 120,
+                    'max_output_tokens' => 180,
                 ]
                 && ! array_key_exists('tools', $payload)
                 && ! array_key_exists('location', $payload)
