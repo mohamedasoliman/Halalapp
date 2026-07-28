@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
+use App\Admin;
+use App\Models\GeneralSetting as GS;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\ServiceProvider;
-use App\Models\GeneralSetting as GS;
 use Illuminate\Support\Facades\View;
-use App\Admin;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('analytics', function (Request $request) {
             return Limit::perMinute(120)->by($request->ip());
+        });
+
+        RateLimiter::for('assistant', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
         });
 
         // Only query database if tables exist (prevents errors during migrations/setup)

@@ -1,23 +1,25 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\JsondataController;
-use App\Http\Controllers\ContactMessageController;
-use App\Http\Controllers\FatwaContactMessageController;
-use App\Http\Controllers\EventsContactMessageController;
-use App\Http\Controllers\KiwiSaverContactMessageController;
-use App\Http\Controllers\PrioritisationController;
 use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 use App\Http\Controllers\Api\AnalyticsIngestionController;
+use App\Http\Controllers\Api\AssistantIntentController;
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\EventsContactMessageController;
+use App\Http\Controllers\FatwaContactMessageController;
+use App\Http\Controllers\JsondataController;
+use App\Http\Controllers\KiwiSaverContactMessageController;
+use App\Http\Controllers\PrioritisationController;
+use Illuminate\Support\Facades\Route;
 
-Route::middleware(['api_key', 'throttle:api'])->group(function(){
+Route::middleware(['api_key', 'throttle:api'])->group(function () {
     Route::post('listing', [ApiController::class, 'allListing']);
     Route::post('listingcode', [ApiController::class, 'allListingBarcode']);
+    Route::post('assistant/intent', AssistantIntentController::class)
+        ->middleware('throttle:assistant');
 
-    Route::middleware('throttle:contact')->group(function(){
+    Route::middleware('throttle:contact')->group(function () {
         Route::post('/contact-us', [ContactMessageController::class, 'send']);
         Route::post('/fatwa-contact-us', [FatwaContactMessageController::class, 'send']);
         Route::post('/events-contact-us', [EventsContactMessageController::class, 'send']);
@@ -31,7 +33,7 @@ Route::post('/analytics/events', [AnalyticsIngestionController::class, 'store'])
     ->middleware(['api_key', 'throttle:analytics']);
 
 Route::post('masjid', [MasjidManagementController::class, 'apishow']);
-Route::get('resturant',[ResturantManagementController::class, 'api']);
+Route::get('resturant', [ResturantManagementController::class, 'api']);
 Route::get('/jsondata/{id}', [JsondataController::class, 'allJsonData']);
 Route::post('/addjsondata/{id}', [JsondataController::class, 'allJsonDataApi']);
 Route::get('/editjsondata/{json2_id}', [JsondataController::class, 'getJsonDataForEdit']);
