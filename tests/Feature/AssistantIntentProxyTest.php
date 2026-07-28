@@ -270,6 +270,36 @@ class AssistantIntentProxyTest extends TestCase
             ]);
     }
 
+    public function test_it_extracts_prayer_day_and_supplied_origin_address(): void
+    {
+        Http::fake([
+            'https://gemini.test/*' => Http::response(
+                $this->geminiResponse([
+                    'intent' => 'masjid',
+                    'prayer' => 'Isha',
+                    'food_query' => '',
+                    'prayer_day' => 'tomorrow',
+                    'origin_address' => '32 Hendon Avenue',
+                ])
+            ),
+        ]);
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', [
+                'query' => 'Tomorrow I am outside till 8 pm; where can I pray Isha from 32 Hendon Avenue?',
+                'has_product_context' => false,
+                'assistant_context' => 'masjids',
+            ])
+            ->assertOk()
+            ->assertExactJson([
+                'intent' => 'masjid',
+                'prayer' => 'Isha',
+                'food_query' => '',
+                'prayer_day' => 'tomorrow',
+                'origin_address' => '32 Hendon Avenue',
+            ]);
+    }
+
     public function test_product_search_is_available_from_every_assistant_page(): void
     {
         Http::fake([

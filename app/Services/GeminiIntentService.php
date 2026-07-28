@@ -10,7 +10,7 @@ use JsonException;
 
 class GeminiIntentService
 {
-    private const CACHE_VERSION = 'v3';
+    private const CACHE_VERSION = 'v4';
 
     private const ALLOWED_INTENTS = [
         'masjid',
@@ -114,6 +114,8 @@ class GeminiIntentService
                                 'flavour' => ['type' => 'string'],
                                 'business_query' => ['type' => 'string'],
                                 'business_location' => ['type' => 'string'],
+                                'prayer_day' => ['type' => 'string'],
+                                'origin_address' => ['type' => 'string'],
                             ],
                             'required' => [
                                 'is_halal_kiwi_related',
@@ -124,6 +126,8 @@ class GeminiIntentService
                                 'flavour',
                                 'business_query',
                                 'business_location',
+                                'prayer_day',
+                                'origin_address',
                             ],
                         ],
                     ],
@@ -193,6 +197,7 @@ Valid intents:
 - unsupported: anything else
 
 Use only these prayer values: Fajr, Zohar, Asr, Magrib, Isha, Jumma, or an empty string.
+For Masjid requests, prayer_day is today, tomorrow, or empty. Put an explicitly supplied starting street address in origin_address; otherwise leave it empty.
 For restaurant requests, food_query must contain only the requested food or cuisine.
 Use product_alternative only when product context is available.
 Use product_search for a halal grocery-product search from any assistant context.
@@ -282,6 +287,24 @@ PROMPT;
         if ($intent !== 'masjid') {
             $prayer = '';
         }
+        $prayerDay = is_string($output['prayer_day'] ?? null)
+            ? mb_strtolower(trim($output['prayer_day']))
+            : '';
+        if (! in_array($prayerDay, ['today', 'tomorrow'], true)) {
+            $prayerDay = '';
+        }
+        $originAddress = $this->sanitiseSearchText(
+            $output['origin_address'] ?? '',
+            120,
+        );
+        if ($this->containsSensitiveTerms($originAddress)) {
+            $intent = 'unsupported';
+        }
+        if ($intent !== 'masjid') {
+            $prayer = '';
+            $prayerDay = '';
+            $originAddress = '';
+        }
 
         $foodQuery = is_string($output['food_query'] ?? null)
             ? trim($output['food_query'])
@@ -332,6 +355,14 @@ PROMPT;
             'food_query' => $foodQuery,
         ];
 
+        if ($intent === 'masjid') {
+            if ($prayerDay !== '') {
+                $result['prayer_day'] = $prayerDay;
+            }
+            if ($originAddress !== '') {
+                $result['origin_address'] = $originAddress;
+            }
+        }
         if ($intent === 'product_search') {
             $result += [
                 'product_query' => $productQuery,
