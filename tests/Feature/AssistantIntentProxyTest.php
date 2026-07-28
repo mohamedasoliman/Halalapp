@@ -20,6 +20,9 @@ class AssistantIntentProxyTest extends TestCase
             'gemini.endpoint' => 'https://gemini.test/v1beta/interactions',
             'gemini.connect_timeout' => 1,
             'gemini.timeout' => 2,
+            'gemini.intent_cache_ttl' => 604800,
+            'gemini.max_output_tokens' => 120,
+            'gemini.thinking_level' => 'minimal',
         ]);
     }
 
@@ -69,12 +72,49 @@ class AssistantIntentProxyTest extends TestCase
                 && $payload['model'] === 'gemini-3.5-flash-lite'
                 && $payload['store'] === false
                 && $payload['input'] === 'I am craving pizza'
+                && $payload['generation_config'] === [
+                    'temperature' => 0,
+                    'thinking_level' => 'minimal',
+                    'max_output_tokens' => 120,
+                ]
                 && ! array_key_exists('tools', $payload)
                 && ! array_key_exists('location', $payload)
                 && ! array_key_exists('restaurants', $payload)
                 && ! array_key_exists('products', $payload)
                 && ! array_key_exists('masjids', $payload);
         });
+    }
+
+    public function test_it_caches_repeated_intent_classifications(): void
+    {
+        Http::fake([
+            'https://gemini.test/*' => Http::response(
+                $this->geminiResponse([
+                    'intent' => 'restaurant',
+                    'prayer' => '',
+                    'food_query' => 'pizza',
+                ])
+            ),
+        ]);
+
+        $payload = [
+            'query' => 'I am craving pizza',
+            'has_product_context' => false,
+        ];
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', $payload)
+            ->assertOk();
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', $payload)
+            ->assertOk()
+            ->assertExactJson([
+                'intent' => 'restaurant',
+                'prayer' => '',
+                'food_query' => 'pizza',
+            ]);
+
+        Http::assertSentCount(1);
     }
 
     public function test_it_revalidates_model_output_before_returning_it(): void
@@ -396,6 +436,12 @@ class AssistantIntentProxyTest extends TestCase
     {
         return [
             'status' => 'completed',
+            'usage' => [
+                'total_input_tokens' => 180,
+                'total_output_tokens' => 35,
+                'total_thought_tokens' => 12,
+                'total_tokens' => 227,
+            ],
             'steps' => [
                 [
                     'type' => 'model_output',

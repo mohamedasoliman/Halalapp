@@ -3,11 +3,15 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use JsonException;
 
 class GeminiIntentService
 {
+    private const CACHE_VERSION = 'v1';
+
     private const ALLOWED_INTENTS = [
         'masjid',
         'restaurant',
@@ -40,7 +44,21 @@ class GeminiIntentService
             $assistantContext,
         );
         if (! in_array(true, $scope, true)) {
+            $this->logUsage(calledGemini: false, cacheHit: false);
+
             return $this->unsupported();
+        }
+
+        $cacheKey = $this->cacheKey(
+            $query,
+            $hasProductContext,
+            $assistantContext,
+        );
+        $cached = Cache::get($cacheKey);
+        if (is_array($cached)) {
+            $this->logUsage(calledGemini: false, cacheHit: true);
+
+            return $cached;
         }
 
         $apiKey = trim((string) config('gemini.api_key'));
@@ -62,6 +80,17 @@ class GeminiIntentService
                         $hasProductContext,
                         $assistantContext,
                     ),
+                    'generation_config' => [
+                        'temperature' => 0,
+                        'thinking_level' => (string) config(
+                            'gemini.thinking_level',
+                            'minimal',
+                        ),
+                        'max_output_tokens' => max(
+                            64,
+                            (int) config('gemini.max_output_tokens', 120),
+                        ),
+                    ],
                     'response_format' => [
                         'type' => 'text',
                         'mime_type' => 'application/json',
@@ -100,9 +129,24 @@ class GeminiIntentService
             );
         }
 
-        $output = $this->extractOutput($response->json());
+        $responseData = $response->json();
+        $output = $this->extractOutput($responseData);
+        $result = $this->validateOutput($output, $scope);
 
-        return $this->validateOutput($output, $scope);
+        Cache::put(
+            $cacheKey,
+            $result,
+            max(60, (int) config('gemini.intent_cache_ttl', 604800)),
+        );
+        $this->logUsage(
+            calledGemini: true,
+            cacheHit: false,
+            usage: is_array($responseData['usage'] ?? null)
+                ? $responseData['usage']
+                : [],
+        );
+
+        return $result;
     }
 
     private function systemInstruction(
@@ -333,5 +377,45 @@ PROMPT;
             0,
             $limit,
         );
+    }
+
+    private function cacheKey(
+        string $query,
+        bool $hasProductContext,
+        string $assistantContext,
+    ): string {
+        $normalized = mb_strtolower(trim($query));
+        $normalized = preg_replace('/\s+/u', ' ', $normalized) ?? $normalized;
+        $fingerprint = implode('|', [
+            self::CACHE_VERSION,
+            (string) config('gemini.model', 'gemini-3.5-flash-lite'),
+            $assistantContext,
+            $hasProductContext ? '1' : '0',
+            $normalized,
+        ]);
+
+        return 'assistant_intent:'.hash('sha256', $fingerprint);
+    }
+
+    /**
+     * @param  array<string, mixed>  $usage
+     */
+    private function logUsage(
+        bool $calledGemini,
+        bool $cacheHit,
+        array $usage = [],
+    ): void {
+        Log::info('Assistant intent usage.', [
+            'model' => (string) config(
+                'gemini.model',
+                'gemini-3.5-flash-lite',
+            ),
+            'gemini_called' => $calledGemini,
+            'cache_hit' => $cacheHit,
+            'input_tokens' => (int) ($usage['total_input_tokens'] ?? 0),
+            'output_tokens' => (int) ($usage['total_output_tokens'] ?? 0),
+            'thought_tokens' => (int) ($usage['total_thought_tokens'] ?? 0),
+            'total_tokens' => (int) ($usage['total_tokens'] ?? 0),
+        ]);
     }
 }
