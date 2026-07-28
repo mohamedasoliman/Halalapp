@@ -10,7 +10,7 @@ use JsonException;
 
 class GeminiIntentService
 {
-    private const CACHE_VERSION = 'v4';
+    private const CACHE_VERSION = 'v5';
 
     private const ALLOWED_INTENTS = [
         'masjid',
@@ -116,6 +116,8 @@ class GeminiIntentService
                                 'business_location' => ['type' => 'string'],
                                 'prayer_day' => ['type' => 'string'],
                                 'origin_address' => ['type' => 'string'],
+                                'available_after' => ['type' => 'string'],
+                                'available_before' => ['type' => 'string'],
                             ],
                             'required' => [
                                 'is_halal_kiwi_related',
@@ -128,6 +130,8 @@ class GeminiIntentService
                                 'business_location',
                                 'prayer_day',
                                 'origin_address',
+                                'available_after',
+                                'available_before',
                             ],
                         ],
                     ],
@@ -174,6 +178,9 @@ class GeminiIntentService
         string $assistantContext,
     ): string {
         $context = $hasProductContext ? 'true' : 'false';
+        $currentNzDate = \Carbon\CarbonImmutable::now(
+            'Pacific/Auckland',
+        )->toDateString();
 
         return <<<PROMPT
 Classify a request for the Halal Kiwi mobile app.
@@ -197,7 +204,7 @@ Valid intents:
 - unsupported: anything else
 
 Use only these prayer values: Fajr, Zohar, Asr, Magrib, Isha, Jumma, or an empty string.
-For Masjid requests, prayer_day is today, tomorrow, or empty. Put an explicitly supplied starting street address in origin_address; otherwise leave it empty.
+For Masjid requests, prayer_day is today, tomorrow, a lowercase weekday, YYYY-MM-DD, or empty. Never convert a named weekday into today or tomorrow. Put an explicitly supplied starting street address in origin_address; otherwise leave it empty. Put the earliest time the user can leave in available_after and the latest acceptable jamaat time in available_before, using HH:mm or empty. "Busy/outside until 8" means available_after 20:00; "free until 8" means available_before 20:00.
 For restaurant requests, food_query must contain only the requested food or cuisine.
 Use product_alternative only when product context is available.
 Use product_search for a halal grocery-product search from any assistant context.
@@ -208,6 +215,7 @@ For business requests, business_query contains only the business name or canonic
 For business requests, business_location contains only an explicitly requested city, suburb, or area; otherwise it is empty.
 Product context available: {$context}.
 Assistant context: {$assistantContext}.
+Current New Zealand date: {$currentNzDate}.
 PROMPT;
     }
 
@@ -290,12 +298,32 @@ PROMPT;
         $prayerDay = is_string($output['prayer_day'] ?? null)
             ? mb_strtolower(trim($output['prayer_day']))
             : '';
-        if (! in_array($prayerDay, ['today', 'tomorrow'], true)) {
+        $validRelativeDays = [
+            'today',
+            'tomorrow',
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ];
+        if (
+            ! in_array($prayerDay, $validRelativeDays, true)
+            && preg_match('/^\d{4}-\d{2}-\d{2}$/', $prayerDay) !== 1
+        ) {
             $prayerDay = '';
         }
         $originAddress = $this->sanitiseSearchText(
             $output['origin_address'] ?? '',
             120,
+        );
+        $availableAfter = $this->sanitiseClock(
+            $output['available_after'] ?? '',
+        );
+        $availableBefore = $this->sanitiseClock(
+            $output['available_before'] ?? '',
         );
         if ($this->containsSensitiveTerms($originAddress)) {
             $intent = 'unsupported';
@@ -304,6 +332,8 @@ PROMPT;
             $prayer = '';
             $prayerDay = '';
             $originAddress = '';
+            $availableAfter = '';
+            $availableBefore = '';
         }
 
         $foodQuery = is_string($output['food_query'] ?? null)
@@ -362,6 +392,12 @@ PROMPT;
             if ($originAddress !== '') {
                 $result['origin_address'] = $originAddress;
             }
+            if ($availableAfter !== '') {
+                $result['available_after'] = $availableAfter;
+            }
+            if ($availableBefore !== '') {
+                $result['available_before'] = $availableBefore;
+            }
         }
         if ($intent === 'product_search') {
             $result += [
@@ -389,6 +425,15 @@ PROMPT;
         }
 
         return $query;
+    }
+
+    private function sanitiseClock(mixed $value): string
+    {
+        $clock = is_string($value) ? trim($value) : '';
+
+        return preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $clock) === 1
+            ? $clock
+            : '';
     }
 
     /**

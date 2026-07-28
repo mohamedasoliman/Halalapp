@@ -280,6 +280,8 @@ class AssistantIntentProxyTest extends TestCase
                     'food_query' => '',
                     'prayer_day' => 'tomorrow',
                     'origin_address' => '32 Hendon Avenue',
+                    'available_after' => '20:00',
+                    'available_before' => '',
                 ])
             ),
         ]);
@@ -297,6 +299,40 @@ class AssistantIntentProxyTest extends TestCase
                 'food_query' => '',
                 'prayer_day' => 'tomorrow',
                 'origin_address' => '32 Hendon Avenue',
+                'available_after' => '20:00',
+            ]);
+    }
+
+    public function test_it_preserves_named_weekdays_and_availability_deadlines(): void
+    {
+        Http::fake([
+            'https://gemini.test/*' => Http::response(
+                $this->geminiResponse([
+                    'intent' => 'masjid',
+                    'prayer' => 'Jumma',
+                    'food_query' => '',
+                    'prayer_day' => 'friday',
+                    'origin_address' => '32 Hendon Avenue',
+                    'available_after' => '',
+                    'available_before' => '14:00',
+                ])
+            ),
+        ]);
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', [
+                'query' => 'Find Jumma next Friday before 2 pm from 32 Hendon Avenue',
+                'has_product_context' => false,
+                'assistant_context' => 'masjids',
+            ])
+            ->assertOk()
+            ->assertExactJson([
+                'intent' => 'masjid',
+                'prayer' => 'Jumma',
+                'food_query' => '',
+                'prayer_day' => 'friday',
+                'origin_address' => '32 Hendon Avenue',
+                'available_before' => '14:00',
             ]);
     }
 
