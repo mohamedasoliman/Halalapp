@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class AssistantIntentProxyTest extends TestCase
@@ -634,6 +635,42 @@ class AssistantIntentProxyTest extends TestCase
             ->assertStatus(502)
             ->assertExactJson([
                 'message' => 'Assistant service is temporarily unavailable.',
+            ]);
+    }
+
+    public function test_it_logs_usage_even_when_gemini_returns_malformed_json(): void
+    {
+        Log::spy();
+        $response = $this->geminiResponse([
+            'intent' => 'prayer',
+            'prayer' => 'Isha',
+        ]);
+        $response['steps'][0]['content'][0]['text'] = '{"intent":"prayer"';
+
+        Http::fake([
+            'https://gemini.test/*' => Http::response($response),
+        ]);
+
+        $this->withHeader('X-API-Key', 'test-mobile-key')
+            ->postJson('/api/assistant/intent', [
+                'query' => 'Where can I pray Isha?',
+                'has_product_context' => false,
+            ])
+            ->assertStatus(502)
+            ->assertExactJson([
+                'message' => 'Assistant service is temporarily unavailable.',
+            ]);
+
+        Log::shouldHaveReceived('info')
+            ->once()
+            ->with('Assistant intent usage.', [
+                'model' => 'gemini-3.5-flash-lite',
+                'gemini_called' => true,
+                'cache_hit' => false,
+                'input_tokens' => 180,
+                'output_tokens' => 35,
+                'thought_tokens' => 12,
+                'total_tokens' => 227,
             ]);
     }
 

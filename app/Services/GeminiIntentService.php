@@ -150,6 +150,13 @@ class GeminiIntentService
         }
 
         $responseData = $response->json();
+        $this->logUsage(
+            calledGemini: true,
+            cacheHit: false,
+            usage: is_array($responseData['usage'] ?? null)
+                ? $responseData['usage']
+                : [],
+        );
         $output = $this->extractOutput($responseData);
         $result = $this->validateOutput(
             $output,
@@ -161,13 +168,6 @@ class GeminiIntentService
             $cacheKey,
             $result,
             max(60, (int) config('gemini.intent_cache_ttl', 604800)),
-        );
-        $this->logUsage(
-            calledGemini: true,
-            cacheHit: false,
-            usage: is_array($responseData['usage'] ?? null)
-                ? $responseData['usage']
-                : [],
         );
 
         return $result;
