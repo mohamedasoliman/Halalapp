@@ -21,7 +21,6 @@ class ProductSearchRequest extends FormRequest
             'page' => 'nullable|integer|min:1',
             'halal_only' => 'nullable|in:0,1,true,false',
             'halal_status' => 'nullable|in:0,1,2,3',
-            'retailer' => 'nullable|in:pak_n_save,woolworths',
             'flavour' => 'nullable|string|max:80',
             'assistant_search' => 'nullable|boolean',
         ];

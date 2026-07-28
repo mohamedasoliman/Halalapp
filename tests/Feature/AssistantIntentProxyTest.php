@@ -102,7 +102,7 @@ class AssistantIntentProxyTest extends TestCase
             ]);
     }
 
-    public function test_halal_list_can_extract_a_store_scoped_product_search(): void
+    public function test_halal_list_can_extract_a_product_search_and_ignore_the_store(): void
     {
         Http::fake([
             'https://gemini.test/*' => Http::response(
@@ -112,7 +112,6 @@ class AssistantIntentProxyTest extends TestCase
                     'food_query' => '',
                     'product_query' => 'chips',
                     'flavour' => 'salt and vinegar',
-                    'retailer' => 'pak_n_save',
                 ])
             ),
         ]);
@@ -130,7 +129,6 @@ class AssistantIntentProxyTest extends TestCase
                 'food_query' => '',
                 'product_query' => 'chips',
                 'flavour' => 'salt and vinegar',
-                'retailer' => 'pak_n_save',
             ]);
     }
 

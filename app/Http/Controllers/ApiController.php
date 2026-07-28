@@ -50,7 +50,6 @@ class ApiController extends Controller
             $statusFilter = in_array($statusFilter, HalalStatus::values(), true)
                 ? $statusFilter
                 : null;
-            $retailer = $request->string('retailer')->toString();
             $flavour = $request->string('flavour')->toString();
             $assistantSearch = $request->boolean('assistant_search');
 
@@ -119,7 +118,7 @@ class ApiController extends Controller
                     $query->where('halal_status', 0);
                 }
 
-                $this->applyAssistantProductFilters($query, $retailer, $flavour);
+                $this->applyAssistantProductFilters($query, $flavour);
 
                 // Order by relevance score first, then alphabetically
                 $query->orderByDesc('relevance_score')
@@ -129,10 +128,10 @@ class ApiController extends Controller
                 $halalFilter = ($halalOnly == '1' || $halalOnly == 'true') ? 1 : 0;
                 $ver = Cache::get('products_cache_version', 1);
                 $cacheStatus = $statusFilter ?? ($halalFilter ? HalalStatus::HALAL : 'all');
-                $filterKey = sha1($retailer.'|'.$flavour);
+                $filterKey = sha1($flavour);
                 $cacheKey = "products:v{$ver}:list:{$cacheStatus}:{$filterKey}:{$perPage}:".($request->get('page', 1));
 
-                $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $statusFilter, $retailer, $flavour, $perPage) {
+                $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $statusFilter, $flavour, $perPage) {
                     $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
                         ->where('status', 1);
 
@@ -142,13 +141,12 @@ class ApiController extends Controller
                         $query->where('halal_status', 0);
                     }
 
-                    $this->applyAssistantProductFilters($query, $retailer, $flavour);
+                    $this->applyAssistantProductFilters($query, $flavour);
 
                     $products = $query->paginate($perPage);
                     $items = $products->items();
                     foreach ($items as $key => $value) {
                         $items[$key]['url'] = $this->getProductImageUrl($value['product_image']);
-                        $items[$key]['retailers'] = $this->inferRetailers($value['product_name']);
                     }
 
                     return [
@@ -177,7 +175,6 @@ class ApiController extends Controller
 
             foreach ($data['alldata'] as $key => $value) {
                 $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
-                $data['alldata'][$key]['retailers'] = $this->inferRetailers($value['product_name']);
             }
 
             return response()->json($data);
@@ -188,15 +185,8 @@ class ApiController extends Controller
 
     private function applyAssistantProductFilters(
         Builder $query,
-        string $retailer,
         string $flavour,
     ): void {
-        if ($retailer === 'pak_n_save') {
-            $query->where('product_name', 'LIKE', '%Pams%');
-        } elseif ($retailer === 'woolworths') {
-            $query->where('product_name', 'LIKE', '%Woolworths%');
-        }
-
         $ignoredWords = ['and', 'flavour', 'flavor', 'flavoured', 'flavored'];
         $words = preg_split('/\s+/u', mb_strtolower(trim($flavour))) ?: [];
         foreach (array_unique($words) as $word) {
@@ -210,26 +200,6 @@ class ApiController extends Controller
                     ->orWhere('notes', 'LIKE', '%'.$word.'%');
             });
         }
-    }
-
-    /**
-     * Product names are the only verified retailer signal currently stored.
-     * Keep these mappings strict so one supermarket's house brand is never
-     * presented as belonging to another supermarket.
-     *
-     * @return list<string>
-     */
-    private function inferRetailers(string $productName): array
-    {
-        if (stripos($productName, 'Pams') !== false) {
-            return ['pak_n_save'];
-        }
-
-        if (stripos($productName, 'Woolworths') !== false) {
-            return ['woolworths'];
-        }
-
-        return [];
     }
 
     public function allListingBarcode(Request $request)

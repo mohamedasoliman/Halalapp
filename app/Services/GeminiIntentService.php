@@ -76,10 +76,6 @@ class GeminiIntentService
                                 'food_query' => ['type' => 'string'],
                                 'product_query' => ['type' => 'string'],
                                 'flavour' => ['type' => 'string'],
-                                'retailer' => [
-                                    'type' => 'string',
-                                    'enum' => ['', 'pak_n_save', 'woolworths'],
-                                ],
                             ],
                             'required' => [
                                 'intent',
@@ -87,7 +83,6 @@ class GeminiIntentService
                                 'food_query',
                                 'product_query',
                                 'flavour',
-                                'retailer',
                             ],
                         ],
                     ],
@@ -135,7 +130,7 @@ Use product_alternative only when product context is available.
 Use product_search only when assistant context is halal_list.
 For product_search, product_query is the grocery product type, such as chicken or chips.
 For product_search, flavour contains only an explicitly requested flavour or variant.
-For product_search, retailer is pak_n_save for Pak'nSave/Pak n Save, woolworths for Woolworths/Countdown, otherwise empty.
+Ignore supermarket names. Product searches are never restricted by retailer.
 Product context available: {$context}.
 Assistant context: {$assistantContext}.
 PROMPT;
@@ -230,16 +225,9 @@ PROMPT;
 
         $productQuery = $this->sanitiseSearchText($output['product_query'] ?? '');
         $flavour = $this->sanitiseSearchText($output['flavour'] ?? '', 60);
-        $retailer = is_string($output['retailer'] ?? null)
-            ? trim($output['retailer'])
-            : '';
-        if (! in_array($retailer, ['', 'pak_n_save', 'woolworths'], true)) {
-            $retailer = '';
-        }
         if ($intent !== 'product_search') {
             $productQuery = '';
             $flavour = '';
-            $retailer = '';
         }
 
         $result = [
@@ -252,7 +240,6 @@ PROMPT;
             $result += [
                 'product_query' => $productQuery,
                 'flavour' => $flavour,
-                'retailer' => $retailer,
             ];
         }
 

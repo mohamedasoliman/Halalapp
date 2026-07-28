@@ -108,32 +108,23 @@ class ProductMashboohApiTest extends TestCase
         $this->assertTrue($invalid->fails());
     }
 
-    public function test_assistant_product_search_never_crosses_house_brands(): void
+    public function test_assistant_product_search_is_not_restricted_by_supermarket(): void
     {
-        $pakNSave = ProductSearchRequest::create('/api/listing', 'POST', [
+        $request = ProductSearchRequest::create('/api/listing', 'POST', [
             'search' => 'chips',
             'flavour' => 'salt and vinegar',
             'retailer' => 'pak_n_save',
             'halal_status' => '0',
             'assistant_search' => true,
         ]);
-        $woolworths = ProductSearchRequest::create('/api/listing', 'POST', [
-            'search' => 'chips',
-            'flavour' => 'salt and vinegar',
-            'retailer' => 'woolworths',
-            'halal_status' => '0',
-            'assistant_search' => true,
-        ]);
 
-        $pakNSaveData = (new ApiController)->allListing($pakNSave)->getData(true);
-        $woolworthsData = (new ApiController)->allListing($woolworths)->getData(true);
+        $data = (new ApiController)->allListing($request)->getData(true);
 
-        $this->assertSame('success', $pakNSaveData['status'], json_encode($pakNSaveData));
-        $this->assertSame('success', $woolworthsData['status'], json_encode($woolworthsData));
-        $this->assertSame(['Pams Salt and Vinegar Chips'], array_column($pakNSaveData['alldata'], 'fruit_name'));
-        $this->assertSame(['pak_n_save'], $pakNSaveData['alldata'][0]['retailers']);
-        $this->assertSame(['Woolworths Salt and Vinegar Chips'], array_column($woolworthsData['alldata'], 'fruit_name'));
-        $this->assertSame(['woolworths'], $woolworthsData['alldata'][0]['retailers']);
+        $this->assertSame('success', $data['status'], json_encode($data));
+        $this->assertSame(
+            ['Pams Salt and Vinegar Chips', 'Woolworths Salt and Vinegar Chips'],
+            array_column($data['alldata'], 'fruit_name'),
+        );
     }
 
     public function test_mashbooh_cannot_be_used_as_a_final_resolution(): void
