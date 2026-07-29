@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Mail\UserNotificationEmail;
 use App\Models\RequestNotificationDelivery;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use Throwable;
 
 class RequestNotificationService
@@ -54,6 +56,38 @@ class RequestNotificationService
                 ],
             );
         });
+    }
+
+    public function prepareInformationRequestEvent(
+        string $eventReference,
+        Collection $requests,
+        string $productName,
+        string $barcode,
+    ): Collection {
+        $existing = RequestNotificationDelivery::query()
+            ->where('event_key', $this->eventKey($eventReference))
+            ->first();
+        if ($existing
+            && (
+                ! in_array($existing->notification_type, [
+                    UserNotificationEmail::TYPE_INFORMATION_REQUEST,
+                    UserNotificationEmail::TYPE_LEGACY_PHOTO_REQUEST,
+                ], true)
+                || (string) $existing->barcode !== $barcode
+                || (string) $existing->product_name !== $productName
+            )) {
+            throw new InvalidArgumentException(
+                'This event reference is already assigned to a different notification. Use a new stable event reference.'
+            );
+        }
+
+        return $this->prepareEvent(
+            $eventReference,
+            $requests,
+            UserNotificationEmail::TYPE_INFORMATION_REQUEST,
+            $productName,
+            $barcode,
+        );
     }
 
     public function deliverEvent(string $eventReference): array
