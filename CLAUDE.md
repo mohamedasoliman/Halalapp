@@ -208,6 +208,12 @@ Non-search product listings are cached for 10 minutes using version-based keys (
 ### Database Backup
 Custom `db:backup` artisan command (`app/Console/Commands/BackupDatabase.php`) supports MySQL (mysqldump) and SQLite (file copy). Runs daily at 3:00 AM via Laravel scheduler. Backups stored in `storage/app/backups/` with `--keep=7` rotation by default.
 
+### User Information Requests
+- Use `php artisan requests:request-information {barcode}` to preview the active request and eligible deduplicated recipient count without writing delivery rows or sending email.
+- After explicit approval, send with a unique stable event reference: `php artisan requests:request-information {barcode} --event='information-request:{date-or-batch}:{barcode}' --send`.
+- This shared path is required by both manufacturer-reply and daily prioritisation workflows. It validates and deduplicates direct requester and watcher addresses, excludes `@halalkiwi.com` placeholders, records per-recipient delivery state, and uses the standard information-request template.
+- New deliveries use `information_request`; `photo_request` remains a legacy template alias only.
+
 ## Important Notes
 
 - The `.env` file on the server contains production database credentials - never overwrite it
