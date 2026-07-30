@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ContactRequest extends FormRequest
@@ -17,10 +17,10 @@ class ContactRequest extends FormRequest
     {
         return [
             'subject' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email:rfc|max:255',
             'name' => 'required|string|max:255',
             'body' => 'required|string|max:10000',
-            'attachment' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'attachment' => 'nullable|file|max:5120|mimes:jpg,jpeg,png,pdf',
         ];
     }
 

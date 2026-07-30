@@ -116,7 +116,7 @@
 
 								<div class="form-group row has-error">
 									<div class="col-sm-12">
-										<input type="email" class="form-control" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" placeholder="Your Email Address">
+										<input type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email', $email ?? '') }}" placeholder="Your Email Address" autocomplete="email">
 									</div>
 									<span class="md-line"></span>
 								</div>
@@ -126,7 +126,7 @@
 
 								<div class="form-group row has-error">
 									<div class="col-sm-12">
-										<input type="password" class="form-control" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" id="password" value="{{ old('password') }}" placeholder="Your Password" required="">
+										<input type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" id="password" placeholder="New Password" autocomplete="new-password" required="">
 									</div>
 									<span class="md-line"></span>
 								</div>
@@ -136,7 +136,7 @@
 
 								<div class="form-group row has-error">
 									<div class="col-sm-12">
-										<input type="password" class="form-control" class="form-control{{ $errors->has('password_confirmation') ? ' is-invalid' : '' }}" name="password_confirmation" id="password_confirmation" value="{{ old('password_confirmation') }}" placeholder="Confirm Password" required="">
+										<input type="password" class="form-control{{ $errors->has('password_confirmation') ? ' is-invalid' : '' }}" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" autocomplete="new-password" required="">
 									</div>
 									<span class="md-line"></span>
 								</div>

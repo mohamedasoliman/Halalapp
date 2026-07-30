@@ -93,9 +93,11 @@ class SyncBusinessMembershipTiers extends Command
         }
 
         $backupDirectory = storage_path('app/backups');
-        File::ensureDirectoryExists($backupDirectory, 0755);
+        File::ensureDirectoryExists($backupDirectory, 0700);
+        chmod($backupDirectory, 0700);
         $backupPath = $backupDirectory.'/business_tiers_'.now()->format('Y-m-d_His').'.json';
         File::copy($path, $backupPath);
+        chmod($backupPath, 0600);
 
         File::put(
             $path,

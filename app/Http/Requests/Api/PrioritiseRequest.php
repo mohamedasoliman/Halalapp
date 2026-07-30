@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class PrioritiseRequest extends FormRequest
@@ -16,10 +16,12 @@ class PrioritiseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'barcode' => 'required|string|max:20',
+            // Existing app versions may send a short internal product ID when the
+            // catalogue response intentionally omits barcodes.
+            'barcode' => ['required', 'string', 'regex:/^\d{1,14}$/'],
             'product_name' => 'nullable|string|max:255',
             'brand_name' => 'nullable|string|max:255',
-            'user_email' => 'nullable|email|max:255',
+            'user_email' => 'nullable|email:rfc|max:255',
             'user_name' => 'nullable|string|max:255',
             'photo' => 'nullable|file|max:5120|mimes:jpg,jpeg,png',
             'type' => 'nullable|in:prioritise,new_product,silent',

@@ -9,35 +9,43 @@ use Illuminate\Support\Facades\Session;
 
 class AdminLoginController extends Controller
 {
-	public function __construct()
-	{
-		$this->middleware('guest:admin', ['except' => ['logout']]);
-	}
+    public function __construct()
+    {
+        $this->middleware('guest:admin', ['except' => ['logout']]);
+    }
 
-	public function showLoginForm()
-	{
-		return view('admin.auth.login');
-	}
+    public function showLoginForm()
+    {
+        return view('admin.auth.login');
+    }
 
-	public function login(Request $request)
-	{
-		$this->validate($request,[
-			'email' => 'required|email',
-			'password' => 'required|min:6'
-		]);
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email:rfc', 'max:255'],
+            'password' => ['required', 'string'],
+        ]);
 
-		if(Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->remember))
-		{
-		    Session::put('admin_session_timeout', now()->addMinutes(5));
-			return redirect()->intended(route('admin.dashboard'));
-		}
+        $credentials['status'] = 1;
 
-		return redirect()->back()->withInput($request->only('email','remember'))->with('error','Email and Password Not Match');;
-	}
+        if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            Session::put('admin_last_activity', now()->timestamp);
 
-	public function logout()
-	{
-		Auth::guard('admin')->logout();
-		return redirect('/admin/login');
-	}
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        return redirect()->back()
+            ->withInput($request->only('email', 'remember'))
+            ->with('error', 'The supplied credentials are invalid.');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login');
+    }
 }

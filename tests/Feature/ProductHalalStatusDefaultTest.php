@@ -57,7 +57,7 @@ class ProductHalalStatusDefaultTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_new_prioritisation_product_is_unreviewed(): void
+    public function test_new_prioritisation_does_not_publish_user_supplied_product_data(): void
     {
         $request = PrioritiseRequest::create('/api/prioritise', 'POST', [
             'barcode' => '1234567890123',
@@ -66,9 +66,12 @@ class ProductHalalStatusDefaultTest extends TestCase
 
         (new PrioritisationController)->store($request);
 
-        $this->assertDatabaseHas('products', [
+        $this->assertDatabaseMissing('products', [
             'Barcode' => '1234567890123',
-            'halal_status' => '2',
+        ]);
+        $this->assertDatabaseHas('prioritisation_requests', [
+            'barcode' => '1234567890123',
+            'product_name' => 'New Product',
         ]);
     }
 

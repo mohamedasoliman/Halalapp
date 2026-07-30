@@ -45,8 +45,6 @@
     <script type="text/javascript" src="{{asset('assets/bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <!-- jquery slimscroll js -->
     <script type="text/javascript" src="{{asset('assets/bower_components/jquery-slimscroll/jquery.slimscroll.js')}}"></script>
-    <!-- Validation js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{{asset('assets/bower_components/modernizr/modernizr.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/bower_components/modernizr/feature-detects/css-scrollbars.js')}}"></script>

@@ -62,8 +62,6 @@
   <!-- Modern Admin Theme - Must be last to override all styles -->
   <link rel="stylesheet" type="text/css" href="{{asset('assets/css/modern-admin.css')}}">
 
-  <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
-
   @yield('after-styles')
 
   @stack('styles')

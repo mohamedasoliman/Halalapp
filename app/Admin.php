@@ -2,20 +2,39 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\AdminResetPasswordNotification;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    use Notifiable, HasRoles;
+    use HasRoles, Notifiable;
 
-    // protected $guard = 'admin';
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role_id',
+        'status',
+        'admin_image',
+        'phone',
+        'username',
+        'shop_id',
+    ];
 
-    protected $guarded = [];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function getRole() {
+    public function getRole()
+    {
         return $this->belongsTo('App\Models\Role\CustomRole', 'role_id', 'id');
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new AdminResetPasswordNotification($token));
     }
 }

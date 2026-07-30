@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Api\PrioritiseRequest;
-use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\BrandCommunication;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
 use App\Models\RequestWatcher;
 use App\Support\ProductBarcode;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -25,7 +25,7 @@ class PrioritisationController extends Controller
 
             // 1. Check if product already has a verdict (lookup by barcode, fallback to ID)
             $product = Product::matchingBarcode($barcode)->first();
-            if (!$product && is_numeric($barcode)) {
+            if (! $product && is_numeric($barcode)) {
                 $product = Product::find($barcode);
                 // Use the actual barcode from the product if found by ID
                 if ($product && $product->Barcode) {
@@ -34,6 +34,11 @@ class PrioritisationController extends Controller
             }
             if ($product) {
                 $barcode = (string) $product->Barcode;
+            }
+            if (! $product && strlen($barcode) < 8) {
+                return response()->json([
+                    'message' => 'A valid product barcode is required.',
+                ], 422);
             }
             if ($product && ($product->halal_status === '0' || $product->halal_status === '1')) {
                 return response()->json([
@@ -52,7 +57,7 @@ class PrioritisationController extends Controller
 
             if ($existingRequest) {
                 // Add this user as a watcher if they provided an email
-                if (!$isAnonymous) {
+                if (! $isAnonymous) {
                     RequestWatcher::firstOrCreate(
                         ['request_id' => $existingRequest->id, 'user_email' => $userEmail],
                         ['user_name' => $request->user_name]
@@ -67,7 +72,7 @@ class PrioritisationController extends Controller
                 if (empty($existingRequest->brand_name) && $request->brand_name) {
                     $updates['brand_name'] = $request->brand_name;
                 }
-                if (!empty($updates)) {
+                if (! empty($updates)) {
                     $existingRequest->update($updates);
                 }
 
@@ -95,7 +100,7 @@ class PrioritisationController extends Controller
 
             // 5. Determine initial status based on brand
             $status = 'pending';
-            if (!empty($brandName)) {
+            if (! empty($brandName)) {
                 $brand = Brand::where('name', 'LIKE', $brandName)->first();
                 if ($brand) {
                     if ($brand->email && $brand->contact_type === 'email') {
@@ -133,22 +138,11 @@ class PrioritisationController extends Controller
             ]);
 
             // 7. Add user as watcher
-            if (!$isAnonymous) {
+            if (! $isAnonymous) {
                 RequestWatcher::create([
                     'request_id' => $prioRequest->id,
                     'user_email' => $userEmail,
                     'user_name' => $request->user_name,
-                ]);
-            }
-
-            // 8. If product not in DB and we have a name, add it so future scans find it
-            if (!$product && $productName) {
-                Product::create([
-                    'product_name' => $productName,
-                    'Barcode' => $barcode,
-                    'halal_status' => '2',
-                    'status' => 1,
-                    'category' => '',
                 ]);
             }
 
@@ -158,7 +152,8 @@ class PrioritisationController extends Controller
                 'status' => $status,
             ]);
         } catch (\Exception $e) {
-            Log::error('Prioritisation request failed: ' . $e->getMessage());
+            Log::error('Prioritisation request failed: '.$e->getMessage());
+
             return response()->json([
                 'message' => 'Request submitted.',
             ]);
@@ -168,7 +163,7 @@ class PrioritisationController extends Controller
     public function checkStatus(Request $request)
     {
         $ids = $request->input('ids', []);
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json(['resolved' => []]);
         }
 
@@ -214,7 +209,7 @@ class PrioritisationController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            Log::debug('Open Food Facts lookup failed for ' . $barcode . ': ' . $e->getMessage());
+            Log::debug('Open Food Facts lookup failed for '.$barcode.': '.$e->getMessage());
         }
 
         return null;

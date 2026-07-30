@@ -4,118 +4,87 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Admin;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use DB;
-use Carbon\Carbon;
-use Mail;
-use App\User;
-use Session;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class ForgotPasswordController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset emails and
-    | includes a trait which assists in sending these notifications from
-    | your application to your users. Feel free to explore this trait.
-    |
-    */
-
-    use SendsPasswordResetEmails;
-
-     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-     public function __construct()
-     {
+    public function __construct()
+    {
         $this->middleware('guest:admin');
     }
-    /**
-     * Display the form to request a password reset link.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function showLinkRequestForm()
     {
-    	return view('admin.auth.passwords.email');
+        return view('admin.auth.passwords.email');
     }
 
     public function sendResetLinkEmails(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:admins',
+            'email' => ['required', 'email:rfc', 'max:255'],
         ]);
 
-        $token = $request->_token;
+        $activeAdminExists = Admin::query()
+            ->where('email', $request->string('email')->toString())
+            ->where('status', 1)
+            ->exists();
 
-        DB::table('password_resets')->insert(
-            ['email' => $request->email, 'token' => $token, 'created_at' => Carbon::now()]
+        if ($activeAdminExists) {
+            Password::broker('admins')->sendResetLink($request->only('email'));
+        }
+
+        // Always return the same response so this endpoint cannot enumerate admins.
+        return back()->with(
+            'success',
+            'If an active administrator account exists for that address, a reset link has been sent.'
         );
-
-        Mail::send('admin.email.email', ['token' => $token], function($message) use($request){
-            $message->to($request->email);
-            $message->subject('Reset Password Notification');
-        });
-
-        Session::flash('success', 'We have e-mailed your password reset link!');
-        return back()->with('message', 'We have e-mailed your password reset link!');
-
     }
 
-
-    public function getPassword($token) {
-
-        return view('admin.auth.passwords.reset', ['token' => $token]);
+    public function getPassword(Request $request, string $token)
+    {
+        return view('admin.auth.passwords.reset', [
+            'token' => $token,
+            'email' => $request->query('email'),
+        ]);
     }
 
     public function updatePassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:admins',
-            'password' => 'required|string|min:6|confirmed',
-            'password_confirmation' => 'required',
-
+        $credentials = $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'email:rfc', 'max:255'],
+            'password' => ['required', 'confirmed', PasswordRule::min(12)->mixedCase()->numbers()],
         ]);
 
-
-        $updatePassword = DB::table('password_resets')
-        ->where(['email' => $request->email, 'token' => $request->token])
-        ->first();
-
-        if(empty($updatePassword))
-        {
-            Session::flash('error', 'Invalid token!!');
-            return back()->withInput()->with('error', 'Invalid token!');
+        if (! Admin::query()->where('email', $credentials['email'])->where('status', 1)->exists()) {
+            return back()->withInput($request->only('email'))->withErrors([
+                'email' => 'This password reset link is invalid or has expired.',
+            ]);
         }
 
-        $user = Admin::where('email', $request->email)
-        ->update(['password' => Hash::make($request->password)]);
+        $status = Password::broker('admins')->reset(
+            $credentials,
+            function (Admin $admin, string $password): void {
+                $admin->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
 
-        DB::table('password_resets')->where(['email'=> $request->email])->delete();
+                event(new PasswordReset($admin));
+            }
+        );
 
-        Session::flash('success', 'Your password has been changed!');
-        return redirect()->route('admin.login');
+        if ($status !== Password::PASSWORD_RESET) {
+            return back()->withInput($request->only('email'))->withErrors([
+                'email' => 'This password reset link is invalid or has expired.',
+            ]);
+        }
 
+        return redirect()->route('admin.login')->with('success', 'Your password has been changed.');
     }
-
-
-     /**
-     * Get the broker to be used during password reset.
-     *
-     * @return \Illuminate\Contracts\Auth\PasswordBroker
-     */
-     public function broker()
-     {
-     	return Password::broker('admin');
-     }
-
- }
+}

@@ -217,7 +217,7 @@
             },
 			password: {
 				required: true,
-				minlength: 8,
+				minlength: 12,
 			},
 			password_confirmation: {
 				required: true,
@@ -248,7 +248,7 @@
             },
 			password:{
 				required: 'Please Enter Your Password',
-				minlength: 'Password Length must be 8 Character',
+				minlength: 'Password Length must be at least 12 characters',
 			},
 			password_confirmation:{
 				required: 'Please Confirm Your Password',

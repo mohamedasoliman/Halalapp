@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class BackupDatabase extends Command
 {
     protected $signature = 'db:backup {--keep=7 : Number of backups to keep}';
+
     protected $description = 'Backup the database and rotate old backups';
 
     public function handle(): int
@@ -24,6 +24,7 @@ class BackupDatabase extends Command
         }
 
         $this->error("Unsupported database driver: {$driver}");
+
         return self::FAILURE;
     }
 
@@ -31,18 +32,20 @@ class BackupDatabase extends Command
     {
         $dbPath = config("database.connections.{$connection}.database");
 
-        if (!file_exists($dbPath)) {
+        if (! file_exists($dbPath)) {
             $this->error("SQLite database not found at: {$dbPath}");
+
             return self::FAILURE;
         }
 
         $backupDir = storage_path('app/backups');
         $this->ensureBackupDir($backupDir);
 
-        $filename = 'backup_' . date('Y-m-d_His') . '.sqlite';
-        $backupPath = $backupDir . '/' . $filename;
+        $filename = 'backup_'.date('Y-m-d_His').'.sqlite';
+        $backupPath = $backupDir.'/'.$filename;
 
         copy($dbPath, $backupPath);
+        chmod($backupPath, 0600);
 
         $this->info("SQLite backup created: {$filename}");
         $this->rotateBackups($backupDir, '.sqlite');
@@ -61,27 +64,47 @@ class BackupDatabase extends Command
         $backupDir = storage_path('app/backups');
         $this->ensureBackupDir($backupDir);
 
-        $filename = 'backup_' . date('Y-m-d_His') . '.sql';
-        $backupPath = $backupDir . '/' . $filename;
+        $filename = 'backup_'.date('Y-m-d_His').'.sql';
+        $backupPath = $backupDir.'/'.$filename;
+
+        $defaultsPath = tempnam($backupDir, '.mysql-client-');
+        if ($defaultsPath === false) {
+            $this->error('Could not create a protected temporary MySQL configuration file.');
+
+            return self::FAILURE;
+        }
+
+        chmod($defaultsPath, 0600);
+        file_put_contents($defaultsPath, implode(PHP_EOL, [
+            '[client]',
+            'host="'.$this->escapeMysqlOption($host).'"',
+            'port='.(int) $port,
+            'user="'.$this->escapeMysqlOption($username).'"',
+            'password="'.$this->escapeMysqlOption($password).'"',
+            '',
+        ]));
 
         $command = sprintf(
-            'mysqldump --host=%s --port=%s --user=%s --password=%s %s > %s 2>&1',
-            escapeshellarg($host),
-            escapeshellarg($port),
-            escapeshellarg($username),
-            escapeshellarg($password),
+            'mysqldump --defaults-extra-file=%s --single-transaction --quick --skip-lock-tables %s > %s 2>&1',
+            escapeshellarg($defaultsPath),
             escapeshellarg($database),
             escapeshellarg($backupPath)
         );
 
-        exec($command, $output, $returnCode);
+        try {
+            exec($command, $output, $returnCode);
+        } finally {
+            @unlink($defaultsPath);
+        }
 
         if ($returnCode !== 0) {
-            $this->error('mysqldump failed: ' . implode("\n", $output));
+            $this->error('mysqldump failed: '.implode("\n", $output));
             @unlink($backupPath);
+
             return self::FAILURE;
         }
 
+        chmod($backupPath, 0600);
         $size = round(filesize($backupPath) / 1024, 1);
         $this->info("MySQL backup created: {$filename} ({$size} KB)");
         $this->rotateBackups($backupDir, '.sql');
@@ -91,23 +114,34 @@ class BackupDatabase extends Command
 
     private function ensureBackupDir(string $dir): void
     {
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0700, true);
         }
+
+        chmod($dir, 0700);
     }
 
     private function rotateBackups(string $dir, string $extension): void
     {
         $keep = (int) $this->option('keep');
-        $files = glob($dir . '/backup_*' . $extension);
+        $files = glob($dir.'/backup_*'.$extension);
         sort($files);
 
         $toDelete = count($files) - $keep;
         if ($toDelete > 0) {
             for ($i = 0; $i < $toDelete; $i++) {
                 unlink($files[$i]);
-                $this->info('Removed old backup: ' . basename($files[$i]));
+                $this->info('Removed old backup: '.basename($files[$i]));
             }
         }
+    }
+
+    private function escapeMysqlOption(mixed $value): string
+    {
+        return str_replace(
+            ['\\', '"', "\r", "\n"],
+            ['\\\\', '\\"', '', ''],
+            (string) $value
+        );
     }
 }

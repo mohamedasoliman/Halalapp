@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers\Admin\ProductController;
 
-use DB;
-use Session;
-use App\User;
-use Validator;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\ProductModel\Product;
 use App\Support\HalalStatus;
 use App\Support\ProductBarcode;
-use Illuminate\Support\Facades\Hash;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 use League\Csv\Reader;
 use League\Csv\Writer;
-
+use Session;
+use Yajra\DataTables\DataTables;
 
 class ProductController extends Controller
 {
@@ -28,12 +24,14 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (!userRoleCheck([1])) {
+            if (! userRoleCheck([1])) {
                 return redirect()->route('admin.dashboard');
             }
+
             return $next($request);
         });
     }
+
     public function showForm()
     {
         return view('admin.products.import_form');
@@ -43,13 +41,13 @@ class ProductController extends Controller
     {
         try {
             $request->validate([
-                'csv_file' => 'required|mimes:csv,txt',
+                'csv_file' => 'required|file|mimes:csv,txt|max:10240',
             ]);
 
             if ($request->hasFile('csv_file')) {
                 $file = $request->file('csv_file');
                 $path = $file->getRealPath();
-                
+
                 // Use League\CSV like the Masjid importer
                 $csv = Reader::createFromPath($path);
                 $csv->setHeaderOffset(0);
@@ -60,6 +58,7 @@ class ProductController extends Controller
                     $barcode = ProductBarcode::canonical($rawBarcode);
                     if (Product::matchingBarcode($barcode)->exists()) {
                         $skippedDuplicates++;
+
                         continue;
                     }
 
@@ -68,14 +67,15 @@ class ProductController extends Controller
                         'Barcode' => $barcode,
                         'product_image' => $record['Product Image'] ?? null,
                         'halal_status' => (isset($record['Halal Status']) && $record['Halal Status'] !== '') ? $record['Halal Status'] : 2,
-                        'Certification_Status' => !empty($record['Certification Status']) ? $record['Certification Status'] : '_',
+                        'Certification_Status' => ! empty($record['Certification Status']) ? $record['Certification Status'] : '_',
                         'category' => $record['Category'] ?? null,
                         'notes' => $record['Notes'] ?? null,
                         'ingredient' => $record['Ingredients'] ?? null,
                     ]);
                 }
-                
+
                 Cache::increment('products_cache_version');
+
                 return redirect()->back()->with(
                     'success',
                     "CSV file imported successfully. Skipped {$skippedDuplicates} duplicate barcode(s)."
@@ -85,10 +85,10 @@ class ProductController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error for debugging
-            \Log::error('CSV import error: ' . $e->getMessage());
-            
+            \Log::error('CSV import error: '.$e->getMessage());
+
             // Return a user-friendly error message
-            return redirect()->back()->with('error', 'An error occurred while importing the CSV file: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'The CSV could not be imported. Check its format and try again.');
         }
     }
 
@@ -113,34 +113,36 @@ class ProductController extends Controller
                 'Certification Status',
                 'Category',
                 'Notes',
-                'Ingredients'
+                'Ingredients',
             ]);
 
             // Add product rows
             foreach ($products as $product) {
                 $csv->insertOne([
-                    $product->product_name,
-                    $product->product_image,
-                    $product->Barcode,
-                    $product->halal_status,
-                    $product->Certification_Status,
-                    $product->category,
-                    $product->notes,
-                    $product->ingredient
+                    $this->safeCsvCell($product->product_name),
+                    $this->safeCsvCell($product->product_image),
+                    $this->safeCsvCell($product->Barcode),
+                    $this->safeCsvCell($product->halal_status),
+                    $this->safeCsvCell($product->Certification_Status),
+                    $this->safeCsvCell($product->category),
+                    $this->safeCsvCell($product->notes),
+                    $this->safeCsvCell($product->ingredient),
                 ]);
             }
 
             // Generate filename with date
-            $filename = 'products_export_' . date('Y-m-d_His') . '.csv';
+            $filename = 'products_export_'.date('Y-m-d_His').'.csv';
 
             // Return CSV download
             return response($csv->toString(), 200, [
                 'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             ]);
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to export CSV: ' . $e->getMessage());
+            \Log::error('CSV export error: '.$e->getMessage());
+
+            return redirect()->back()->with('error', 'The CSV export could not be generated.');
         }
     }
 
@@ -166,23 +168,11 @@ class ProductController extends Controller
         return response()->json(['status' => 1, 'message' => 'All products have been deleted.']);
     }
 
-
-
-
-
-
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-
-
-
-
-
-
-
     public function index(Request $request)
     {
 
@@ -193,13 +183,14 @@ class ProductController extends Controller
             }
 
             $Product = $query->get();
+
             return DataTables::of($Product)
                 ->addIndexColumn()
                 ->addColumn('status', function ($user) {
                     if ($user->status == '1') {
-                        return "<label data-id='" . $user->id . "' class='label label-info status-update status_list'>Active</label>";
+                        return "<label data-id='".$user->id."' class='label label-info status-update status_list'>Active</label>";
                     } else {
-                        return "<label data-id='" . $user->id . "' class='label label-danger status-update status_list'>Not Active</label>";
+                        return "<label data-id='".$user->id."' class='label label-danger status-update status_list'>Not Active</label>";
                     }
                 })
                 ->addColumn('halal_status', function ($user) {
@@ -211,23 +202,25 @@ class ProductController extends Controller
                 ->editColumn('product_image', function ($row) {
                     // Support both local filenames and external URLs
                     $image = $row->product_image;
-                    if (!empty($image) && (str_starts_with($image, 'http://') || str_starts_with($image, 'https://'))) {
+                    if (! empty($image) && (str_starts_with($image, 'http://') || str_starts_with($image, 'https://'))) {
                         $url = $image;
                     } else {
-                        $url = asset('public/upload/product_images/' . $image);
+                        $url = asset('public/upload/product_images/'.$image);
                     }
-                    return '<img src="' . $url . '" border="0" width="40" class="img-rounded" align="center" />';
+
+                    return '<img src="'.e($url).'" border="0" width="40" class="img-rounded" align="center" alt="" />';
                 })
                 ->addColumn('action', function ($user) {
-                    $data = '<a href="javascript:;" onclick="editproductModel(' . $user->id . ')" class="btn btn-outline-warning" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Edit Category"><i class="icofont icofont-edit"></i></a>
-                <button type="button" class="btn btn-outline-danger" onclick="deleteproductModel(' . $user->id . ')" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Delete Category"><i class="icofont icofont-trash"></i>
+                    $data = '<a href="javascript:;" onclick="editproductModel('.$user->id.')" class="btn btn-outline-warning" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Edit Category"><i class="icofont icofont-edit"></i></a>
+                <button type="button" class="btn btn-outline-danger" onclick="deleteproductModel('.$user->id.')" data-toggle="tooltip" data-trigger="hover" data-placement="top" title="Delete Category"><i class="icofont icofont-trash"></i>
                 </button> ';
+
                     return $data;
                 })
-                ->rawColumns(['action', 'status', 'halal_status', 'product_image', 'Barcode', 'Certification_Status', 'category', 'notes', 'ingredient'])
+                ->rawColumns(['action', 'status', 'halal_status', 'product_image'])
                 ->make(true);
         } else {
-            $cat = new Product();
+            $cat = new Product;
             $categories = $cat->getAllUniqueCategories();
 
             return view('admin.products.index', compact('categories'));
@@ -237,7 +230,7 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -247,8 +240,7 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -257,7 +249,7 @@ class ProductController extends Controller
         ];
 
         $validatedData = $request->validate([
-            'product_name' => 'required',
+            'product_name' => 'required|string|max:255',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image input
             'halal_status' => ['nullable', Rule::in(HalalStatus::values())],
             'Barcode' => 'required|string|max:20',
@@ -275,15 +267,15 @@ class ProductController extends Controller
 
         if ($originalImage) {
             // Generate a unique name for the image
-            $imageName = time() . '_' . $originalImage->getClientOriginalName();
+            $imageName = Str::uuid().'.'.$originalImage->extension();
 
             // Define the upload path
-            $path = dirname(base_path()) . "/public_html/public/upload/product_images/";
+            $path = dirname(base_path()).'/public_html/public/upload/product_images/';
             // dd($path);
 
             // Create the directory if it doesn't exist
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true);
+            if (! file_exists($path)) {
+                mkdir($path, 0755, true);
             }
 
             // Move the uploaded image to the desired path
@@ -305,11 +297,9 @@ class ProductController extends Controller
         Cache::increment('products_cache_version');
 
         return json_encode([
-            'status' => 1
+            'status' => 1,
         ]);
     }
-
-
 
     public function show($id)
     {
@@ -322,9 +312,10 @@ class ProductController extends Controller
         $mode = 'Edit';
 
         $editData = view('admin.products.edit', compact('Product', 'mode'))->render();
+
         return json_encode([
             'status' => 1,
-            'data' => $editData
+            'data' => $editData,
         ]);
     }
 
@@ -337,7 +328,8 @@ class ProductController extends Controller
         ];
 
         $validatedData = $request->validate([
-            'product_name' => 'required',
+            'product_name' => 'required|string|max:255',
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'halal_status' => ['nullable', Rule::in(HalalStatus::values())],
             'Barcode' => 'required|string|max:20',
         ], $messages);
@@ -354,14 +346,14 @@ class ProductController extends Controller
 
         if ($originalImage) {
             // Generate a unique name for the image
-            $imageName = time() . '_' . $originalImage->getClientOriginalName();
+            $imageName = Str::uuid().'.'.$originalImage->extension();
             // Define the upload path
-            $path = dirname(base_path()) . "/public_html/public/upload/product_images/";
+            $path = dirname(base_path()).'/public_html/public/upload/product_images/';
             // dd($path);
 
             // Create the directory if it doesn't exist
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true);
+            if (! file_exists($path)) {
+                mkdir($path, 0755, true);
             }
 
             // Move the uploaded image to the desired path
@@ -384,7 +376,7 @@ class ProductController extends Controller
         }
 
         // If a new image was uploaded, add it to the update data
-        if (!empty($originalImage)) {
+        if (! empty($originalImage)) {
             $updateData['product_image'] = $imageName;
         }
 
@@ -396,12 +388,11 @@ class ProductController extends Controller
         return json_encode(['status' => 1]);
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {
@@ -420,6 +411,7 @@ class ProductController extends Controller
         $Product->delete();
 
         Session::flash('error', 'Product deleted successfully!');
+
         return redirect()->route('maincategory.index');
     }
 
@@ -428,26 +420,26 @@ class ProductController extends Controller
 
         $name = $request->categoryName;
         $id = $request->categoryID;
-        if (!empty($id)) {
+        if (! empty($id)) {
             $Product = Product::where('id', '!=', $id)->where('city_name', $name)->get();
             if ($Product->count()) {
                 return json_encode([
-                    'msg' => 'true'
+                    'msg' => 'true',
                 ]);
             } else {
                 return json_encode([
-                    'msg' => 'false'
+                    'msg' => 'false',
                 ]);
             }
         } else {
             $Product = Product::where('city_name', $name)->get();
             if ($Product->count()) {
                 return json_encode([
-                    'msg' => 'true'
+                    'msg' => 'true',
                 ]);
             } else {
                 return json_encode([
-                    'msg' => 'false'
+                    'msg' => 'false',
                 ]);
             }
         }
@@ -467,6 +459,15 @@ class ProductController extends Controller
 
         Cache::increment('products_cache_version');
 
-        return response()->json(['status' => TRUE, 'message' => 'Product status change successfully.']);
+        return response()->json(['status' => true, 'message' => 'Product status change successfully.']);
+    }
+
+    private function safeCsvCell(mixed $value): mixed
+    {
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        return preg_match('/^[\\s]*[=+\\-@]/u', $value) === 1 ? "'".$value : $value;
     }
 }

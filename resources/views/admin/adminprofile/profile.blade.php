@@ -191,16 +191,22 @@
 														{{csrf_field()}}
 														<input type="hidden" name="viewchangeuserid" id="viewchangeuserid" value="{{ $user->id }}">
 														<div class="form-group row has-error">
+															<label class="col-sm-2 col-form-label">Your Current Password</label>
+															<div class="col-sm-10">
+																<input type="password" class="form-control" id="current_password" name="current_password" placeholder="Current administrator password" autocomplete="current-password">
+															</div>
+														</div>
+														<div class="form-group row has-error">
 															<label class="col-sm-2 col-form-label">New Password</label>
 															<div class="col-sm-10">
-																<input type="password" class="form-control" id="password" name="password" placeholder="New Password" value="{{ old('password') }}">
+																<input type="password" class="form-control" id="password" name="password" placeholder="New Password" autocomplete="new-password">
 															</div>
 														</div>
 														<!-- end of table col-lg-6 -->
 														<div class="form-group row has-error">
 															<label class="col-sm-2 col-form-label">Confirm Password</label>
 															<div class="col-sm-10">
-																<input type="password" class="form-control" name="confirmpassword" id="confirmpassword" placeholder="Confirm Password" value="{{ old('confirmpassword') }}">
+																<input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" autocomplete="new-password">
 															</div>
 														</div>
 														<!-- end of table col-lg-6 -->
@@ -284,11 +290,14 @@
 	$('#changepasswordid').click(function() {
 		$('#changepasswordform').validate({
 			rules: {
+				current_password: {
+					required: true,
+				},
 				password: {
 					required: true,
-					minlength:8,
+					minlength:12,
 				},
-				confirmpassword: {
+				password_confirmation: {
 					required: true,
 					equalTo: "#password",
 				},
@@ -306,11 +315,14 @@
 				}
 			},
 			messages:{
+				current_password:{
+					required: 'Please enter your current administrator password',
+				},
 				password:{
 					required: 'Please Enter Your Password',
-					minlength: 'Password Length must be 8 Character',
+					minlength: 'Password Length must be at least 12 characters',
 				},
-				confirmpassword:{
+				password_confirmation:{
 					required: 'Please Confirm Your Password',
 				},
 			},
@@ -331,8 +343,9 @@
                         $('#loading').hide();
                         if (data.status) {
                             message(data.message, 'success');
+                            $('#current_password').val('');
                             $('#password').val('');
-                            $('#confirmpassword').val('');
+                            $('#password_confirmation').val('');
                         }
                     },
                     error: function (data) {

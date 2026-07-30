@@ -87,6 +87,13 @@
 												</div>
 
 												<div class="form-group row">
+													<label class="col-sm-2 col-form-label">Confirm Password</label>
+													<div class="col-sm-10">
+														<input name="password_confirmation" type="password" class="form-control" autocomplete="new-password">
+													</div>
+												</div>
+
+												<div class="form-group row">
 													<label class="col-sm-2 col-form-label">Phone</label>
 													<div class="col-sm-10">
 														<input name="phone" type="phone" class="form-control" value="{{ old('phone') }}">
@@ -147,11 +154,3 @@
 </div>
 
 @endsection
-
-@push('scripts')
-<script>
-	$(document).ready(function() {
-		CKEDITOR.replace( 'address' );
-	});
-</script>
-@endpush

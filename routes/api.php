@@ -37,6 +37,8 @@ Route::middleware(['api_key', 'throttle:api'])->group(function () {
         Route::post('/fatwa-contact-us', [FatwaContactMessageController::class, 'send']);
         Route::post('/events-contact-us', [EventsContactMessageController::class, 'send']);
         Route::post('/kiwisaver-contact', [KiwiSaverContactMessageController::class, 'send']);
+    });
+    Route::middleware('throttle:prioritisation')->group(function () {
         Route::post('/prioritise', [PrioritisationController::class, 'store']);
         Route::post('/prioritise/check', [PrioritisationController::class, 'checkStatus']);
     });

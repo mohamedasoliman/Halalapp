@@ -1,55 +1,68 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\Users\UsersController;
-use App\Http\Controllers\Admin\Auth\AdminLoginController;
-use App\Http\Controllers\Admin\Users\UsersTableController;
-use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
-use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
-use App\Http\Controllers\Admin\ProductController\ProductController;
-use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
-use App\Http\Controllers\JsondataController;
-use App\Http\Controllers\Admin\PrioritisationController;
-use App\Http\Controllers\Admin\BrandsController;
-use App\Http\Controllers\Admin\BrandOutreachController;
-use App\Http\Controllers\Admin\RestaurantTierController;
-use App\Http\Controllers\Admin\NotificationManagerController;
-use App\Http\Controllers\Admin\BusinessNetworkController;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
+use App\Http\Controllers\Admin\BrandOutreachController;
+use App\Http\Controllers\Admin\BrandsController;
+use App\Http\Controllers\Admin\BusinessNetworkController;
+use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
+use App\Http\Controllers\Admin\NotificationManagerController;
+use App\Http\Controllers\Admin\PrioritisationController;
+use App\Http\Controllers\Admin\ProductController\ProductController;
+use App\Http\Controllers\Admin\RestaurantTierController;
+use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
+use App\Http\Controllers\Admin\Users\UsersController;
+use App\Http\Controllers\Admin\Users\UsersTableController;
+use App\Http\Controllers\JsondataController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/login', function() {
+Route::get('/login', function () {
     return redirect()->route('admin.login');
 });
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/login', [AdminLoginController::class, 'login'])->name('admin.login.submit');
+    Route::post('/login', [AdminLoginController::class, 'login'])
+        ->middleware('throttle:admin-login')
+        ->name('admin.login.submit');
     Route::get('/forgot-password-email', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.forgot.password.email');
-    Route::post('/send-forgot-password-email', [ForgotPasswordController::class, 'sendResetLinkEmails'])->name('admin.password.emails');
+    Route::post('/send-forgot-password-email', [ForgotPasswordController::class, 'sendResetLinkEmails'])
+        ->middleware('throttle:admin-password-reset')
+        ->name('admin.password.emails');
 
-    Route::get('/{token}/reset-password', [ForgotPasswordController::class, 'getPassword']);
-    Route::post('/reset-password', [ForgotPasswordController::class, 'updatePassword'])->name('admin.password.request');
+    Route::get('/{token}/reset-password', [ForgotPasswordController::class, 'getPassword'])
+        ->middleware('throttle:admin-password-reset')
+        ->name('admin.password.reset');
+    Route::post('/reset-password', [ForgotPasswordController::class, 'updatePassword'])
+        ->middleware('throttle:admin-password-reset')
+        ->name('admin.password.request');
 
-    Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+    Route::get('/', [AdminController::class, 'index'])
+        ->middleware(['auth:admin', 'admin_session'])
+        ->name('admin.dashboard');
+    Route::post('/logout', [AdminLoginController::class, 'logout'])
+        ->middleware(['auth:admin', 'admin_session'])
+        ->name('admin.logout');
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'admin_session']], function () {
     //    For delivery person otp
     Route::post('/otp-send-for-delivery', [AdminController::class, 'OtpSendForDelivery'])->name('otp.send.for.delivery');
     Route::post('/order-confirm', [AdminController::class, 'orderConfirmByOtp'])->name('order.confirm');
 
-    //Admin Users Route
-    Route::get('/admin-users', [AdminController::class, 'adminUser'])->name('admin.users');
-    Route::get('/admin-addusers', [AdminController::class, 'addadminUser'])->name('add.adminuser');
-    Route::get('/admin-user-edit/{id}', [AdminController::class, 'adminUserEdit'])->name('admin.user.edit');
-    Route::delete('/admin-user-edit/{id}', [AdminController::class, 'adminUserDelete'])->name('admin.user.delete');
-    Route::post('/admin.user.update', [AdminController::class, 'adminUserUpdate'])->name('admin.user.update');
-    Route::post('/admin.user.create', [AdminController::class, 'adminUserCreate'])->name('admin.user.create');
+    Route::middleware('check_role:1')->group(function () {
+        Route::get('/admin-users', [AdminController::class, 'adminUser'])->name('admin.users');
+        Route::get('/admin-addusers', [AdminController::class, 'addadminUser'])->name('add.adminuser');
+        Route::get('/admin-user-edit/{id}', [AdminController::class, 'adminUserEdit'])->name('admin.user.edit');
+        Route::delete('/admin-user-edit/{id}', [AdminController::class, 'adminUserDelete'])->name('admin.user.delete');
+        Route::post('/admin.user.update', [AdminController::class, 'adminUserUpdate'])->name('admin.user.update');
+        Route::post('/admin.user.create', [AdminController::class, 'adminUserCreate'])->name('admin.user.create');
+    });
 
-    /// Resource Routes
+    // / Resource Routes
     Route::resource('users', UsersController::class)->except(['edit', 'destroy']);
-    /// User Management
+    // / User Management
     Route::post('users/get', [UsersTableController::class])->name('users.get');
     Route::post('users/delete', [UsersController::class, 'UserDelete'])->name('users.delete');
     Route::post('users/block', [UsersController::class, 'UserBlock'])->name('users.block');
@@ -62,19 +75,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::get('users/edit/{id}', [UsersController::class, 'Useredit'])->name('users.edit');
     Route::post('users/update', [UsersController::class, 'userUpdate'])->name('user.detail.update');
 
-
     // Admin Profiles Routes
     Route::get('profile/{id}', [AdminController::class, 'adminProfile'])->name('admin.adminProfile');
     Route::post('editprofile', [AdminController::class, 'updateAdminProfile'])->name('admin.profile.update');
-    Route::post('updatePassword', [AdminController::class, 'updatePassword'])->name('admin.changepassword');
     Route::post('/configurations/adminprofile/update', [AdminController::class, 'updateprofile'])->name('admin.logoIcon.update');
 
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'admin_session']], function () {
 
-
-    //Food Routes
+    // Food Routes
     Route::get('main-food', [ProductController::class, 'index'])->name('product.index');
     Route::post('food/store', [ProductController::class, 'store'])->name('product.store');
     Route::post('food/delete', [ProductController::class, 'destroy'])->name('product.delete');
@@ -87,14 +97,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::post('foodstatusupdate/{id}', [ProductController::class, 'statusUpdate'])->name('product.status.update');
     Route::post('food/checkfood', [ProductController::class, 'checkUniqueproductName'])->name('product.checkproduct');
 
-
     Route::get('/import-csv', [ProductController::class, 'showform'])->name('import.form');
     Route::post('/import-csv-product', [ProductController::class, 'import'])->name('import.process');
     Route::get('/export-csv-products', [ProductController::class, 'export'])->name('product.export');
-    ///// food route ends /////
+    // /// food route ends /////
 
-
-    ////masjid routes///////
+    // //masjid routes///////
     Route::get('masjid', [MasjidManagementController::class, 'index'])->name('masjid.index');
     Route::post('masjid', [MasjidManagementController::class, 'store'])->name('masjid.store');
     Route::get('masjid/edit/{id}', [MasjidManagementController::class, 'edit'])->name('masjid.edit');
@@ -102,10 +110,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::delete('masjid/delete/{id}', [MasjidManagementController::class, 'delete'])->name('masjid.delete');
     Route::delete('masjid/deleteall', [MasjidManagementController::class, 'deleteall'])->name('masjid.deleteall');
     Route::post('import-csv-masjid', [MasjidManagementController::class, 'import'])->name('import.csv');
-    ///// masjid routes end/////
+    // /// masjid routes end/////
 
-
-    //// resturant routes ///////
+    // // resturant routes ///////
     Route::get('resturant', [ResturantManagementController::class, 'index'])->name('resturant.index');
     Route::post('resturant', [ResturantManagementController::class, 'store'])->name('resturant.store');
 
@@ -185,11 +192,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin']], function () 
     Route::delete('brands/{id}', [BrandsController::class, 'destroy'])->name('brands.destroy');
 
     // Admin Routes
-    Route::post('/admin-users', [AdminController::class, 'addadminUser'])->name('add.adminusers');
-    Route::get('/admin-users/edit/{id}', [AdminController::class, 'adminUserEdit'])->name('admin.users.edit');
+    Route::middleware('check_role:1')->group(function () {
+        Route::post('/admin-users', [AdminController::class, 'addadminUser'])->name('add.adminusers');
+        Route::get('/admin-users/edit/{id}', [AdminController::class, 'adminUserEdit'])->name('admin.users.edit');
+        Route::post('admin/status/update/{id}', [AdminController::class, 'statusUpdate'])->name('admin.status.update');
+        Route::delete('admin/delete/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
+        Route::post('admin/checkemail', [AdminController::class, 'checkUniqueEmail'])->name('admin.email');
+    });
     Route::post('updatePassword/{id}', [AdminController::class, 'updatePassword'])->name('admin.user.changepassword');
     Route::post('/adminprofileimage/{id}', [AdminController::class, 'updateprofile'])->name('admin.profilesimage.update');
-    Route::post('admin/status/update/{id}', [AdminController::class, 'statusUpdate'])->name('admin.status.update');
-    Route::delete('admin/delete/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
-    Route::post('admin/checkemail', [AdminController::class, 'checkUniqueEmail'])->name('admin.email');
 });
