@@ -24,7 +24,7 @@ class ProductCatalogueFetchTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach ([$this->barcodeFile, $this->outputFile] as $file) {
+        foreach ([$this->barcodeFile, $this->outputFile, $this->outputFile.'.state.ndjson'] as $file) {
             if (isset($file) && is_file($file)) {
                 unlink($file);
             }
@@ -77,5 +77,21 @@ class ProductCatalogueFetchTest extends TestCase
         $this->assertArrayNotHasKey('created_at', $record);
         $this->assertArrayNotHasKey('source', $record);
         $this->assertArrayNotHasKey('source_url', $record);
+
+        $state = json_decode(trim((string) file_get_contents($this->outputFile.'.state.ndjson')), true);
+        $this->assertSame([
+            'barcode' => '9310036040385',
+            'outcome' => 'written',
+        ], $state);
+
+        $this->artisan('products:fetch-catalogue', [
+            'barcodes' => $this->barcodeFile,
+            'output' => $this->outputFile,
+            '--resume' => true,
+            '--delay-ms' => 0,
+        ])->assertSuccessful();
+
+        Http::assertSentCount(1);
+        $this->assertCount(1, file($this->outputFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
     }
 }

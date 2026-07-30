@@ -36,6 +36,7 @@ class FetchProductCatalogue extends Command
 
         $barcodeFile = (string) $this->argument('barcodes');
         $outputFile = (string) $this->argument('output');
+        $stateFile = $outputFile.'.state.ndjson';
         if (! is_file($barcodeFile) || ! is_readable($barcodeFile)) {
             $this->error("Barcode file is not readable: {$barcodeFile}");
 
@@ -45,6 +46,11 @@ class FetchProductCatalogue extends Command
         $resume = (bool) $this->option('resume');
         if (is_file($outputFile) && ! $resume) {
             $this->error('Output already exists. Use --resume or choose a new destination.');
+
+            return self::FAILURE;
+        }
+        if (is_file($stateFile) && ! $resume) {
+            $this->error('Checkpoint state already exists. Use --resume or choose a new destination.');
 
             return self::FAILURE;
         }
@@ -70,10 +76,17 @@ class FetchProductCatalogue extends Command
         $batchSize = min(max((int) $this->option('batch-size'), 1), 10);
         $delayMilliseconds = min(max((int) $this->option('delay-ms'), 0), 5000);
         $limit = $this->option('limit') === null ? null : max((int) $this->option('limit'), 0);
-        $completedKeys = $resume ? $this->completedKeys($outputFile) : [];
+        $completedKeys = $resume ? $this->completedKeys($outputFile, $stateFile) : [];
         $output = fopen($outputFile, $resume ? 'ab' : 'xb');
         if ($output === false) {
             $this->error("Unable to open output file: {$outputFile}");
+
+            return self::FAILURE;
+        }
+        $state = fopen($stateFile, $resume ? 'ab' : 'xb');
+        if ($state === false) {
+            fclose($output);
+            $this->error("Unable to open checkpoint state: {$stateFile}");
 
             return self::FAILURE;
         }
@@ -121,6 +134,7 @@ class FetchProductCatalogue extends Command
                         $batch,
                         $token,
                         $output,
+                        $state,
                         $imageDirectory
                     );
                     $written += $added;
@@ -149,6 +163,7 @@ class FetchProductCatalogue extends Command
                     $batch,
                     $token,
                     $output,
+                    $state,
                     $imageDirectory
                 );
                 $written += $added;
@@ -157,6 +172,7 @@ class FetchProductCatalogue extends Command
             }
         } finally {
             fclose($output);
+            fclose($state);
         }
 
         $this->newLine();
@@ -172,9 +188,10 @@ class FetchProductCatalogue extends Command
     /**
      * @param  list<array{catalogue_barcode: string, canonical_barcode: string}>  $batch
      * @param  resource  $output
+     * @param  resource  $state
      * @return array{int, int, int}
      */
-    private function fetchBatch(array $batch, string $token, $output, ?string $imageDirectory): array
+    private function fetchBatch(array $batch, string $token, $output, $state, ?string $imageDirectory): array
     {
         $responses = Http::pool(fn (Pool $pool) => array_map(
             fn (array $item, int $index) => $pool->as('item-'.$index)
@@ -189,11 +206,14 @@ class FetchProductCatalogue extends Command
         $records = [];
         $failed = 0;
         $unusable = 0;
+        $outcomes = [];
 
         foreach ($batch as $index => $item) {
+            $canonicalBarcode = $item['canonical_barcode'];
             $response = $responses['item-'.$index] ?? null;
             if (! $response instanceof Response) {
                 $failed++;
+                $outcomes[$canonicalBarcode] = 'failed';
 
                 continue;
             }
@@ -204,19 +224,21 @@ class FetchProductCatalogue extends Command
                 : null;
             if (! is_array($product)) {
                 $unusable++;
+                $outcomes[$canonicalBarcode] = 'unusable';
 
                 continue;
             }
 
             $record = ProductCatalogueRecord::fromApiProduct($product);
             if ($record === null
-                || ProductBarcode::key($record['barcode']) !== ProductBarcode::key($item['canonical_barcode'])) {
+                || ProductBarcode::key($record['barcode']) !== ProductBarcode::key($canonicalBarcode)) {
                 $unusable++;
+                $outcomes[$canonicalBarcode] = 'unusable';
 
                 continue;
             }
 
-            $records[$item['canonical_barcode']] = $record;
+            $records[$canonicalBarcode] = $record;
         }
 
         if ($imageDirectory !== null && $records !== []) {
@@ -231,8 +253,19 @@ class FetchProductCatalogue extends Command
                 throw new RuntimeException('Unable to write the catalogue output.');
             }
             $written++;
+            $outcomes[$record['barcode']] = 'written';
         }
         fflush($output);
+        foreach ($outcomes as $barcode => $outcome) {
+            $encoded = json_encode([
+                'barcode' => (string) $barcode,
+                'outcome' => $outcome,
+            ], JSON_UNESCAPED_SLASHES);
+            if ($encoded === false || fwrite($state, $encoded.PHP_EOL) === false) {
+                throw new RuntimeException('Unable to write the catalogue checkpoint state.');
+            }
+        }
+        fflush($state);
 
         return [$written, $unusable, $failed];
     }
@@ -315,28 +348,42 @@ class FetchProductCatalogue extends Command
     /**
      * @return array<string, true>
      */
-    private function completedKeys(string $outputFile): array
+    private function completedKeys(string $outputFile, string $stateFile): array
     {
-        if (! is_file($outputFile)) {
-            return [];
+        $keys = [];
+        if (is_file($outputFile)) {
+            $input = fopen($outputFile, 'rb');
+            if ($input !== false) {
+                while (($line = fgets($input)) !== false) {
+                    $row = json_decode($line, true);
+                    if (! is_array($row)) {
+                        continue;
+                    }
+                    $key = ProductBarcode::key((string) ($row['barcode'] ?? ''));
+                    if ($key !== null) {
+                        $keys[$key] = true;
+                    }
+                }
+                fclose($input);
+            }
         }
 
-        $keys = [];
-        $input = fopen($outputFile, 'rb');
-        if ($input === false) {
-            return [];
-        }
-        while (($line = fgets($input)) !== false) {
-            $row = json_decode($line, true);
-            if (! is_array($row)) {
-                continue;
+        if (is_file($stateFile)) {
+            $input = fopen($stateFile, 'rb');
+            if ($input !== false) {
+                while (($line = fgets($input)) !== false) {
+                    $row = json_decode($line, true);
+                    if (! is_array($row) || ! in_array($row['outcome'] ?? null, ['written', 'unusable'], true)) {
+                        continue;
+                    }
+                    $key = ProductBarcode::key((string) ($row['barcode'] ?? ''));
+                    if ($key !== null) {
+                        $keys[$key] = true;
+                    }
+                }
+                fclose($input);
             }
-            $key = ProductBarcode::key((string) ($row['barcode'] ?? ''));
-            if ($key !== null) {
-                $keys[$key] = true;
-            }
         }
-        fclose($input);
 
         return $keys;
     }
