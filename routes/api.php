@@ -14,10 +14,23 @@ use App\Http\Controllers\PrioritisationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['api_key', 'throttle:api'])->group(function () {
-    Route::post('listing', [ApiController::class, 'allListing']);
-    Route::post('listingcode', [ApiController::class, 'allListingBarcode']);
+    Route::post('listing', [ApiController::class, 'allListing'])
+        ->middleware(['legacy_catalogue', 'mobile_version', 'throttle:catalogue', 'api_security_log']);
+    Route::post('listingcode', [ApiController::class, 'allListingBarcode'])
+        ->middleware(['legacy_catalogue', 'mobile_version', 'throttle:barcode', 'api_security_log']);
+
+    Route::prefix('v2/products')->group(function () {
+        Route::post('search', [ApiController::class, 'searchProducts'])
+            ->middleware(['mobile_version', 'throttle:catalogue', 'api_security_log']);
+        Route::post('barcode', [ApiController::class, 'allListingBarcode'])
+            ->middleware(['mobile_version', 'throttle:barcode', 'api_security_log']);
+    });
     Route::post('assistant/intent', AssistantIntentController::class)
         ->middleware('throttle:assistant');
+
+    Route::post('masjid', [MasjidManagementController::class, 'apishow']);
+    Route::get('resturant', [ResturantManagementController::class, 'api']);
+    Route::get('/jsondata/{id}', [JsondataController::class, 'allJsonData']);
 
     Route::middleware('throttle:contact')->group(function () {
         Route::post('/contact-us', [ContactMessageController::class, 'send']);
@@ -31,11 +44,3 @@ Route::middleware(['api_key', 'throttle:api'])->group(function () {
 
 Route::post('/analytics/events', [AnalyticsIngestionController::class, 'store'])
     ->middleware(['api_key', 'throttle:analytics']);
-
-Route::post('masjid', [MasjidManagementController::class, 'apishow']);
-Route::get('resturant', [ResturantManagementController::class, 'api']);
-Route::get('/jsondata/{id}', [JsondataController::class, 'allJsonData']);
-Route::post('/addjsondata/{id}', [JsondataController::class, 'allJsonDataApi']);
-Route::get('/editjsondata/{json2_id}', [JsondataController::class, 'getJsonDataForEdit']);
-Route::put('/editjsondata/{json2_id}', [JsondataController::class, 'editJsonDataApi']);
-Route::delete('/deletejsondata/{record_id}', [JsondataController::class, 'deleteJsonDataApi']);

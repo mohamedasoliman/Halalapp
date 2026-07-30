@@ -36,6 +36,20 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by($request->ip());
         });
 
+        RateLimiter::for('catalogue', function (Request $request) {
+            return [
+                Limit::perMinute(20)->by('catalogue-minute:'.$request->ip()),
+                Limit::perHour(300)->by('catalogue-hour:'.$request->ip()),
+            ];
+        });
+
+        RateLimiter::for('barcode', function (Request $request) {
+            return [
+                Limit::perMinute(30)->by('barcode-minute:'.$request->ip()),
+                Limit::perHour(240)->by('barcode-hour:'.$request->ip()),
+            ];
+        });
+
         RateLimiter::for('analytics', function (Request $request) {
             return Limit::perMinute(120)->by($request->ip());
         });

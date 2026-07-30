@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin\MasjidControllers;
 
-use League\Csv\Reader;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use App\Models\MasjidModel\Masjid;
-use App\DataTables\MasjidDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\MasjidModel\Masjid;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use League\Csv\Reader;
+use Yajra\DataTables\DataTables;
 
 class MasjidManagementController extends Controller
 {
@@ -38,7 +37,6 @@ class MasjidManagementController extends Controller
 
         return view('admin.masjid.masjid_index');
 
-
     }
 
     public function store(Request $request)
@@ -61,7 +59,7 @@ class MasjidManagementController extends Controller
                 'latitude' => 'required|string|max:255',
             ]);
 
-            $masjid = new Masjid();
+            $masjid = new Masjid;
             $masjid->Masjid_name = $validatedData['masjidName'];
             $masjid->Address = $validatedData['address'];
             $masjid->Area_id = $validatedData['areaid'];
@@ -80,8 +78,7 @@ class MasjidManagementController extends Controller
             $masjid->save();
 
             return response()->json(['success' => true]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
     }
@@ -89,7 +86,7 @@ class MasjidManagementController extends Controller
     public function edit($id)
     {
         $id = Masjid::find($id);
-        if (!$id) {
+        if (! $id) {
             return response()->json(['success' => false, 'message' => 'id not found'], 404);
         }
 
@@ -102,7 +99,7 @@ class MasjidManagementController extends Controller
 
         $masjid = Masjid::find($id);
 
-        if (!$masjid) {
+        if (! $masjid) {
             return response()->json(['success' => false, 'message' => 'Masjid not found'], 404);
         }
 
@@ -124,6 +121,7 @@ class MasjidManagementController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Masjid updated successfully']);
     }
+
     public function delete(Request $request, $id)
     {
 
@@ -131,6 +129,7 @@ class MasjidManagementController extends Controller
 
         if ($masjid) {
             $masjid->delete();
+
             return response()->json(['success' => true]);
         } else {
             return response()->json(['success' => false, 'message' => 'id not found.']);
@@ -142,13 +141,13 @@ class MasjidManagementController extends Controller
         try {
             Masjid::truncate();
 
-            return response()->json(['success'=>true]);
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-           return response()->json(['success'=>false,'message'=>$e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
-    //import csv file function
+    // import csv file function
     public function import(Request $request)
     {
         if ($request->hasFile('csv_file')) {
@@ -182,16 +181,13 @@ class MasjidManagementController extends Controller
 
     public function apishow(Request $request)
     {
-        //get the column name from the request
+        // get the column name from the request
         $column_name = $request->all();
 
-        $apikey = $request->header('X-API-Key');//header key
-        $appkey = config('app.key');//app key in env file
-
-        //prepare the query
+        // prepare the query
         $query = Masjid::query();
 
-        if (!empty($column_name)) {
+        if (! empty($column_name)) {
             foreach ($column_name as $key => $value) {
                 // Check if the column exists in the "resturants" table
                 if (Schema::hasColumn('masjids', $key)) {
@@ -203,13 +199,9 @@ class MasjidManagementController extends Controller
         $data = $query->get();
 
         if ($data->isEmpty()) {
-            return response()->json(['message'=>'No Record Found'],401);
+            return response()->json(['message' => 'No Record Found'], 401);
         }
 
-        if ($apikey != $appkey) {
-            return response()->json(['You are Unauthorized'],400);
-        }
-
-        return response()->json(['data'=>$data],200);
+        return response()->json(['data' => $data], 200);
     }
 }

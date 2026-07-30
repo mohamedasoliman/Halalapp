@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\Admin\ResturantControllers;
 
-use League\Csv\Reader;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\ResturantModel\Resturant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Reader;
+use Yajra\DataTables\DataTables;
 
 class ResturantManagementController extends Controller
 {
     // function to show data using datatable plugins
     public function index(Request $request)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
             $data = Resturant::select(
                 'id',
                 'Resturant_name',
@@ -38,6 +37,7 @@ class ResturantManagementController extends Controller
             return DataTables::of($data)
                 ->make(true);
         }
+
         return view('admin.resturant.resturant_index');
     }
 
@@ -56,7 +56,7 @@ class ResturantManagementController extends Controller
             'latitude' => 'required',
 
         ]);
-        $resturant = new Resturant();
+        $resturant = new Resturant;
         $resturant->Resturant_name = $request->input('resturantName');
         $resturant->Description = $request->input('description');
         $resturant->Website = $request->input('website');
@@ -75,12 +75,12 @@ class ResturantManagementController extends Controller
 
         // Store Images 1 to 6
         for ($i = 1; $i <= 6; $i++) {
-            $fieldName = 'image' . $i;
+            $fieldName = 'image'.$i;
             if ($request->hasFile($fieldName)) {
                 $image = $request->file($fieldName);
                 $imageName = $image->getClientOriginalName();
                 $image->move('public_html/upload/resturant', $imageName);
-                $resturant->{'Image_' . $i} = $imageName;
+                $resturant->{'Image_'.$i} = $imageName;
                 //  Storage::disk('public')->setVisibility('upload/resturant/' . $imageName, 'public');
             }
         }
@@ -94,7 +94,7 @@ class ResturantManagementController extends Controller
     public function edit($id)
     {
         $id = Resturant::find($id);
-        if (!$id) {
+        if (! $id) {
             return response()->json(['success' => false, 'message' => 'id not found'], 404);
         }
 
@@ -102,7 +102,8 @@ class ResturantManagementController extends Controller
     }
 
     // function to update that specific record
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'logo' => 'image|mimes:jpeg,png,jpg,gif',
             'image1' => 'image|mimes:jpeg,png,jpg,gif',
@@ -115,7 +116,7 @@ class ResturantManagementController extends Controller
         ]);
         $restaurant = Resturant::find($id);
 
-        if (!$restaurant) {
+        if (! $restaurant) {
             return response()->json(['success' => false, 'error' => 'Record not found']);
         }
 
@@ -146,36 +147,39 @@ class ResturantManagementController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Restaurant updated successfully']);
     }
+
     // private function to handle file upload
-    private function uploadFile($file) {
+    private function uploadFile($file)
+    {
         $fileName = $file->getClientOriginalName();
         $file->move('public_html/upload/resturant', $fileName);
+
         return $fileName;
     }
 
-
-
-
     // function to delete all the records
-    public function deleteall(){
+    public function deleteall()
+    {
         try {
             Resturant::Truncate();
-            return response()->json(['success'=>true]);
+
+            return response()->json(['success' => true]);
         } catch (\Throwable $e) {
-            return response()->json(['success'=>false,'message'=>$e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
     // function to delete any specific record
-    public function delete(Request $request,$id){
+    public function delete(Request $request, $id)
+    {
         $data = Resturant::find($id);
 
         if ($data) {
             $data->delete();
-            return response()->json(['success'=>true]);
-        }else
-        {
-            return response()->json(['success'=>false,'message'=>'id not found']);
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'id not found']);
         }
     }
 
@@ -214,7 +218,7 @@ class ResturantManagementController extends Controller
             return redirect()->back()->with('error', 'Please select a valid CSV file.');
         } catch (\Exception $e) {
             // Log the error for debugging
-            Log::error('CSV import error: ' . $e->getMessage());
+            Log::error('CSV import error: '.$e->getMessage());
             // dd($e);
 
             // Handle the error gracefully and provide a user-friendly message
@@ -222,20 +226,11 @@ class ResturantManagementController extends Controller
         }
     }
 
-    //function to show all data in api
+    // function to show all data in api
     public function api(Request $request)
     {
         $resturant = Resturant::all();
 
-        $apikey = $request->header('X-API-Key');
-        $appkey = config('app.key');
-
-        if ($apikey != $appkey) {
-            return response()->json(['message'=>'You are unauthorized']);
-        }else{
-            return response()->json(['data'=>$resturant]);
-        }
-
+        return response()->json(['data' => $resturant]);
     }
-
 }

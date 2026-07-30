@@ -2,15 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Api\BarcodeLookupRequest;
 use App\Http\Requests\Api\ProductSearchRequest;
+use App\Http\Requests\Api\StrictProductSearchRequest;
 use App\Models\ProductModel\Product;
 use App\Support\HalalStatus;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ApiController extends Controller
 {
+    /**
+     * Only these columns are needed to build the public mobile response.
+     *
+     * Barcode, barcode_key, proof, timestamps and other internal fields are
+     * intentionally excluded. A catalogue client must never receive them.
+     */
+    private const PUBLIC_PRODUCT_COLUMNS = [
+        'id',
+        'product_name',
+        'product_image',
+        'halal_status',
+        'Certification_Status',
+        'category',
+        'ingredient',
+        'notes',
+    ];
+
     /**
      * Get the full URL for a product image.
      * Supports both local filenames and external URLs.
@@ -41,8 +61,8 @@ class ApiController extends Controller
     public function allListing(ProductSearchRequest $request)
     {
         try {
-            // Force pagination: default 50, max 100
-            $perPage = min((int) ($request->get('per_page', 50)), 100);
+            // Force bounded pagination: default 25, max 50.
+            $perPage = min(max((int) $request->get('per_page', 25), 1), 50);
 
             // Check if halal_only filter is requested
             $halalOnly = $request->get('halal_only');
@@ -55,56 +75,59 @@ class ApiController extends Controller
 
             if (! empty($request->search)) {
                 $searchTerm = trim($request->search);
+                $escapedSearchTerm = $this->escapeLike($searchTerm);
 
                 // Fuzzy search implementation with multiple matching strategies
-                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
+                $query = $this->publicProductQuery()
                     ->selectRaw('
                         (CASE
                             WHEN product_name = ? THEN 100
-                            WHEN product_name LIKE ? THEN 95
-                            WHEN product_name LIKE ? THEN 90
-                            WHEN product_name LIKE ? THEN 85
+                            WHEN product_name LIKE ? ESCAPE \'!\' THEN 95
+                            WHEN product_name LIKE ? ESCAPE \'!\' THEN 90
+                            WHEN product_name LIKE ? ESCAPE \'!\' THEN 85
                             WHEN SOUNDEX(product_name) = SOUNDEX(?) THEN 80
                             WHEN Barcode = ? THEN 75
-                            WHEN Barcode LIKE ? THEN 70
-                            WHEN category LIKE ? THEN 65
-                            WHEN ingredient LIKE ? THEN 60
-                            WHEN notes LIKE ? THEN 55
+                            WHEN category LIKE ? ESCAPE \'!\' THEN 65
+                            WHEN ingredient LIKE ? ESCAPE \'!\' THEN 60
+                            WHEN notes LIKE ? ESCAPE \'!\' THEN 55
                             WHEN SOUNDEX(category) = SOUNDEX(?) THEN 50
                             WHEN SOUNDEX(ingredient) = SOUNDEX(?) THEN 45
                             ELSE 0
                         END) as relevance_score
                     ', [
                         $searchTerm,                    // Exact match
-                        $searchTerm.'%',              // Starts with
-                        '%'.$searchTerm.'%',        // Contains
-                        '%'.$searchTerm,              // Ends with
+                        $escapedSearchTerm.'%',        // Starts with
+                        '%'.$escapedSearchTerm.'%',    // Contains
+                        '%'.$escapedSearchTerm,        // Ends with
                         $searchTerm,                    // Sounds like (SOUNDEX)
                         $searchTerm,                    // Exact barcode
-                        '%'.$searchTerm.'%',        // Barcode contains
-                        '%'.$searchTerm.'%',        // Category contains
-                        '%'.$searchTerm.'%',        // Ingredient contains
-                        '%'.$searchTerm.'%',        // Notes contains
+                        '%'.$escapedSearchTerm.'%',    // Category contains
+                        '%'.$escapedSearchTerm.'%',    // Ingredient contains
+                        '%'.$escapedSearchTerm.'%',    // Notes contains
                         $searchTerm,                    // Category sounds like
                         $searchTerm,                     // Ingredient sounds like
                     ])
-                    ->where(function ($q) use ($searchTerm, $assistantSearch) {
+                    ->where(function ($q) use ($searchTerm, $escapedSearchTerm, $assistantSearch) {
                         if ($assistantSearch) {
                             $words = preg_split('/\s+/u', mb_strtolower($searchTerm)) ?: [];
                             foreach (array_unique($words) as $word) {
                                 if (mb_strlen($word) >= 2) {
-                                    $q->where('product_name', 'LIKE', '%'.$word.'%');
+                                    $q->whereRaw(
+                                        "product_name LIKE ? ESCAPE '!'",
+                                        ['%'.$this->escapeLike($word).'%']
+                                    );
                                 }
                             }
 
                             return;
                         }
 
-                        $q->where('product_name', 'LIKE', '%'.$searchTerm.'%')
-                            ->orWhere('Barcode', 'LIKE', '%'.$searchTerm.'%')
-                            ->orWhere('category', 'LIKE', '%'.$searchTerm.'%')
-                            ->orWhere('ingredient', 'LIKE', '%'.$searchTerm.'%')
-                            ->orWhere('notes', 'LIKE', '%'.$searchTerm.'%')
+                        $contains = '%'.$escapedSearchTerm.'%';
+                        $q->whereRaw("product_name LIKE ? ESCAPE '!'", [$contains])
+                            ->orWhere('Barcode', $searchTerm)
+                            ->orWhereRaw("category LIKE ? ESCAPE '!'", [$contains])
+                            ->orWhereRaw("ingredient LIKE ? ESCAPE '!'", [$contains])
+                            ->orWhereRaw("notes LIKE ? ESCAPE '!'", [$contains])
                             ->orWhereRaw('SOUNDEX(product_name) = SOUNDEX(?)', [$searchTerm])
                             ->orWhereRaw('SOUNDEX(category) = SOUNDEX(?)', [$searchTerm])
                             ->orWhereRaw('SOUNDEX(ingredient) = SOUNDEX(?)', [$searchTerm]);
@@ -129,10 +152,10 @@ class ApiController extends Controller
                 $ver = Cache::get('products_cache_version', 1);
                 $cacheStatus = $statusFilter ?? ($halalFilter ? HalalStatus::HALAL : 'all');
                 $filterKey = sha1($flavour);
-                $cacheKey = "products:v{$ver}:list:{$cacheStatus}:{$filterKey}:{$perPage}:".($request->get('page', 1));
+                $cacheKey = "products:v{$ver}:public-v2:{$cacheStatus}:{$filterKey}:{$perPage}:".($request->get('page', 1));
 
                 $data = Cache::remember($cacheKey, 600, function () use ($halalFilter, $statusFilter, $flavour, $perPage) {
-                    $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
+                    $query = $this->publicProductQuery()
                         ->where('status', 1);
 
                     if ($statusFilter !== null) {
@@ -144,14 +167,10 @@ class ApiController extends Controller
                     $this->applyAssistantProductFilters($query, $flavour);
 
                     $products = $query->paginate($perPage);
-                    $items = $products->items();
-                    foreach ($items as $key => $value) {
-                        $items[$key]['url'] = $this->getProductImageUrl($value['product_image']);
-                    }
 
                     return [
                         'status' => 'success',
-                        'alldata' => $items,
+                        'alldata' => $this->serializeProducts($products->items()),
                         'current_page' => $products->currentPage(),
                         'last_page' => $products->lastPage(),
                         'per_page' => $products->perPage(),
@@ -166,21 +185,29 @@ class ApiController extends Controller
             $products = $query->paginate($perPage);
             $data = [
                 'status' => 'success',
-                'alldata' => $products->items(),
+                'alldata' => $this->serializeProducts($products->items()),
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
                 'per_page' => $products->perPage(),
                 'total' => $products->total(),
             ];
 
-            foreach ($data['alldata'] as $key => $value) {
-                $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
-            }
-
             return response()->json($data);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        } catch (Throwable $exception) {
+            Log::error('Product catalogue request failed.', [
+                'exception' => $exception,
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unable to process the product request.',
+            ], 500);
         }
+    }
+
+    public function searchProducts(StrictProductSearchRequest $request)
+    {
+        return $this->allListing($request);
     }
 
     private function applyAssistantProductFilters(
@@ -195,51 +222,85 @@ class ApiController extends Controller
             }
 
             $query->where(function (Builder $query) use ($word) {
-                $query->where('product_name', 'LIKE', '%'.$word.'%')
-                    ->orWhere('ingredient', 'LIKE', '%'.$word.'%')
-                    ->orWhere('notes', 'LIKE', '%'.$word.'%');
+                $contains = '%'.$this->escapeLike($word).'%';
+                $query->whereRaw("product_name LIKE ? ESCAPE '!'", [$contains])
+                    ->orWhereRaw("ingredient LIKE ? ESCAPE '!'", [$contains])
+                    ->orWhereRaw("notes LIKE ? ESCAPE '!'", [$contains]);
             });
         }
     }
 
-    public function allListingBarcode(Request $request)
+    public function allListingBarcode(BarcodeLookupRequest $request)
     {
         try {
-            // Force pagination: default 50, max 100
-            $perPage = min((int) ($request->get('per_page', 50)), 100);
+            $searchTerm = trim((string) $request->validated('search'));
+            $product = $this->publicProductQuery()
+                ->matchingBarcode($searchTerm)
+                ->where('status', 1)
+                ->orderBy('product_name')
+                ->first();
 
-            if (! empty($request->search)) {
-                $searchTerm = trim($request->search);
-
-                // Try exact barcode match first (uses index)
-                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
-                    ->matchingBarcode($searchTerm)
-                    ->where('status', 1)
-                    ->orderBy('product_name');
-
-                $products = $query->paginate($perPage);
-            } else {
-                $query = Product::select('products.*', 'product_name as fruit_name', 'product_image as fruit_image')
-                    ->where('status', 1);
-
-                $products = $query->paginate($perPage);
-            }
+            $items = $product ? $this->serializeProducts([$product]) : [];
             $data = [
                 'status' => 'success',
-                'alldata' => $products->items(),
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
+                'alldata' => $items,
+                'current_page' => 1,
+                'last_page' => 1,
+                'per_page' => 1,
+                'total' => count($items),
             ];
 
-            foreach ($data['alldata'] as $key => $value) {
-                $data['alldata'][$key]['url'] = $this->getProductImageUrl($value['product_image']);
-            }
-
             return response()->json($data);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        } catch (Throwable $exception) {
+            Log::error('Barcode lookup request failed.', [
+                'exception' => $exception,
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unable to process the barcode request.',
+            ], 500);
         }
+    }
+
+    private function publicProductQuery(): Builder
+    {
+        return Product::query()->select(self::PUBLIC_PRODUCT_COLUMNS);
+    }
+
+    /**
+     * @param  iterable<int, Product>  $products
+     * @return array<int, array<string, int|string|null>>
+     */
+    private function serializeProducts(iterable $products): array
+    {
+        $serialized = [];
+
+        foreach ($products as $product) {
+            $serialized[] = [
+                'id' => $product->id,
+                'product_name' => $product->product_name,
+                'fruit_name' => $product->product_name,
+                'product_image' => $product->product_image,
+                'fruit_image' => $product->product_image,
+                'halal_status' => (string) $product->halal_status,
+                'Certification_Status' => $product->Certification_Status,
+                'category' => $product->category,
+                'ingredient' => $product->ingredient,
+                'notes' => $product->notes,
+                'url' => $this->getProductImageUrl($product->product_image),
+            ];
+        }
+
+        return $serialized;
+    }
+
+    private function escapeLike(string $value): string
+    {
+        return str_replace(
+            ['!', '%', '_'],
+            ['!!', '!%', '!_'],
+            $value
+        );
     }
 }

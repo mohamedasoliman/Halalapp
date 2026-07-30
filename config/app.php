@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\ServiceProvider;
-
 return [
 
     /*
@@ -102,7 +99,9 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'api_key' => env('API_KEY', env('APP_KEY')),
+    // Mobile API access must never fall back to Laravel's encryption key.
+    // The API middleware fails closed when API_KEY is not configured.
+    'api_key' => env('API_KEY'),
 
     'previous_keys' => [
         ...array_filter(

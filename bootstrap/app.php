@@ -6,9 +6,9 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        api: __DIR__ . '/../routes/api.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -39,7 +39,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
-
         // used within groups or with individually route
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
@@ -54,6 +53,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'check_role' => \App\Http\Middleware\CheckRole::class,
             'api_key' => \App\Http\Middleware\apimiddleware::class,
+            'mobile_version' => \App\Http\Middleware\EnforceMobileAppVersion::class,
+            'legacy_catalogue' => \App\Http\Middleware\AllowLegacyCatalogue::class,
+            'api_security_log' => \App\Http\Middleware\LogSensitiveApiAccess::class,
         ]);
 
         $middleware->priority([
