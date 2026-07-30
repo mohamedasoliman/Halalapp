@@ -9,7 +9,7 @@ class jsondata extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['Name','slug','Description'];
+    protected $fillable = ['Name', 'slug', 'Description'];
 
     public function json2()
     {

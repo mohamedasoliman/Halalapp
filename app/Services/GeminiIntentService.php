@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -178,7 +179,7 @@ class GeminiIntentService
         string $assistantContext,
     ): string {
         $context = $hasProductContext ? 'true' : 'false';
-        $currentNzDate = \Carbon\CarbonImmutable::now(
+        $currentNzDate = CarbonImmutable::now(
             'Pacific/Auckland',
         )->toDateString();
 

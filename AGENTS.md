@@ -39,6 +39,9 @@ php artisan test
 - `halal_status`: `0 = Halal`, `1 = Not Halal`, `2 = Unreviewed`, `3 = Mashbooh`
 - Mashbooh is an investigated but unresolved concern, not a final verdict. Do not resolve requests or send final-verdict notifications for status `3`.
 - `products.notes` is displayed to app users. Keep it optional and concise; never put dates, proof paths, communication IDs, or other audit metadata there.
+- Follow `docs/product-assessment-guidelines.md` for product evidence and ingredient decisions, including the approved ethanol/carrier rule.
+- An exact-product manufacturer statement that a product is halal suitable is sufficient unless reliable exact-product evidence establishes a conflicting prohibited ingredient or process. Vegetarian/vegan suitability alone is not equivalent to halal suitability.
+- Shared equipment is acceptable when cleaning or sanitation between runs is confirmed; halal-specific or independently validated cleaning is not required.
 - Use strict PHP checks (`=== '0'`), never loose comparisons for status
 - Watcher/user emails ending in `@halalkiwi.com` are placeholders for users who did not provide an email; do not send user notifications to them
 - Present findings and get explicit approval before destructive DB changes
@@ -69,6 +72,7 @@ php artisan test
 - Present per-barcode recommendations and obtain explicit approval before changing `halal_status`, updating brand response scope, sending follow-ups, or notifying users.
 - Linked-user lookup must union `prioritisation_requests.user_email` with `request_watchers.user_email`, validate/deduplicate addresses, and exclude `@halalkiwi.com` placeholders.
 - Record approved inbound evidence with `brands:record-reply`, then resolve exact barcodes with `requests:resolve --communication-id=...`; this shared path preserves notes, requires proof for inbound evidence, includes direct and watcher emails, and records retry-safe delivery state.
+- If missing user-supplied packaging, ingredients, or barcode photos block exact matching, preview with `requests:request-information {barcode}`. After explicit approval only, send with a unique stable `--event` and `--send`. This is the required shared template path for both manufacturer-reply and prioritisation flows; do not send ad-hoc user emails.
 - Retry failed/pending recipients with `requests:resolve --retry-event='...'`; sent recipients are not resent.
 - SMTP transport exceptions are recorded as `uncertain`, not retryable failures. Reconcile them manually before changing their state; an uncertain message may already have been accepted by the mail server.
 - Notification deliveries left in `sending` are reported by the retry command but excluded from retry; they may represent an interrupted process after SMTP acceptance.
@@ -83,6 +87,7 @@ php artisan test
   - A `silent` request with a later watcher is effectively deliberate because the current API does not promote its type. Include watcher creation timestamps in daily classification.
 - Freeze one complete `Pacific/Auckland` day and retain the request/watcher cutoff throughout the run.
 - Present the research and outreach plan before any DB write or email send. Never send drafts, resolve verdicts, or classify halal/not halal without the required approval.
+- User information requests must use `requests:request-information`: preview first, report the exact barcode and eligible recipient count, then use `--event='...' --send` only after approval. New events use notification type `information_request`; `photo_request` is a legacy rendering alias.
 - HostGator is for DB/Laravel operations only; perform Open Food Facts and web research locally or from Hetzner.
 - Daily audit artifacts belong under `Halal Kiwi/Products/Prioritisation_Daily/{YYYY-MM-DD}/` in the Halal Kiwi Google Drive.
 

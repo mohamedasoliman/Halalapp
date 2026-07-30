@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers\Admin\Configurations;
 
-use App\MetaField;
-use Nette\Utils\Image;
-use Illuminate\Http\Request;
-use App\Models\GeneralSetting;
 use App\Http\Controllers\Controller;
-use App\Models\ProductModel\Product;
-use Illuminate\Support\Facades\Auth;
+use App\MetaField;
+use App\Models\GeneralSetting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Nette\Utils\Image;
 
 class GeneralSettingController extends Controller
 {
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (!userRoleCheck([1])) {
+            if (! userRoleCheck([1])) {
                 return redirect()->route('admin.dashboard');
             }
+
             return $next($request);
         });
     }
@@ -59,7 +58,6 @@ class GeneralSettingController extends Controller
 
         Session::flash('success', 'Successfully Updated!');
 
-
         return redirect()->route('admin.GenSetting');
     }
 
@@ -81,6 +79,7 @@ class GeneralSettingController extends Controller
         MetaField::where('name', 'start_time')->update(['value' => $request->start_time]);
         MetaField::where('name', 'close_time')->update(['value' => $request->close_time]);
         Session::flash('success', 'Successfully Updated!');
+
         return redirect()->route('admin.TimerSetting');
     }
 
@@ -89,6 +88,7 @@ class GeneralSettingController extends Controller
         $data['banner_1'] = getsSiteMetaField('banner_1');
         $data['banner_2'] = getsSiteMetaField('banner_2');
         $data['banner_3'] = getsSiteMetaField('banner_3');
+
         return view('admin.configurations.banner.index', $data);
     }
 
@@ -109,86 +109,85 @@ class GeneralSettingController extends Controller
         $originalImage1 = $request->file('banner1');
         $banner_1_image = getsSiteMetaField('banner_1');
         if ($originalImage1) {
-            if (!empty($banner_1_image) && file_exists(public_path() . '/upload/banner/banner1/'.$banner_1_image->value)){
+            if (! empty($banner_1_image) && file_exists(public_path().'/upload/banner/banner1/'.$banner_1_image->value)) {
                 @unlink('./public/upload/banner/banner1/'.$banner_1_image->value);
-//                unlink(public_path() . '/upload/banner/banner1/'.$banner_1_image);
+                //                unlink(public_path() . '/upload/banner/banner1/'.$banner_1_image);
             }
 
-            $imageName = time() . $originalImage1->getClientOriginalName();
+            $imageName = time().$originalImage1->getClientOriginalName();
             $thumbnailImage = Image::make($originalImage1);
-            $originalPath = public_path() . '/upload/banner/banner1/';
-            $thumbnailImage->save($originalPath . $imageName);
+            $originalPath = public_path().'/upload/banner/banner1/';
+            $thumbnailImage->save($originalPath.$imageName);
 
             MetaField::updateOrCreate(['name' => 'banner_1'], ['value' => $imageName]);
         }
 
-
         $originalImage2 = $request->file('banner2_image');
-        $banner2 = array(
+        $banner2 = [
             'banner_text' => $request->banner2_text,
-        );
+        ];
         $getBanner2Data = getsSiteMetaField('banner_2');
-        if (!empty($getBanner2Data)){
+        if (! empty($getBanner2Data)) {
             $banner_2_image = json_decode(getsSiteMetaField('banner_2')->value, true)['banner_image'];
             $banner2['banner_image'] = $banner_2_image;
         }
 
         if ($originalImage2) {
-            if (!empty($getBanner2Data) && file_exists(public_path() . '/upload/banner/banner2/'.$banner_2_image)){
+            if (! empty($getBanner2Data) && file_exists(public_path().'/upload/banner/banner2/'.$banner_2_image)) {
                 @unlink('./upload/banner/banner2/'.$banner_2_image);
             }
 
-            $imageName = time() . $originalImage2->getClientOriginalName();
+            $imageName = time().$originalImage2->getClientOriginalName();
             $thumbnailImage = Image::make($originalImage2);
-            $originalPath = public_path() . '/upload/banner/banner2/';
-            $thumbnailImage->save($originalPath . $imageName);
+            $originalPath = public_path().'/upload/banner/banner2/';
+            $thumbnailImage->save($originalPath.$imageName);
 
             $banner2['banner_image'] = $imageName;
         }
 
         $originalImage2 = $request->file('banner2_image');
-        $banner2 = array(
+        $banner2 = [
             'banner_text' => $request->banner2_text,
-        );
+        ];
         $getBanner2Data = getsSiteMetaField('banner_2');
-        if (!empty($getBanner2Data)){
+        if (! empty($getBanner2Data)) {
             $banner_2_image = json_decode(getsSiteMetaField('banner_2')->value, true)['banner_image'];
             $banner2['banner_image'] = $banner_2_image;
         }
 
         if ($originalImage2) {
-            if (!empty($getBanner2Data) && file_exists(public_path() . '/upload/banner/banner2/'.$banner_2_image)){
+            if (! empty($getBanner2Data) && file_exists(public_path().'/upload/banner/banner2/'.$banner_2_image)) {
                 @unlink('./upload/banner/banner2/'.$banner_2_image);
             }
 
-            $imageName = time() . $originalImage2->getClientOriginalName();
+            $imageName = time().$originalImage2->getClientOriginalName();
             $thumbnailImage = Image::make($originalImage2);
-            $originalPath = public_path() . '/upload/banner/banner2/';
-            $thumbnailImage->save($originalPath . $imageName);
+            $originalPath = public_path().'/upload/banner/banner2/';
+            $thumbnailImage->save($originalPath.$imageName);
 
             $banner2['banner_image'] = $imageName;
         }
 
-        //For banner 3
+        // For banner 3
         $originalImage3 = $request->file('banner3_image');
-        $banner3 = array(
+        $banner3 = [
             'banner_text' => $request->banner3_text,
-        );
+        ];
         $getBanner3Data = getsSiteMetaField('banner_3');
-        if (!empty($getBanner3Data)){
+        if (! empty($getBanner3Data)) {
             $banner_3_image = json_decode(getsSiteMetaField('banner_3')->value, true)['banner_image'];
             $banner3['banner_image'] = $banner_3_image;
         }
 
         if ($originalImage3) {
-            if (!empty($getBanner3Data) && file_exists(public_path() . '/upload/banner/banner3/'.$banner_3_image)){
+            if (! empty($getBanner3Data) && file_exists(public_path().'/upload/banner/banner3/'.$banner_3_image)) {
                 @unlink('./upload/banner/banner3/'.$banner_3_image);
             }
 
-            $imageName = time() . $originalImage3->getClientOriginalName();
+            $imageName = time().$originalImage3->getClientOriginalName();
             $thumbnailImage = Image::make($originalImage3);
-            $originalPath = public_path() . '/upload/banner/banner3/';
-            $thumbnailImage->save($originalPath . $imageName);
+            $originalPath = public_path().'/upload/banner/banner3/';
+            $thumbnailImage->save($originalPath.$imageName);
 
             $banner3['banner_image'] = $imageName;
         }
@@ -198,8 +197,8 @@ class GeneralSettingController extends Controller
 
         MetaField::updateOrCreate(['name' => 'banner_2'], ['value' => $banner2]);
         MetaField::updateOrCreate(['name' => 'banner_3'], ['value' => $banner3]);
-//        MetaField::where('name', 'banner_3')->update(['value' => $banner3]);
+        //        MetaField::where('name', 'banner_3')->update(['value' => $banner3]);
 
-        return response()->json(['status' => TRUE, 'message' => 'Banner update successfully']);
+        return response()->json(['status' => true, 'message' => 'Banner update successfully']);
     }
 }

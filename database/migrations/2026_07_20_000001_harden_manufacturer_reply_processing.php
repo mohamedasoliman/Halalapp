@@ -19,7 +19,7 @@ return new class extends Migration
             }
 
             if (isset($seen[$messageId])) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     "Duplicate manufacturer email Message-ID detected on communications {$seen[$messageId]} and {$row->id}: {$messageId}"
                 );
             }

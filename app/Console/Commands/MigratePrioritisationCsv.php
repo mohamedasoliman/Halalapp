@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Brand;
 use App\Models\PrioritisationRequest;
 use App\Models\RequestWatcher;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use League\Csv\Reader;
 
@@ -31,8 +32,9 @@ class MigratePrioritisationCsv extends Command
 
     private function importBrands(string $path): void
     {
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             $this->error("Brands CSV not found: {$path}");
+
             return;
         }
 
@@ -43,7 +45,9 @@ class MigratePrioritisationCsv extends Command
         $count = 0;
         foreach ($records as $row) {
             $name = trim($row['Brand'] ?? '');
-            if (empty($name)) continue;
+            if (empty($name)) {
+                continue;
+            }
 
             $response = match (strtolower(trim($row['Response'] ?? ''))) {
                 'halal' => 'halal',
@@ -54,7 +58,9 @@ class MigratePrioritisationCsv extends Command
 
             $email = trim($row['Email'] ?? '');
             $contactType = str_starts_with($email, 'http') ? 'form' : 'email';
-            if (str_starts_with($email, 'http')) $email = null;
+            if (str_starts_with($email, 'http')) {
+                $email = null;
+            }
 
             Brand::updateOrCreate(
                 ['name' => $name],
@@ -75,8 +81,9 @@ class MigratePrioritisationCsv extends Command
 
     private function importRequests(string $path): void
     {
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             $this->error("Prioritisation CSV not found: {$path}");
+
             return;
         }
 
@@ -90,7 +97,9 @@ class MigratePrioritisationCsv extends Command
 
         foreach ($records as $row) {
             $barcode = trim($row['Barcode'] ?? '');
-            if (empty($barcode)) continue;
+            if (empty($barcode)) {
+                continue;
+            }
 
             $status = $this->mapStatus(trim($row['Status'] ?? ''));
             $userEmail = trim($row['Email'] ?? '');
@@ -98,13 +107,14 @@ class MigratePrioritisationCsv extends Command
 
             // If we've already seen this barcode, add as watcher instead
             if (isset($seenBarcodes[$barcode])) {
-                if (!$isAnonymous) {
+                if (! $isAnonymous) {
                     RequestWatcher::firstOrCreate(
                         ['request_id' => $seenBarcodes[$barcode], 'user_email' => $userEmail],
                         ['user_name' => trim($row['Requested By'] ?? '') ?: null]
                     );
                     $watcherCount++;
                 }
+
                 continue;
             }
 
@@ -123,7 +133,7 @@ class MigratePrioritisationCsv extends Command
 
             $seenBarcodes[$barcode] = $request->id;
 
-            if (!$isAnonymous) {
+            if (! $isAnonymous) {
                 RequestWatcher::create([
                     'request_id' => $request->id,
                     'user_email' => $userEmail,
@@ -151,13 +161,15 @@ class MigratePrioritisationCsv extends Command
         };
     }
 
-    private function parseDate(string $date): ?\Carbon\Carbon
+    private function parseDate(string $date): ?Carbon
     {
         $date = trim($date);
-        if (empty($date)) return null;
+        if (empty($date)) {
+            return null;
+        }
 
         try {
-            return \Carbon\Carbon::parse($date);
+            return Carbon::parse($date);
         } catch (\Exception) {
             return null;
         }

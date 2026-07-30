@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Configurations;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\GeneralSetting as GS;
 use App\Models\Social;
+use Illuminate\Http\Request;
 use Session;
 
 class SocialController extends Controller
@@ -13,9 +12,10 @@ class SocialController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (!userRoleCheck([1])) {
+            if (! userRoleCheck([1])) {
                 return redirect()->route('admin.dashboard');
             }
+
             return $next($request);
         });
     }
@@ -24,6 +24,7 @@ class SocialController extends Controller
     {
         $data['socials'] = Social::all();
         $data['mode'] = 'Add';
+
         return view('admin.configurations.socialsetting.index', $data);
     }
 
@@ -45,6 +46,7 @@ class SocialController extends Controller
         $social->url = $request->title;
         $social->save();
         Session::flash('success', 'New social link added successfully!');
+
         return redirect()->back();
     }
 
@@ -53,6 +55,7 @@ class SocialController extends Controller
         $social = Social::find($request->socialID);
         $social->delete();
         Session::flash('error', 'Social Deleted Successfully');
+
         return redirect()->back();
     }
 
@@ -60,6 +63,7 @@ class SocialController extends Controller
     {
         $editSocial = Social::findOrFail($id);
         $mode = 'Edit';
+
         return view('admin.configurations.socialsetting.index', compact('editSocial', 'mode'));
     }
 
@@ -83,6 +87,7 @@ class SocialController extends Controller
         $social->url = $request->title;
         if ($social->save()) {
             Session::flash('success', 'Social link update successfully!');
+
             return redirect()->route('admin.social.index');
         }
     }

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('brands')) {
+        if (! Schema::hasTable('brands')) {
             Schema::create('brands', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->unique();
@@ -22,7 +22,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('prioritisation_requests')) {
+        if (! Schema::hasTable('prioritisation_requests')) {
             Schema::create('prioritisation_requests', function (Blueprint $table) {
                 $table->id();
                 $table->string('barcode', 20)->index();
@@ -40,7 +40,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('brand_communications')) {
+        if (! Schema::hasTable('brand_communications')) {
             Schema::create('brand_communications', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('brand_id')->constrained('brands')->cascadeOnDelete();
@@ -54,7 +54,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('request_watchers')) {
+        if (! Schema::hasTable('request_watchers')) {
             Schema::create('request_watchers', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('request_id')->constrained('prioritisation_requests')->cascadeOnDelete();

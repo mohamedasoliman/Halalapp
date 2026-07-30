@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Resturant extends Model
 {
     use HasFactory, SoftDeletes;
+
     public $skipValidation = true;
+
     protected $fillable = [
         'Resturant_name',
         'Description',

@@ -8,7 +8,7 @@ class StrictProductSearchRequest extends ProductSearchRequest
     {
         return [
             ...parent::rules(),
-            'search' => ['required', 'string', 'min:2', 'max:100'],
+            'search' => ['nullable', 'string', 'min:2', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1', 'max:10'],
         ];
     }

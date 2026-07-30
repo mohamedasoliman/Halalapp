@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Masjid extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'Masjid_name',
         'Address',
@@ -22,6 +23,6 @@ class Masjid extends Model
         'Ishaa',
         'Jumaa',
         'Latitude',
-        'Longitude'
+        'Longitude',
     ];
 }

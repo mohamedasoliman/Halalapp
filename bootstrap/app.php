@@ -13,6 +13,7 @@ use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\LogSensitiveApiAccess;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
+use App\Http\Middleware\VerifyFirebaseAppCheck;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -87,6 +88,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'mobile_version' => EnforceMobileAppVersion::class,
             'legacy_catalogue' => AllowLegacyCatalogue::class,
             'api_security_log' => LogSensitiveApiAccess::class,
+            'app_check' => VerifyFirebaseAppCheck::class,
             'admin_session' => EnsureAdminSessionIsFresh::class,
         ]);
 

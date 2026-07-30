@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Services\Security\FirebaseAppCheckTokenVerifier;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
+use UnexpectedValueException;
 
 class ProductApiSecurityTest extends TestCase
 {
@@ -23,6 +25,7 @@ class ProductApiSecurityTest extends TestCase
             'mobile_api.require_version' => false,
             'mobile_api.minimum_version' => null,
             'mobile_api.legacy_catalogue_enabled' => true,
+            'app_check.mode' => 'off',
         ]);
         DB::purge('sqlite');
         DB::connection('sqlite')->getPdo()->sqliteCreateFunction(
@@ -125,11 +128,17 @@ class ProductApiSecurityTest extends TestCase
             ->assertJsonPath('total', 0);
     }
 
-    public function test_v2_catalogue_requires_a_real_search_term(): void
+    public function test_v2_catalogue_supports_bounded_browsing_and_real_search_terms(): void
     {
-        $this->withHeader('X-API-Key', self::API_KEY)
+        $response = $this->withHeader('X-API-Key', self::API_KEY)
             ->postJson('/api/v2/products/search', ['search' => ''])
-            ->assertUnprocessable();
+            ->assertOk()
+            ->assertJsonPath('total', 1)
+            ->assertJsonPath('alldata.0.product_name', 'Secure Product');
+
+        $this->assertArrayNotHasKey('Barcode', $response->json('alldata.0'));
+        $this->assertArrayNotHasKey('barcode_key', $response->json('alldata.0'));
+        $this->assertArrayNotHasKey('proof', $response->json('alldata.0'));
 
         $this->withHeader('X-API-Key', self::API_KEY)
             ->postJson('/api/v2/products/search', ['search' => 'S'])
@@ -139,6 +148,13 @@ class ProductApiSecurityTest extends TestCase
             ->postJson('/api/v2/products/search', ['search' => 'Secure'])
             ->assertOk()
             ->assertJsonPath('total', 1);
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/v2/products/search', [
+                'search' => '',
+                'page' => 11,
+            ])
+            ->assertUnprocessable();
     }
 
     public function test_legacy_catalogue_can_be_retired_after_forced_upgrade(): void
@@ -165,6 +181,60 @@ class ProductApiSecurityTest extends TestCase
         $this->postJson('/api/listing', ['search' => 'chips'])
             ->assertStatus(503)
             ->assertExactJson(['message' => 'Service unavailable.']);
+    }
+
+    public function test_app_check_monitor_mode_does_not_break_an_old_client(): void
+    {
+        config(['app_check.mode' => 'monitor']);
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/v2/products/search', ['search' => 'Secure'])
+            ->assertOk()
+            ->assertJsonPath('total', 1);
+    }
+
+    public function test_app_check_enforcement_rejects_a_missing_token(): void
+    {
+        config(['app_check.mode' => 'enforce']);
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/v2/products/search', ['search' => 'Secure'])
+            ->assertUnauthorized()
+            ->assertJsonPath('code', 'APP_CHECK_REQUIRED');
+    }
+
+    public function test_app_check_enforcement_rejects_an_invalid_token(): void
+    {
+        config(['app_check.mode' => 'enforce']);
+        $this->mock(FirebaseAppCheckTokenVerifier::class)
+            ->shouldReceive('verify')
+            ->once()
+            ->with('invalid-token')
+            ->andThrow(new UnexpectedValueException('Invalid token.'));
+
+        $this->withHeaders([
+            'X-API-Key' => self::API_KEY,
+            'X-Firebase-AppCheck' => 'invalid-token',
+        ])->postJson('/api/v2/products/search', ['search' => 'Secure'])
+            ->assertUnauthorized()
+            ->assertJsonPath('code', 'APP_CHECK_REQUIRED');
+    }
+
+    public function test_app_check_enforcement_accepts_a_verified_mobile_app(): void
+    {
+        config(['app_check.mode' => 'enforce']);
+        $this->mock(FirebaseAppCheckTokenVerifier::class)
+            ->shouldReceive('verify')
+            ->once()
+            ->with('valid-token')
+            ->andReturn('1:952667093663:android:test');
+
+        $this->withHeaders([
+            'X-API-Key' => self::API_KEY,
+            'X-Firebase-AppCheck' => 'valid-token',
+        ])->postJson('/api/v2/products/search', ['search' => 'Secure'])
+            ->assertOk()
+            ->assertJsonPath('total', 1);
     }
 
     public function test_removed_directory_mutation_routes_are_not_reachable(): void

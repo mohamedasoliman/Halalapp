@@ -13,6 +13,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'products';
+
     protected $guarded = [];
 
     protected $attributes = [
@@ -32,20 +33,19 @@ class Product extends Model
         });
     }
 
-	protected $casts = [
-		'created_at' => 'datetime',
-		'updated_at' => 'datetime',
-		'deleted_at' => 'datetime',
-	];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
+    public function getAllUniqueCategories()
+    {
+        $uniqueCategories = Product::whereNotNull('category') // Filter out null values
+            ->distinct()
+            ->pluck('category')
+            ->toArray();
 
-	public function getAllUniqueCategories()
-{
-    $uniqueCategories = Product::whereNotNull('category') // Filter out null values
-        ->distinct()
-        ->pluck('category')
-        ->toArray();
-
-    return $uniqueCategories;
-}
+        return $uniqueCategories;
+    }
 }

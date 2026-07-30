@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
@@ -175,7 +176,7 @@ class ProductBarcodeDeduplicationMigrationTest extends TestCase
             'request_id' => 21,
             'user_email' => 'watcher@example.com',
         ]);
-        $this->assertSame(20, \App\Models\PrioritisationRequest::matchingBarcode('0078895743050')->orderBy('id')->value('id'));
+        $this->assertSame(20, PrioritisationRequest::matchingBarcode('0078895743050')->orderBy('id')->value('id'));
 
         $this->expectException(QueryException::class);
         DB::table('products')->insert([

@@ -221,6 +221,8 @@ Custom `db:backup` artisan command (`app/Console/Commands/BackupDatabase.php`) s
 - Product search uses MySQL SOUNDEX for fuzzy matching (see `ApiController::allListing`)
 - `halal_status = 0` means Halal, `1` means Not Halal, `2` means Unreviewed, and `3` means Mashbooh
 - Mashbooh is not a final verdict and must not resolve prioritisation requests or trigger final-verdict notifications
+- An exact-product manufacturer statement that a product is halal suitable supports Halal unless reliable exact-product evidence establishes a conflicting prohibited ingredient or process. Vegetarian/vegan suitability alone still requires ingredient review.
+- Shared production equipment is acceptable when the manufacturer confirms cleaning or sanitation between runs; halal-specific or independently validated cleaning is not required.
 - Admin authentication uses a separate `admin` guard defined in `config/auth.php`
 - User uploads are stored in `public/upload/` and are not tracked in git
 - The admin panel UI uses `public/assets/css/modern-admin.css` for styling (Outfit font, glass-morphic design, dark sidebar)

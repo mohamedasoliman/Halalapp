@@ -98,6 +98,40 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($request->ip());
         });
 
+        RateLimiter::for('masjid-timings', function (Request $request) {
+            $masjidId = preg_replace(
+                '/\D+/',
+                '',
+                (string) $request->input('masjid_id', 'missing'),
+            );
+
+            return [
+                Limit::perMinute(20)->by('masjid-times-ip:'.$request->ip()),
+                Limit::perMinute(10)->by('masjid-times-record:'.$masjidId),
+            ];
+        });
+
+        RateLimiter::for('masjid-timing-corrections', function (Request $request) {
+            $masjidId = preg_replace(
+                '/\D+/',
+                '',
+                (string) $request->input('masjid_id', 'missing'),
+            );
+            $installId = trim((string) $request->header('X-Install-ID', ''));
+            $installKey = preg_match(
+                '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+                $installId,
+            ) === 1
+                ? hash('sha256', strtolower($installId))
+                : hash('sha256', (string) $request->ip());
+
+            return [
+                Limit::perMinute(2)->by('masjid-correction-record:'.$masjidId),
+                Limit::perHour(8)->by('masjid-correction-install:'.$installKey),
+                Limit::perHour(20)->by('masjid-correction-ip:'.$request->ip()),
+            ];
+        });
+
         // Only query database if tables exist (prevents errors during migrations/setup)
         try {
             if (Schema::hasTable('general_settings')) {

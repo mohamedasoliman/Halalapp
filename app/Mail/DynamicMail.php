@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -13,9 +12,9 @@ class DynamicMail extends Mailable
 
     public function __construct($user, $view, $data)
     {
-        $this->user=$user;
-        $this->view=$view;
-        $this->data=$data;
+        $this->user = $user;
+        $this->view = $view;
+        $this->data = $data;
     }
 
     /**
@@ -25,6 +24,6 @@ class DynamicMail extends Mailable
      */
     public function build()
     {
-        return $this->view($this->view, array('viewData' => $this->data))->subject($this->data['subject']);
+        return $this->view($this->view, ['viewData' => $this->data])->subject($this->data['subject']);
     }
 }

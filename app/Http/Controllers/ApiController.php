@@ -8,6 +8,7 @@ use App\Http\Requests\Api\StrictProductSearchRequest;
 use App\Models\ProductModel\Product;
 use App\Support\HalalStatus;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -56,7 +57,7 @@ class ApiController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function allListing(ProductSearchRequest $request)
     {

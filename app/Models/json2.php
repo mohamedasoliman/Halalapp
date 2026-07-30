@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class json2 extends Model
 {
     use HasFactory;
+
     public $table = 'json2';
+
     protected $fillable = ['jsondata_id'];
 
     public function jsonmeta()

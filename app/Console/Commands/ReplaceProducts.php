@@ -11,14 +11,16 @@ use League\Csv\Reader;
 class ReplaceProducts extends Command
 {
     protected $signature = 'products:replace {csv_file : Path to the CSV file to import}';
+
     protected $description = 'Delete all products and import fresh data from a CSV file';
 
     public function handle()
     {
         $csvPath = $this->argument('csv_file');
 
-        if (!file_exists($csvPath)) {
+        if (! file_exists($csvPath)) {
             $this->error("File not found: {$csvPath}");
+
             return 1;
         }
 
@@ -38,7 +40,7 @@ class ReplaceProducts extends Command
                     'Barcode' => ProductBarcode::canonical($rawBarcode),
                     'product_image' => $record['Product Image'] ?? null,
                     'halal_status' => (isset($record['Halal Status']) && $record['Halal Status'] !== '') ? $record['Halal Status'] : 2,
-                    'Certification_Status' => !empty($record['Certification Status']) ? $record['Certification Status'] : '_',
+                    'Certification_Status' => ! empty($record['Certification Status']) ? $record['Certification Status'] : '_',
                     'category' => $record['Category'] ?? null,
                     'notes' => $record['Notes'] ?? null,
                     'ingredient' => $record['Ingredients'] ?? null,

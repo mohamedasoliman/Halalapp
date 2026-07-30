@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Admin\Configurations;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\GeneralSettings as GS;
-use Session;
+use Illuminate\Http\Request;
 
 class BackgroundImageController extends Controller
 {
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (!userRoleCheck([1])) {
+            if (! userRoleCheck([1])) {
                 return redirect()->route('admin.dashboard');
             }
+
             return $next($request);
         });
     }

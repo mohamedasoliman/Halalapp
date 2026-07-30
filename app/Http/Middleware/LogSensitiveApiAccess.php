@@ -37,6 +37,7 @@ class LogSensitiveApiAccess
             'app_version' => Str::limit((string) $request->header('X-App-Version', 'unknown'), 20, ''),
             'app_build' => Str::limit((string) $request->header('X-App-Build', 'unknown'), 20, ''),
             'platform' => Str::limit((string) $request->header('X-App-Platform', 'unknown'), 20, ''),
+            'app_check_status' => (string) $request->attributes->get('app_check_status', 'unknown'),
             'page' => max(1, (int) $request->input('page', 1)),
             'search_kind' => $searchKind,
             'search_hash' => $this->hashValue($search),

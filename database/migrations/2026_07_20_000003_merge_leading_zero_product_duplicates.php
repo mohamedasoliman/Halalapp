@@ -75,19 +75,19 @@ return new class extends Migration
             $products = DB::table('products')->whereIn('id', $productIds)->get();
             $statuses = $products->pluck('halal_status')->map(fn ($status) => (string) $status)->unique();
             if ($statuses->count() !== 1) {
-                throw new \RuntimeException("Barcode variants for {$key} have conflicting halal statuses.");
+                throw new RuntimeException("Barcode variants for {$key} have conflicting halal statuses.");
             }
 
             $proofs = $products->pluck('proof')->filter()->map(fn ($proof) => trim((string) $proof))->unique();
             if ($proofs->count() > 1) {
-                throw new \RuntimeException("Barcode variants for {$key} have conflicting proof records.");
+                throw new RuntimeException("Barcode variants for {$key} have conflicting proof records.");
             }
 
             $variants = $products->pluck('Barcode')->map(fn ($barcode) => (string) $barcode)->all();
             if ($this->hasCommunicationReferences($variants)
                 || $this->hasNotificationReferences($variants)
                 || $this->hasOutreachBatchReferences($variants)) {
-                throw new \RuntimeException("Barcode variants for {$key} are referenced by an outreach or notification audit record.");
+                throw new RuntimeException("Barcode variants for {$key} are referenced by an outreach or notification audit record.");
             }
         }
     }
@@ -327,7 +327,7 @@ return new class extends Migration
             return null;
         }
         if ($maxLength !== null && strlen($merged) > $maxLength) {
-            throw new \RuntimeException("Merged notes for {$barcode} exceed the database limit.");
+            throw new RuntimeException("Merged notes for {$barcode} exceed the database limit.");
         }
 
         return $merged;

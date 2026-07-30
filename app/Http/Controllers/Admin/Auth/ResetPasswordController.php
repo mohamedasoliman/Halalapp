@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\View\View;
 
 class ResetPasswordController extends Controller
 {
@@ -38,7 +41,7 @@ class ResetPasswordController extends Controller
      */
     public function __construct()
     {
-    	$this->middleware('guest:admin');
+        $this->middleware('guest:admin');
     }
 
     /**
@@ -46,34 +49,33 @@ class ResetPasswordController extends Controller
      *
      * If no token is present, display the link request form.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string|null  $token
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function showResetForm(Request $request, $token = null)
     {
-    	return view('backend.auth.passwords.reset')->with(
-    		['token' => $token, 'email' => $request->email]
-    	);
+        return view('backend.auth.passwords.reset')->with(
+            ['token' => $token, 'email' => $request->email]
+        );
     }
 
-     /**
+    /**
      * Get the broker to be used during password reset.
      *
-     * @return \Illuminate\Contracts\Auth\PasswordBroker
+     * @return PasswordBroker
      */
-     public function broker()
-     {
-     	return Password::broker('admin');
-     }
+    public function broker()
+    {
+        return Password::broker('admin');
+    }
 
     /**
      * Get the guard to be used during password reset.
      *
-     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     * @return StatefulGuard
      */
     protected function guard()
     {
-    	return Auth::guard('admin');
+        return Auth::guard('admin');
     }
 }
