@@ -223,8 +223,14 @@ class FetchProductCatalogue extends Command
                 ? ($payload['product'] ?? null)
                 : null;
             if (! is_array($product)) {
-                $unusable++;
-                $outcomes[$canonicalBarcode] = 'unusable';
+                if (in_array($response->status(), [401, 403, 408, 425, 429], true)
+                    || $response->serverError()) {
+                    $failed++;
+                    $outcomes[$canonicalBarcode] = 'failed';
+                } else {
+                    $unusable++;
+                    $outcomes[$canonicalBarcode] = 'unusable';
+                }
 
                 continue;
             }

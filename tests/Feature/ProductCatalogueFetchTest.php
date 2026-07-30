@@ -94,4 +94,35 @@ class ProductCatalogueFetchTest extends TestCase
         Http::assertSentCount(1);
         $this->assertCount(1, file($this->outputFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
     }
+
+    public function test_resume_retries_transient_failures(): void
+    {
+        Http::fakeSequence('admin.mustakshif.com/*')
+            ->push(['success' => false, 'message' => 'Slow down'], 429)
+            ->push([
+                'success' => true,
+                'product' => [
+                    'barcode' => '9310036040385',
+                    'name' => 'Milk',
+                ],
+            ]);
+
+        $this->artisan('products:fetch-catalogue', [
+            'barcodes' => $this->barcodeFile,
+            'output' => $this->outputFile,
+            '--delay-ms' => 0,
+        ])->assertSuccessful();
+
+        $this->assertSame('', (string) file_get_contents($this->outputFile));
+
+        $this->artisan('products:fetch-catalogue', [
+            'barcodes' => $this->barcodeFile,
+            'output' => $this->outputFile,
+            '--resume' => true,
+            '--delay-ms' => 0,
+        ])->assertSuccessful();
+
+        Http::assertSentCount(2);
+        $this->assertCount(1, file($this->outputFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
+    }
 }
