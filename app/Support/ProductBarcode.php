@@ -43,8 +43,21 @@ final class ProductBarcode
         return $barcode;
     }
 
-    private static function hasValidCheckDigit(string $barcode): bool
+    public static function isValidGtin(?string $barcode): bool
     {
+        $barcode = self::clean($barcode);
+
+        return ctype_digit($barcode)
+            && in_array(strlen($barcode), [8, 12, 13, 14], true)
+            && self::hasValidCheckDigit($barcode);
+    }
+
+    public static function hasValidCheckDigit(string $barcode): bool
+    {
+        if ($barcode === '' || ! ctype_digit($barcode)) {
+            return false;
+        }
+
         $digits = array_map('intval', str_split($barcode));
         $checkDigit = array_pop($digits);
         $sum = 0;

@@ -9,6 +9,12 @@
         </div>
 </div>
 <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Brand</label>
+    <div class="col-sm-10">
+        <input name="brand" type="text" class="form-control" value="{{ $Product->brand }}">
+    </div>
+</div>
+<div class="form-group row">
     <label class="col-sm-2 col-form-label">Product image</label>
     <div class="col-sm-10">
     	<input type="file" name="product_image" id="editFileUploader" class="form-control">
@@ -26,6 +32,12 @@
             }
         @endphp
         <img style="height: 100px; width: 100px;" id="edit_display_image" class="img-thumbnail" src="{{ $imageUrl }}">
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-sm-2 col-form-label">Country</label>
+    <div class="col-sm-10">
+        <input name="country" type="text" class="form-control" value="{{ $Product->country }}">
     </div>
 </div>
 <div class="form-group row">

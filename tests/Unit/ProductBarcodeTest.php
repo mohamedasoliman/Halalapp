@@ -22,4 +22,13 @@ class ProductBarcodeTest extends TestCase
         $this->assertNull(ProductBarcode::key('000'));
         $this->assertSame('ABC', ProductBarcode::key('0ABC'));
     }
+
+    public function test_it_validates_supported_gtin_lengths_and_check_digits(): void
+    {
+        $this->assertTrue(ProductBarcode::isValidGtin('9310036040385'));
+        $this->assertTrue(ProductBarcode::isValidGtin('93519441'));
+        $this->assertFalse(ProductBarcode::isValidGtin('9310036040384'));
+        $this->assertFalse(ProductBarcode::isValidGtin('123'));
+        $this->assertFalse(ProductBarcode::isValidGtin('not-a-barcode'));
+    }
 }

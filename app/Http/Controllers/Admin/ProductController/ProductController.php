@@ -64,11 +64,13 @@ class ProductController extends Controller
 
                     Product::create([
                         'product_name' => $record['Product Name'] ?? 'Unnamed Product',
+                        'brand' => $record['Brand'] ?? null,
                         'Barcode' => $barcode,
                         'product_image' => $record['Product Image'] ?? null,
                         'halal_status' => (isset($record['Halal Status']) && $record['Halal Status'] !== '') ? $record['Halal Status'] : 2,
                         'Certification_Status' => ! empty($record['Certification Status']) ? $record['Certification Status'] : '_',
                         'category' => $record['Category'] ?? null,
+                        'country' => $record['Country'] ?? null,
                         'notes' => $record['Notes'] ?? null,
                         'ingredient' => $record['Ingredients'] ?? null,
                     ]);
@@ -107,11 +109,13 @@ class ProductController extends Controller
             // Add header row (matching import format)
             $csv->insertOne([
                 'Product Name',
+                'Brand',
                 'Product Image',
                 'Barcode',
                 'Halal Status',
                 'Certification Status',
                 'Category',
+                'Country',
                 'Notes',
                 'Ingredients',
             ]);
@@ -120,11 +124,13 @@ class ProductController extends Controller
             foreach ($products as $product) {
                 $csv->insertOne([
                     $this->safeCsvCell($product->product_name),
+                    $this->safeCsvCell($product->brand),
                     $this->safeCsvCell($product->product_image),
                     $this->safeCsvCell($product->Barcode),
                     $this->safeCsvCell($product->halal_status),
                     $this->safeCsvCell($product->Certification_Status),
                     $this->safeCsvCell($product->category),
+                    $this->safeCsvCell($product->country),
                     $this->safeCsvCell($product->notes),
                     $this->safeCsvCell($product->ingredient),
                 ]);
@@ -250,6 +256,8 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'product_name' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:250',
+            'country' => 'nullable|string|max:250',
             'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image input
             'halal_status' => ['nullable', Rule::in(HalalStatus::values())],
             'Barcode' => 'required|string|max:20',
@@ -284,12 +292,14 @@ class ProductController extends Controller
 
         Product::create([
             'product_name' => $request->product_name, // Make sure to use the correct input name
+            'brand' => $request->brand,
             'product_image' => $imageName,
             'halal_status' => $request->filled('halal_status') ? $request->halal_status : '2',
             'status' => 1,
             'Barcode' => $barcode,
             'Certification_Status' => $request->Certification_Status,
             'category' => $request->category,
+            'country' => $request->country,
             'notes' => $request->notes,
             'ingredient' => $request->ingredient,
         ]);
@@ -329,6 +339,8 @@ class ProductController extends Controller
 
         $validatedData = $request->validate([
             'product_name' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:250',
+            'country' => 'nullable|string|max:250',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'halal_status' => ['nullable', Rule::in(HalalStatus::values())],
             'Barcode' => 'required|string|max:20',
@@ -363,10 +375,12 @@ class ProductController extends Controller
         // Prepare the update data
         $updateData = [
             'product_name' => $request->product_name, // Ensure you're using the correct field name
+            'brand' => $request->brand,
             'status' => $request->status ? $request->status : 0,
             'Barcode' => $barcode,
             'Certification_Status' => $request->Certification_Status,
             'category' => $request->category,
+            'country' => $request->country,
             'notes' => $request->notes,
             'ingredient' => $request->ingredient,
         ];

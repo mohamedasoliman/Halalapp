@@ -75,6 +75,12 @@ aria-labelledby="addServiceTitle" aria-hidden="true">
             </div>
           </div>
           <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Brand</label>
+            <div class="col-sm-10">
+              <input name="brand" type="text" class="form-control" value="{{ old('brand') }}">
+            </div>
+          </div>
+          <div class="form-group row">
             <label class="col-sm-2 col-form-label">Product image</label>
             <div class="col-sm-10">
               <input type="file" name="product_image" id="fileUploader" class="form-control">
@@ -130,6 +136,12 @@ aria-labelledby="addServiceTitle" aria-hidden="true">
               @if ($errors->has('category'))
               <span style="color:red;">{{ $errors->first('category') }}</span>
               @endif
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Country</label>
+            <div class="col-sm-10">
+              <input name="country" type="text" class="form-control" value="{{ old('country') }}">
             </div>
         </div>
         <div class="form-group row">
