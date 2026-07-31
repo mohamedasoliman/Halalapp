@@ -125,4 +125,55 @@ class ProductCatalogueFetchTest extends TestCase
         Http::assertSentCount(2);
         $this->assertCount(1, file($this->outputFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES));
     }
+
+    public function test_fetch_stops_immediately_when_authentication_is_rejected(): void
+    {
+        Http::fake([
+            'admin.mustakshif.com/*' => Http::response([
+                'success' => false,
+                'message' => 'Unauthenticated',
+            ], 401),
+        ]);
+
+        $this->artisan('products:fetch-catalogue', [
+            'barcodes' => $this->barcodeFile,
+            'output' => $this->outputFile,
+            '--delay-ms' => 0,
+        ])
+            ->expectsOutputToContain('Catalogue authentication was rejected')
+            ->assertFailed();
+
+        Http::assertSentCount(1);
+        $state = json_decode(trim((string) file_get_contents($this->outputFile.'.state.ndjson')), true);
+        $this->assertSame('failed', $state['outcome']);
+    }
+
+    public function test_fetch_stops_after_three_completely_failed_batches(): void
+    {
+        file_put_contents(
+            $this->barcodeFile,
+            "9310036040385\n0000000034449\n00000024\n10463031\n"
+        );
+        Http::fake([
+            'admin.mustakshif.com/*' => Http::response([
+                'success' => false,
+                'message' => 'Slow down',
+            ], 429),
+        ]);
+
+        $this->artisan('products:fetch-catalogue', [
+            'barcodes' => $this->barcodeFile,
+            'output' => $this->outputFile,
+            '--batch-size' => 1,
+            '--delay-ms' => 0,
+        ])
+            ->expectsOutputToContain('Three complete catalogue batches failed')
+            ->assertFailed();
+
+        Http::assertSentCount(3);
+        $this->assertCount(
+            3,
+            file($this->outputFile.'.state.ndjson', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)
+        );
+    }
 }

@@ -99,6 +99,7 @@ class FetchProductCatalogue extends Command
         $duplicateInput = 0;
         $seen = $completedKeys;
         $batch = [];
+        $consecutiveFailedBatches = 0;
 
         try {
             $input = fopen($barcodeFile, 'rb');
@@ -130,7 +131,8 @@ class FetchProductCatalogue extends Command
                 $requested++;
 
                 if (count($batch) >= $batchSize) {
-                    [$added, $badRecords, $requestFailures] = $this->fetchBatch(
+                    $processedBatchSize = count($batch);
+                    [$added, $badRecords, $requestFailures, $failureReason] = $this->fetchBatch(
                         $batch,
                         $token,
                         $output,
@@ -141,6 +143,25 @@ class FetchProductCatalogue extends Command
                     $unusable += $badRecords;
                     $failed += $requestFailures;
                     $batch = [];
+
+                    if ($failureReason === 'authentication') {
+                        $this->error(
+                            'Catalogue authentication was rejected. Refresh the token and resume from the checkpoint.'
+                        );
+
+                        return self::FAILURE;
+                    }
+
+                    $consecutiveFailedBatches = $requestFailures === $processedBatchSize
+                        ? $consecutiveFailedBatches + 1
+                        : 0;
+                    if ($consecutiveFailedBatches >= 3) {
+                        $this->error(
+                            'Three complete catalogue batches failed. Pause, check connectivity or rate limits, then resume.'
+                        );
+
+                        return self::FAILURE;
+                    }
 
                     if ($requested % 100 === 0) {
                         $this->line("Requested {$requested}; wrote {$written}; unusable {$unusable}; failed {$failed}.");
@@ -159,7 +180,7 @@ class FetchProductCatalogue extends Command
             fclose($input);
 
             if ($batch !== []) {
-                [$added, $badRecords, $requestFailures] = $this->fetchBatch(
+                [$added, $badRecords, $requestFailures, $failureReason] = $this->fetchBatch(
                     $batch,
                     $token,
                     $output,
@@ -169,6 +190,14 @@ class FetchProductCatalogue extends Command
                 $written += $added;
                 $unusable += $badRecords;
                 $failed += $requestFailures;
+
+                if ($failureReason === 'authentication') {
+                    $this->error(
+                        'Catalogue authentication was rejected. Refresh the token and resume from the checkpoint.'
+                    );
+
+                    return self::FAILURE;
+                }
             }
         } finally {
             fclose($output);
@@ -189,7 +218,7 @@ class FetchProductCatalogue extends Command
      * @param  list<array{catalogue_barcode: string, canonical_barcode: string}>  $batch
      * @param  resource  $output
      * @param  resource  $state
-     * @return array{int, int, int}
+     * @return array{int, int, int, string|null}
      */
     private function fetchBatch(array $batch, string $token, $output, $state, ?string $imageDirectory): array
     {
@@ -207,6 +236,7 @@ class FetchProductCatalogue extends Command
         $failed = 0;
         $unusable = 0;
         $outcomes = [];
+        $failureReason = null;
 
         foreach ($batch as $index => $item) {
             $canonicalBarcode = $item['canonical_barcode'];
@@ -223,7 +253,11 @@ class FetchProductCatalogue extends Command
                 ? ($payload['product'] ?? null)
                 : null;
             if (! is_array($product)) {
-                if (in_array($response->status(), [401, 403, 408, 425, 429], true)
+                if (in_array($response->status(), [401, 403], true)) {
+                    $failureReason = 'authentication';
+                    $failed++;
+                    $outcomes[$canonicalBarcode] = 'failed';
+                } elseif (in_array($response->status(), [408, 425, 429], true)
                     || $response->serverError()) {
                     $failed++;
                     $outcomes[$canonicalBarcode] = 'failed';
@@ -273,7 +307,7 @@ class FetchProductCatalogue extends Command
         }
         fflush($state);
 
-        return [$written, $unusable, $failed];
+        return [$written, $unusable, $failed, $failureReason];
     }
 
     /**
