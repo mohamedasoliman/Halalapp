@@ -183,6 +183,11 @@ class ProductCatalogueRecordTest extends TestCase
             "L’oréal L'Oreal Men Expert Total Clean Shower Gel Large XL 400ml",
             'Listerine Pocketpaks Fresh Breath Strips Cool Mint',
             "Bells Healthcare Allergy Relief Tablet's",
+            'tesco hayfever relief tablets',
+            'Ricola Sugar Free Lemon Mint Cough Drops',
+            'alka-seltzer plus cold & flu',
+            'Night Nurse Liquid For Colds & Flu 160 ml',
+            'Relisan Alcohol Hand Gel - 500ml',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',

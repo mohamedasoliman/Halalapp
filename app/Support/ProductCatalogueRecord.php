@@ -270,7 +270,9 @@ final class ProductCatalogueRecord
                 lip\s+(?:balm|butter)|butter\s+lip|lotion|hand\s+cream|
                 skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
-                allergy\s+relief(?:\s+tablets?)?|
+                allergy\s+relief(?:\s+tablets?)?|hay\s*fever\s+relief(?:\s+tablets?)?|
+                cough\s+drops?|alka[- ]seltzer|colds?\s*(?:&|and)\s*flu|night\s+nurse|
+                hand\s+(?:gel|saniti[sz]er)|
                 cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
                 batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
                 citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|
