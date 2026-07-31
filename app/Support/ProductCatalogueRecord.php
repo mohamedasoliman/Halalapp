@@ -265,8 +265,8 @@ final class ProductCatalogueRecord
                 perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
                 lipstick|mascara|eyeliner|nail\s+(?:polish|base|coat|nurse)|hair\s+dye|
                 hair\s+colou?r|
-                sunscreen|sunblock|moisturi[sz]er|face\s+wash|facial\s+cleanser|
-                hydrating\s+cleanser|moisture\s+bomb|sheet\s+mask|beauty\s+bar|
+                sunscreen|sunblock|moisturi[sz]er|face\s+wash|cleanser|
+                moisture\s+bomb|sheet\s+mask|beauty\s+bar|
                 lip\s+(?:balm|butter)|butter\s+lip|lotion|hand\s+cream|
                 skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|

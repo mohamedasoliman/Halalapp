@@ -188,6 +188,7 @@ class ProductCatalogueRecordTest extends TestCase
             'alka-seltzer plus cold & flu',
             'Night Nurse Liquid For Colds & Flu 160 ml',
             'Relisan Alcohol Hand Gel - 500ml',
+            'Asda Vitamin C Facial Gel Cleanser 150ml',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',
