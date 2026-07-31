@@ -192,6 +192,7 @@ class ProductCatalogueRecordTest extends TestCase
             'Pollinosan Hayfever Tablets',
             'dove Beauty Cream Bar Original 1 x 100g',
             'Chicken puree Applaws',
+            'Tresemme Botanique',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',

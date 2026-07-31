@@ -276,7 +276,7 @@ final class ProductCatalogueRecord
                 hand\s+(?:gel|saniti[sz]er)|
                 cat\s+food|dog\s+food|pet\s+food|applaws|cigarettes?|tobacco|vape|e-liquid|
                 batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
-                citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|
+                citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|tresemm[eé]|
                 l[’\']?occitane|l[’\']?or[eé]al|listerine|
                 dove\s+(?:glowing\s+beauty|sensitive)\s+bar
             )\b/iux',
