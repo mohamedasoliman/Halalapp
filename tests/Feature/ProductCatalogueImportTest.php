@@ -11,6 +11,8 @@ class ProductCatalogueImportTest extends TestCase
 {
     private string $catalogueFile;
 
+    private string $imageDirectory;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -50,6 +52,8 @@ class ProductCatalogueImportTest extends TestCase
         ]);
 
         $this->catalogueFile = sys_get_temp_dir().'/catalogue-import-'.bin2hex(random_bytes(8)).'.ndjson';
+        $this->imageDirectory = sys_get_temp_dir().'/catalogue-images-'.bin2hex(random_bytes(8));
+        mkdir($this->imageDirectory);
         file_put_contents($this->catalogueFile, implode(PHP_EOL, [
             json_encode([
                 'barcode' => '9310036040385',
@@ -80,6 +84,12 @@ class ProductCatalogueImportTest extends TestCase
     {
         if (isset($this->catalogueFile) && is_file($this->catalogueFile)) {
             unlink($this->catalogueFile);
+        }
+        if (isset($this->imageDirectory) && is_dir($this->imageDirectory)) {
+            foreach (glob($this->imageDirectory.'/*') ?: [] as $file) {
+                unlink($file);
+            }
+            rmdir($this->imageDirectory);
         }
         DB::disconnect('sqlite');
 
@@ -120,5 +130,18 @@ class ProductCatalogueImportTest extends TestCase
             '--commit' => true,
         ])->assertSuccessful();
         $this->assertSame(2, DB::table('products')->count());
+    }
+
+    public function test_image_validation_clears_missing_or_invalid_image_files(): void
+    {
+        $this->artisan('products:import-catalogue', [
+            'file' => $this->catalogueFile,
+            '--images' => $this->imageDirectory,
+            '--commit' => true,
+        ])->assertSuccessful();
+
+        $product = DB::table('products')->where('Barcode', '9300462130132')->first();
+        $this->assertNotNull($product);
+        $this->assertNull($product->product_image);
     }
 }

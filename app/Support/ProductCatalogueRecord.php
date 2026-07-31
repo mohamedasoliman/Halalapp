@@ -6,6 +6,11 @@ use Illuminate\Support\Str;
 
 final class ProductCatalogueRecord
 {
+    private const PLACEHOLDER_IMAGE_HASHES = [
+        '32f3fadb207279b98ebb201e5c71a64fee2236e33ebe96924f9fb0fa05202a67',
+        'c7e8046208a5938b85790fda802f7b190e4c5daefa0db771f9921d89a0c7c660',
+    ];
+
     /**
      * Fields intentionally omit external verdicts, source details and timestamps.
      *
@@ -145,6 +150,22 @@ final class ProductCatalogueRecord
         }
 
         return true;
+    }
+
+    public static function isUsableImageFile(string $path): bool
+    {
+        if (! is_file($path) || ! is_readable($path)) {
+            return false;
+        }
+
+        $details = @getimagesize($path);
+        $hash = @hash_file('sha256', $path);
+
+        return $details !== false
+            && ($details[0] ?? 0) >= 20
+            && ($details[1] ?? 0) >= 20
+            && is_string($hash)
+            && ! in_array($hash, self::PLACEHOLDER_IMAGE_HASHES, true);
     }
 
     private static function productName(string $name, ?string $brand): string
