@@ -49,6 +49,7 @@ final class ProductCatalogueRecord
                 ?? ($product['categories'][0]['name'] ?? null)
         );
         if (! self::isSuitableProduct($productName, $category)
+            || self::looksLikeBrandOnlyName($productName)
             || ($brand !== null && mb_strtolower($productName) === mb_strtolower($brand))) {
             return null;
         }
@@ -93,6 +94,7 @@ final class ProductCatalogueRecord
         if (! ProductBarcode::isValidGtin($barcode)
             || ! self::hasUsableName($name)
             || ! self::isSuitableProduct($name, $category)
+            || self::looksLikeBrandOnlyName($name)
             || ($brand !== null && mb_strtolower($name) === mb_strtolower($brand))) {
             return null;
         }
@@ -145,11 +147,19 @@ final class ProductCatalogueRecord
         }
 
         if (preg_match('/^health star rating(?:\s+\d+(?:\.\d+)?)?$/iu', $normalized) === 1
-            || preg_match('/https?:\/\/|www\./iu', $normalized) === 1) {
+            || preg_match('/https?:\/\/|www\.|\bbarcode\b/iu', $normalized) === 1) {
             return false;
         }
 
         return true;
+    }
+
+    private static function looksLikeBrandOnlyName(string $name): bool
+    {
+        return preg_match(
+            '/^[\p{L}\p{M}.-]+(?:\s+[\p{L}\p{M}.-]+){0,2}[’\']s$/iu',
+            trim($name)
+        ) === 1;
     }
 
     public static function isUsableImageFile(string $path): bool
