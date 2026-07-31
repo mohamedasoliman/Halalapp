@@ -123,4 +123,61 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertSame('Coles', $record['brand']);
         $this->assertSame('Australia', $record['country']);
     }
+
+    public function test_it_rejects_non_food_categories_and_names(): void
+    {
+        $this->assertNull(ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Fresh Lemon Dishwashing Liquid 900ml',
+        ]));
+
+        $this->assertNull(ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Fresh Lemon',
+            'main_category' => 'Household',
+        ]));
+
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Bright White Bleach',
+        ]));
+
+        $this->assertNotNull(ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Strong White Unbleached Bread Flour',
+            'main_category' => 'Pantry',
+        ]));
+    }
+
+    public function test_it_rejects_generic_names_and_brand_only_records(): void
+    {
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('https://example.com/product'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('Test Product'));
+        $this->assertNull(ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Example Brand',
+            'brand' => 'Example Brand',
+        ]));
+    }
+
+    public function test_it_removes_additional_source_quality_suffixes_from_names(): void
+    {
+        $record = ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Tomato Passata - Need More Information',
+        ]);
+
+        $this->assertSame('Tomato Passata', $record['product_name']);
+    }
+
+    public function test_it_rejects_generic_placeholder_image_urls(): void
+    {
+        $record = ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Milk',
+            'main_image' => 'https://admin.mustakshif.com/uploads/products/product.jpeg',
+        ]);
+
+        $this->assertNull($record['image_download_url']);
+    }
 }

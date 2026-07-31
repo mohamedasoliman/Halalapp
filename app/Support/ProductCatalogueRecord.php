@@ -43,6 +43,10 @@ final class ProductCatalogueRecord
                 ?? ($product['all_categories'][0] ?? null)
                 ?? ($product['categories'][0]['name'] ?? null)
         );
+        if (! self::isSuitableProduct($productName, $category)
+            || ($brand !== null && mb_strtolower($productName) === mb_strtolower($brand))) {
+            return null;
+        }
 
         return [
             'barcode' => $barcode,
@@ -80,7 +84,11 @@ final class ProductCatalogueRecord
             }
         }
         $name = self::collapseRepeatedBrand($name, $brand);
-        if (! ProductBarcode::isValidGtin($barcode) || ! self::hasUsableName($name)) {
+        $category = self::limited(self::meaningfulValue($row['category'] ?? null), 250);
+        if (! ProductBarcode::isValidGtin($barcode)
+            || ! self::hasUsableName($name)
+            || ! self::isSuitableProduct($name, $category)
+            || ($brand !== null && mb_strtolower($name) === mb_strtolower($brand))) {
             return null;
         }
 
@@ -94,7 +102,7 @@ final class ProductCatalogueRecord
             'product_name' => Str::limit($name, 250, ''),
             'brand' => self::limited($brand, 250),
             'country' => self::limited(self::countryValue($row['country'] ?? null), 250),
-            'category' => self::limited(self::meaningfulValue($row['category'] ?? null), 250),
+            'category' => $category,
             'ingredient' => self::meaningfulValue($row['ingredient'] ?? null),
             'product_image' => self::limited($image, 250),
         ];
@@ -118,11 +126,22 @@ final class ProductCatalogueRecord
             'n/a',
             'na',
             'none',
+            'no name',
+            'product name',
+            'sample product',
+            'test product',
+            'dummy product',
+            'barcode',
         ], true)) {
             return false;
         }
 
-        return preg_match('/^health star rating(?:\s+\d+(?:\.\d+)?)?$/iu', $normalized) !== 1;
+        if (preg_match('/^health star rating(?:\s+\d+(?:\.\d+)?)?$/iu', $normalized) === 1
+            || preg_match('/https?:\/\/|www\./iu', $normalized) === 1) {
+            return false;
+        }
+
+        return true;
     }
 
     private static function productName(string $name, ?string $brand): string
@@ -155,7 +174,13 @@ final class ProductCatalogueRecord
     {
         $name = self::text($value);
         $name = trim((string) preg_replace(
-            '/\s*\((?:product\s+)?not\s+available\)\s*$/iu',
+            '/(?:\s*[-–—:(]\s*)?(?:
+                (?:product\s+)?not\s+available
+                |product\s+not\s+verified
+                |ingredients?\s+(?:are\s+)?(?:missing|not\s+available|not\s+verified)
+                |ingredients?\s+need(?:s)?\s+(?:verification|to\s+be\s+verified)
+                |need\s+more\s+information
+            )\)?\s*$/iux',
             '',
             $name
         ));
@@ -165,6 +190,45 @@ final class ProductCatalogueRecord
             '',
             $name
         ));
+    }
+
+    private static function isSuitableProduct(string $name, ?string $category): bool
+    {
+        $normalizedCategory = mb_strtolower(trim((string) $category));
+        if (in_array($normalizedCategory, [
+            'household',
+            'health & beauty',
+            'cosmetic',
+            'cosmetics',
+            'dental care',
+            'medicine',
+            'skin care',
+            'perfume fragrance cologne',
+            'tobacco',
+            'pharmacy',
+            'pet food',
+        ], true)) {
+            return false;
+        }
+
+        return preg_match(
+            '/\b(?:
+                dishwashing(?:\s+liquid)?|dishwasher|laundry|detergent|fabric\s+softener|
+                bleach|disinfectant|toilet\s+cleaner|floor\s+cleaner|surface\s+cleaner|
+                glass\s+cleaner|air\s+freshener|insect(?:icide)?\s+spray|
+                garbage\s+bags?|trash\s+bags?|paper\s+towels?|toilet\s+paper|facial\s+tissues?|
+                shampoo|conditioner|body\s+wash|hand\s+wash|liquid\s+soap|bar\s+soap|
+                toothpaste|toothbrush|mouthwash|dental\s+floss|deodorant|antiperspirant|
+                perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
+                lipstick|mascara|eyeliner|nail\s+polish|hair\s+dye|hair\s+colou?r|
+                sunscreen|sunblock|moisturi[sz]er|face\s+wash|facial\s+cleanser|
+                body\s+lotion|hand\s+cream|skin\s+cream|baby\s+wipes|
+                napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
+                cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
+                batter(?:y|ies)|light\s+bulbs?|kites?
+            )\b/iux',
+            $name
+        ) !== 1;
     }
 
     private static function brandValue(mixed $value): ?string
@@ -206,7 +270,19 @@ final class ProductCatalogueRecord
             if ($url !== null && filter_var($url, FILTER_VALIDATE_URL) !== false) {
                 $scheme = mb_strtolower((string) parse_url($url, PHP_URL_SCHEME));
                 $host = mb_strtolower((string) parse_url($url, PHP_URL_HOST));
-                if (in_array($scheme, ['http', 'https'], true) && self::isAllowedImageHost($host)) {
+                $basename = mb_strtolower(rawurldecode(basename((string) parse_url($url, PHP_URL_PATH))));
+                if (in_array($scheme, ['http', 'https'], true)
+                    && self::isAllowedImageHost($host)
+                    && ! in_array($basename, [
+                        'product.jpg',
+                        'product.jpeg',
+                        'product.png',
+                        'placeholder.jpg',
+                        'placeholder.jpeg',
+                        'placeholder.png',
+                        'no-image.jpg',
+                        'no-image.png',
+                    ], true)) {
                     return $url;
                 }
             }

@@ -25,6 +25,11 @@ class FetchProductCatalogue extends Command
 
     private const API_ENDPOINT = 'https://admin.mustakshif.com/api/V4/product/search';
 
+    private const PLACEHOLDER_IMAGE_HASHES = [
+        '32f3fadb207279b98ebb201e5c71a64fee2236e33ebe96924f9fb0fa05202a67',
+        'c7e8046208a5938b85790fda802f7b190e4c5daefa0db771f9921d89a0c7c660',
+    ];
+
     public function handle(): int
     {
         $token = trim((string) getenv('CATALOGUE_API_TOKEN'));
@@ -381,6 +386,12 @@ class FetchProductCatalogue extends Command
         $saved = imagejpeg($target, $destination, 82);
         imagedestroy($source);
         imagedestroy($target);
+
+        if ($saved && in_array(hash_file('sha256', $destination), self::PLACEHOLDER_IMAGE_HASHES, true)) {
+            unlink($destination);
+
+            return null;
+        }
 
         return $saved ? $filename : null;
     }
