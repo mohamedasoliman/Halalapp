@@ -223,6 +223,10 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Vegetarian, Vegan'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
+            'name' => 'N/A ( information missing)',
+        ]));
+        $this->assertNull(ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
             'name' => "Mama Lisa's",
         ]));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
@@ -247,6 +251,20 @@ class ProductCatalogueRecordTest extends TestCase
         ]);
 
         $this->assertSame('Tomato Passata', $record['product_name']);
+
+        $record = ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Pork Sausages - product not available on stores',
+        ]);
+
+        $this->assertSame('Pork Sausages', $record['product_name']);
+
+        $record = ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Cheese - information missing',
+        ]);
+
+        $this->assertSame('Cheese', $record['product_name']);
     }
 
     public function test_it_rejects_generic_placeholder_image_urls(): void

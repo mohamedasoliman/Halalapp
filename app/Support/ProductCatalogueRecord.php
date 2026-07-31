@@ -217,12 +217,13 @@ final class ProductCatalogueRecord
         $name = self::text($value);
         $name = trim((string) preg_replace(
             '/(?:\s*[-–—:(]\s*)?(?:
-                (?:product\s+)?not\s+available
+                (?:product\s+)?not\s+available(?:\s+on\s+stores?)?
                 |product\s+not\s+verified
                 |ingred(?:ient|iant)s?\s+(?:are\s+)?(?:missing|not\s+available|not\s+verified)
                 |ingred(?:ient|iant)s?\s+need(?:s)?\s+(?:verification|to\s+be\s+verified)
+                |information\s+(?:is\s+)?missing
                 |need\s+more\s+information
-            )\)?\s*$/iux',
+            )\)?[\s_]*$/iux',
             '',
             $name
         ));
