@@ -257,7 +257,8 @@ final class ProductCatalogueRecord
         return preg_match(
             '/\b(?:
                 dishwashing(?:\s+liquid)?|dishwasher|laundry|detergent|fabric\s+softener|
-                bleach|disinfectant|toilet\s+cleaner|floor\s+cleaner|surface\s+cleaner|
+                bleach|disinfectant|toilet\s+cleaner|floor\s+cleaner|
+                surface\s+(?:cleaner|spray)|
                 glass\s+cleaner|(?:anti[- ]?bacterial\s+)?cleaner|air\s+freshener|
                 insect(?:icide)?\s+spray|
                 garbage\s+bags?|trash\s+bags?|paper\s+towels?|household\s+towels?|
