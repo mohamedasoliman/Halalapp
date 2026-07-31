@@ -60,7 +60,7 @@ final class ProductCatalogueRecord
             'brand' => self::limited($brand, 250),
             'country' => self::limited(self::countryValue($product['origin'] ?? null), 250),
             'category' => self::limited($category, 250),
-            'ingredient' => self::meaningfulValue($product['ingredients'] ?? null),
+            'ingredient' => self::ingredientValue($product['ingredients'] ?? null),
             'product_image' => null,
             'image_download_url' => self::imageUrl($product),
         ];
@@ -110,7 +110,7 @@ final class ProductCatalogueRecord
             'brand' => self::limited($brand, 250),
             'country' => self::limited(self::countryValue($row['country'] ?? null), 250),
             'category' => $category,
-            'ingredient' => self::meaningfulValue($row['ingredient'] ?? null),
+            'ingredient' => self::ingredientValue($row['ingredient'] ?? null),
             'product_image' => self::limited($image, 250),
         ];
     }
@@ -142,6 +142,7 @@ final class ProductCatalogueRecord
             'easter',
             'christmas',
             'miscellaneous',
+            'stabilité',
             '#name?',
             '#ref!',
             '#value!',
@@ -257,7 +258,7 @@ final class ProductCatalogueRecord
                 insect(?:icide)?\s+spray|
                 garbage\s+bags?|trash\s+bags?|paper\s+towels?|household\s+towels?|
                 toilet\s+paper|facial\s+tissues?|
-                shampoo|conditioner|body\s+wash|hand\s+wash|soap|
+                shampoo|conditioner|body\s+wash|hand\s+wash|shower\s+gel|soap|
                 toothpaste|toothbrush|mouthwash|dental\s+floss|deodorant|antiperspirant|
                 perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
                 lipstick|mascara|eyeliner|nail\s+(?:polish|base|coat|nurse)|hair\s+dye|
@@ -270,10 +271,20 @@ final class ProductCatalogueRecord
                 cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
                 batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
                 citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|
-                l[’\']?occitane|listerine|dove\s+(?:glowing\s+beauty|sensitive)\s+bar
+                l[’\']?occitane|l[’\']?or[eé]al|listerine|
+                dove\s+(?:glowing\s+beauty|sensitive)\s+bar
             )\b/iux',
             $name
         ) !== 1;
+    }
+
+    private static function ingredientValue(mixed $value): ?string
+    {
+        $ingredient = self::meaningfulValue($value);
+
+        return $ingredient !== null && ! str_contains($ingredient, "\u{FFFD}")
+            ? $ingredient
+            : null;
     }
 
     private static function brandValue(mixed $value): ?string

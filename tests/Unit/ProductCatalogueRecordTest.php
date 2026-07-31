@@ -180,6 +180,7 @@ class ProductCatalogueRecordTest extends TestCase
             'Garnier Moisture Bomb',
             'Rimmel London Nail base & top coat nail Nurse',
             'loccitane sheah butter lip',
+            "L’oréal L'Oreal Men Expert Total Clean Shower Gel Large XL 400ml",
             'Listerine Pocketpaks Fresh Breath Strips Cool Mint',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
@@ -204,6 +205,7 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('#NAME?'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('ts'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('tes5 2'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('Stabilité'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => "Mama Lisa's",
@@ -234,5 +236,17 @@ class ProductCatalogueRecordTest extends TestCase
         ]);
 
         $this->assertNull($record['image_download_url']);
+    }
+
+    public function test_it_discards_corrupt_ingredient_text_without_rejecting_the_product(): void
+    {
+        $record = ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Brown Sugar Pastry',
+            'ingredient' => 'Harina, vitamina B1, �cido f�lico',
+        ]);
+
+        $this->assertNotNull($record);
+        $this->assertNull($record['ingredient']);
     }
 }
