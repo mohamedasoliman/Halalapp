@@ -167,6 +167,11 @@ class ProductCatalogueRecordTest extends TestCase
             'product_name' => 'Old Spice',
         ]));
 
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Dr Bronners Pure Castille Soap Green Tea',
+        ]));
+
         $this->assertNotNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => 'Strong White Unbleached Bread Flour',
@@ -180,6 +185,8 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Test Product'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Easter'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Barcode is wrong'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('#NAME?'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('ts'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => "Mama Lisa's",

@@ -118,7 +118,7 @@ final class ProductCatalogueRecord
     public static function hasUsableName(?string $name): bool
     {
         $name = self::text($name);
-        if (mb_strlen($name) < 2 || preg_match('/[\p{L}]{2}/u', $name) !== 1) {
+        if (mb_strlen($name) < 3 || preg_match('/[\p{L}]{2}/u', $name) !== 1) {
             return false;
         }
 
@@ -142,6 +142,9 @@ final class ProductCatalogueRecord
             'easter',
             'christmas',
             'miscellaneous',
+            '#name?',
+            '#ref!',
+            '#value!',
         ], true)) {
             return false;
         }
@@ -252,7 +255,7 @@ final class ProductCatalogueRecord
                 glass\s+cleaner|air\s+freshener|insect(?:icide)?\s+spray|
                 garbage\s+bags?|trash\s+bags?|paper\s+towels?|household\s+towels?|
                 toilet\s+paper|facial\s+tissues?|
-                shampoo|conditioner|body\s+wash|hand\s+wash|liquid\s+soap|bar\s+soap|
+                shampoo|conditioner|body\s+wash|hand\s+wash|soap|
                 toothpaste|toothbrush|mouthwash|dental\s+floss|deodorant|antiperspirant|
                 perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
                 lipstick|mascara|eyeliner|nail\s+polish|hair\s+dye|hair\s+colou?r|
