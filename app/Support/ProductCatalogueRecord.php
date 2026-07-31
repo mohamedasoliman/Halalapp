@@ -150,6 +150,7 @@ final class ProductCatalogueRecord
         }
 
         if (preg_match('/^health star rating(?:\s+\d+(?:\.\d+)?)?$/iu', $normalized) === 1
+            || preg_match('/^(?:test|dummy|sample|tes\d*)(?:\s+\d+)*$/iu', $normalized) === 1
             || preg_match('/https?:\/\/|www\.|\bbarcode\b/iu', $normalized) === 1) {
             return false;
         }
@@ -252,19 +253,24 @@ final class ProductCatalogueRecord
             '/\b(?:
                 dishwashing(?:\s+liquid)?|dishwasher|laundry|detergent|fabric\s+softener|
                 bleach|disinfectant|toilet\s+cleaner|floor\s+cleaner|surface\s+cleaner|
-                glass\s+cleaner|air\s+freshener|insect(?:icide)?\s+spray|
+                glass\s+cleaner|(?:anti[- ]?bacterial\s+)?cleaner|air\s+freshener|
+                insect(?:icide)?\s+spray|
                 garbage\s+bags?|trash\s+bags?|paper\s+towels?|household\s+towels?|
                 toilet\s+paper|facial\s+tissues?|
                 shampoo|conditioner|body\s+wash|hand\s+wash|soap|
                 toothpaste|toothbrush|mouthwash|dental\s+floss|deodorant|antiperspirant|
                 perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
-                lipstick|mascara|eyeliner|nail\s+polish|hair\s+dye|hair\s+colou?r|
+                lipstick|mascara|eyeliner|nail\s+(?:polish|base|coat|nurse)|hair\s+dye|
+                hair\s+colou?r|
                 sunscreen|sunblock|moisturi[sz]er|face\s+wash|facial\s+cleanser|
-                lotion|hand\s+cream|skin\s+(?:cream|therapy)|baby\s+wipes|
+                hydrating\s+cleanser|moisture\s+bomb|sheet\s+mask|beauty\s+bar|
+                lip\s+(?:balm|butter)|butter\s+lip|lotion|hand\s+cream|
+                skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
                 cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
                 batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
-                citrullus\s+lanatus
+                citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|
+                l[’\']?occitane|listerine|dove\s+(?:glowing\s+beauty|sensitive)\s+bar
             )\b/iux',
             $name
         ) !== 1;

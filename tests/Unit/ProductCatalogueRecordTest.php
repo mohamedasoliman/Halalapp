@@ -172,6 +172,22 @@ class ProductCatalogueRecordTest extends TestCase
             'product_name' => 'Dr Bronners Pure Castille Soap Green Tea',
         ]));
 
+        foreach ([
+            'Anti-bacterial Cleaner',
+            'Dove Glowing Beauty Bar',
+            'dove Sensitive Bar 3.75 oz, 16 Bars',
+            'CeraVe Hydrating Cleanser 236ml',
+            'Garnier Moisture Bomb',
+            'Rimmel London Nail base & top coat nail Nurse',
+            'loccitane sheah butter lip',
+            'Listerine Pocketpaks Fresh Breath Strips Cool Mint',
+        ] as $name) {
+            $this->assertNull(ProductCatalogueRecord::fromImportRow([
+                'barcode' => '9310036040385',
+                'product_name' => $name,
+            ]), $name);
+        }
+
         $this->assertNotNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => 'Strong White Unbleached Bread Flour',
@@ -187,6 +203,7 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Barcode is wrong'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('#NAME?'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('ts'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('tes5 2'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => "Mama Lisa's",
