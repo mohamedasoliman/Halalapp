@@ -194,6 +194,9 @@ class ProductCatalogueRecordTest extends TestCase
             'Chicken puree Applaws',
             'Tresemme Botanique',
             "Allen's Soothers Butter-menthol Throat Lozenge 3 Pack",
+            'coles paracetamol',
+            'Nair Strip Free Wax',
+            'Dollar Sweets Piping Bag Kit',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',

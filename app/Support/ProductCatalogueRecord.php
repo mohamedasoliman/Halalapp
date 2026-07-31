@@ -275,10 +275,12 @@ final class ProductCatalogueRecord
                 allergy\s+relief(?:\s+tablets?)?|hay\s*fever(?:\s+relief)?(?:\s+tablets?)?|
                 cough\s+drops?|throat\s+lozenges?|alka[- ]seltzer|
                 colds?\s*(?:&|and)\s*flu|night\s+nurse|
+                paracetamol|acetaminophen|ibuprofen|aspirin|
                 hand\s+(?:gel|saniti[sz]er)|
-                cat\s+food|dog\s+food|pet\s+food|applaws|cigarettes?|tobacco|vape|e-liquid|
+                piping\s+bag\s+kit|cat\s+food|dog\s+food|pet\s+food|applaws|
+                cigarettes?|tobacco|vape|e-liquid|
                 batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
-                citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|tresemm[eé]|
+                citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|tresemm[eé]|nair|
                 l[’\']?occitane|l[’\']?or[eé]al|listerine|
                 dove\s+(?:glowing\s+beauty|sensitive)\s+bar
             )\b/iux',
