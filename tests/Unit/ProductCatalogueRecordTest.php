@@ -199,6 +199,7 @@ class ProductCatalogueRecordTest extends TestCase
             'Nair Strip Free Wax',
             'Dollar Sweets Piping Bag Kit',
             'Earth Choice Antibacterial All Purpose Surface Spray 600ml',
+            'Ultra sensitive dish liquid',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',
