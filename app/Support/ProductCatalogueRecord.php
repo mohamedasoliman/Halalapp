@@ -274,7 +274,7 @@ final class ProductCatalogueRecord
                 skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
                 allergy\s+relief(?:\s+tablets?)?|hay\s*fever(?:\s+relief)?(?:\s+tablets?)?|
-                cough\s+drops?|throat\s+lozenges?|alka[- ]seltzer|
+                cough\s+drops?|throat\s+(?:drops?|lozenges?)|alka[- ]seltzer|
                 colds?\s*(?:&|and)\s*flu|night\s+nurse|
                 paracetamol|acetaminophen|ibuprofen|aspirin|
                 hand\s+(?:gel|saniti[sz]er)|
