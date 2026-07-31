@@ -257,10 +257,11 @@ final class ProductCatalogueRecord
                 perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
                 lipstick|mascara|eyeliner|nail\s+polish|hair\s+dye|hair\s+colou?r|
                 sunscreen|sunblock|moisturi[sz]er|face\s+wash|facial\s+cleanser|
-                body\s+lotion|hand\s+cream|skin\s+(?:cream|therapy)|baby\s+wipes|
+                lotion|hand\s+cream|skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
                 cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
-                batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|citrullus\s+lanatus
+                batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
+                citrullus\s+lanatus
             )\b/iux',
             $name
         ) !== 1;

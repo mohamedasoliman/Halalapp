@@ -157,6 +157,16 @@ class ProductCatalogueRecordTest extends TestCase
             'product_name' => 'Cocoa Butter Skin Therapy Oil',
         ]));
 
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Dove Body Love Pampering Care Lotion',
+        ]));
+
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Old Spice',
+        ]));
+
         $this->assertNotNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => 'Strong White Unbleached Bread Flour',
