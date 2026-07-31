@@ -189,6 +189,9 @@ class ProductCatalogueRecordTest extends TestCase
             'Night Nurse Liquid For Colds & Flu 160 ml',
             'Relisan Alcohol Hand Gel - 500ml',
             'Asda Vitamin C Facial Gel Cleanser 150ml',
+            'Pollinosan Hayfever Tablets',
+            'dove Beauty Cream Bar Original 1 x 100g',
+            'Chicken puree Applaws',
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',
@@ -214,6 +217,7 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('tes5 2'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Stabilité'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('muas'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('Gh Four'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Vegetarian, Vegan'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
