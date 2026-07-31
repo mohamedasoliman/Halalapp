@@ -240,16 +240,17 @@ final class ProductCatalogueRecord
                 dishwashing(?:\s+liquid)?|dishwasher|laundry|detergent|fabric\s+softener|
                 bleach|disinfectant|toilet\s+cleaner|floor\s+cleaner|surface\s+cleaner|
                 glass\s+cleaner|air\s+freshener|insect(?:icide)?\s+spray|
-                garbage\s+bags?|trash\s+bags?|paper\s+towels?|toilet\s+paper|facial\s+tissues?|
+                garbage\s+bags?|trash\s+bags?|paper\s+towels?|household\s+towels?|
+                toilet\s+paper|facial\s+tissues?|
                 shampoo|conditioner|body\s+wash|hand\s+wash|liquid\s+soap|bar\s+soap|
                 toothpaste|toothbrush|mouthwash|dental\s+floss|deodorant|antiperspirant|
                 perfume|cologne|eau\s+de\s+(?:parfum|toilette)|fragrance|
                 lipstick|mascara|eyeliner|nail\s+polish|hair\s+dye|hair\s+colou?r|
                 sunscreen|sunblock|moisturi[sz]er|face\s+wash|facial\s+cleanser|
-                body\s+lotion|hand\s+cream|skin\s+cream|baby\s+wipes|
+                body\s+lotion|hand\s+cream|skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
                 cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
-                batter(?:y|ies)|light\s+bulbs?|kites?
+                batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|citrullus\s+lanatus
             )\b/iux',
             $name
         ) !== 1;

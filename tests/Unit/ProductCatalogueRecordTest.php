@@ -142,6 +142,21 @@ class ProductCatalogueRecordTest extends TestCase
             'product_name' => 'Bright White Bleach',
         ]));
 
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Mega Ultra Household Towels',
+        ]));
+
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => "Palmer's Cocoa Butter Formula",
+        ]));
+
+        $this->assertNull(ProductCatalogueRecord::fromImportRow([
+            'barcode' => '9310036040385',
+            'product_name' => 'Cocoa Butter Skin Therapy Oil',
+        ]));
+
         $this->assertNotNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => 'Strong White Unbleached Bread Flour',
