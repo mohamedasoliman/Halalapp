@@ -182,6 +182,7 @@ class ProductCatalogueRecordTest extends TestCase
             'loccitane sheah butter lip',
             "L’oréal L'Oreal Men Expert Total Clean Shower Gel Large XL 400ml",
             'Listerine Pocketpaks Fresh Breath Strips Cool Mint',
+            "Bells Healthcare Allergy Relief Tablet's",
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',
@@ -207,6 +208,7 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('tes5 2'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Stabilité'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('muas'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('Vegetarian, Vegan'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => "Mama Lisa's",
@@ -220,6 +222,13 @@ class ProductCatalogueRecordTest extends TestCase
 
     public function test_it_removes_additional_source_quality_suffixes_from_names(): void
     {
+        $record = ProductCatalogueRecord::fromApiProduct([
+            'barcode' => '9310036040385',
+            'name' => 'Wholegrain Large Wraps ingrediants missing',
+        ]);
+
+        $this->assertSame('Wholegrain Large Wraps', $record['product_name']);
+
         $record = ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => 'Tomato Passata - Need More Information',

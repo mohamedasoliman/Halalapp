@@ -153,6 +153,7 @@ final class ProductCatalogueRecord
 
         if (preg_match('/^health star rating(?:\s+\d+(?:\.\d+)?)?$/iu', $normalized) === 1
             || preg_match('/^(?:test|dummy|sample|tes\d*)(?:\s+\d+)*$/iu', $normalized) === 1
+            || preg_match('/^(?:vegetarian|vegan)(?:\s*,\s*(?:vegetarian|vegan))*$/iu', $normalized) === 1
             || preg_match('/https?:\/\/|www\.|\bbarcode\b/iu', $normalized) === 1) {
             return false;
         }
@@ -217,8 +218,8 @@ final class ProductCatalogueRecord
             '/(?:\s*[-–—:(]\s*)?(?:
                 (?:product\s+)?not\s+available
                 |product\s+not\s+verified
-                |ingredients?\s+(?:are\s+)?(?:missing|not\s+available|not\s+verified)
-                |ingredients?\s+need(?:s)?\s+(?:verification|to\s+be\s+verified)
+                |ingred(?:ient|iant)s?\s+(?:are\s+)?(?:missing|not\s+available|not\s+verified)
+                |ingred(?:ient|iant)s?\s+need(?:s)?\s+(?:verification|to\s+be\s+verified)
                 |need\s+more\s+information
             )\)?\s*$/iux',
             '',
@@ -226,7 +227,7 @@ final class ProductCatalogueRecord
         ));
 
         return trim((string) preg_replace(
-            '/(?:\s*[-–—:]\s*)?ingredients?\s+(?:are\s+)?(?:missing|not\s+available)$/iu',
+            '/(?:\s*[-–—:]\s*)?ingred(?:ient|iant)s?\s+(?:are\s+)?(?:missing|not\s+available)$/iu',
             '',
             $name
         ));
@@ -269,6 +270,7 @@ final class ProductCatalogueRecord
                 lip\s+(?:balm|butter)|butter\s+lip|lotion|hand\s+cream|
                 skin\s+(?:cream|therapy)|baby\s+wipes|
                 napp(?:y|ies)|diapers?|sanitary\s+pads?|tampons?|condoms?|pregnancy\s+tests?|
+                allergy\s+relief(?:\s+tablets?)?|
                 cat\s+food|dog\s+food|pet\s+food|cigarettes?|tobacco|vape|e-liquid|
                 batter(?:y|ies)|light\s+bulbs?|kites?|palmer[’\']?s|old\s+spice|
                 citrullus\s+lanatus|cera\s*ve|garnier|rimmel(?:\s+london)?|
