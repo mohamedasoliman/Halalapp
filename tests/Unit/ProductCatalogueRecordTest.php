@@ -193,6 +193,7 @@ class ProductCatalogueRecordTest extends TestCase
             'dove Beauty Cream Bar Original 1 x 100g',
             'Chicken puree Applaws',
             'Tresemme Botanique',
+            "Allen's Soothers Butter-menthol Throat Lozenge 3 Pack",
         ] as $name) {
             $this->assertNull(ProductCatalogueRecord::fromImportRow([
                 'barcode' => '9310036040385',
