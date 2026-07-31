@@ -132,6 +132,9 @@ final class ProductCatalogueRecord
             'test product',
             'dummy product',
             'barcode',
+            'easter',
+            'christmas',
+            'miscellaneous',
         ], true)) {
             return false;
         }
