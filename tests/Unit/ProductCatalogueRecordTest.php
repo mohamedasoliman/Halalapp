@@ -206,6 +206,7 @@ class ProductCatalogueRecordTest extends TestCase
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('ts'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('tes5 2'));
         $this->assertFalse(ProductCatalogueRecord::hasUsableName('Stabilité'));
+        $this->assertFalse(ProductCatalogueRecord::hasUsableName('muas'));
         $this->assertNull(ProductCatalogueRecord::fromApiProduct([
             'barcode' => '9310036040385',
             'name' => "Mama Lisa's",

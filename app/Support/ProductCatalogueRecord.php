@@ -143,6 +143,7 @@ final class ProductCatalogueRecord
             'christmas',
             'miscellaneous',
             'stabilité',
+            'muas',
             '#name?',
             '#ref!',
             '#value!',
