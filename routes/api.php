@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\MasjidControllers\MasjidManagementController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
 use App\Http\Controllers\Api\AnalyticsIngestionController;
 use App\Http\Controllers\Api\AssistantIntentController;
+use App\Http\Controllers\Api\DirectionsController;
 use App\Http\Controllers\Api\MasjidTimingController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ContactMessageController;
@@ -28,6 +29,8 @@ Route::middleware(['api_key', 'throttle:api'])->group(function () {
     });
     Route::post('assistant/intent', AssistantIntentController::class)
         ->middleware('throttle:assistant');
+    Route::post('directions', DirectionsController::class)
+        ->middleware('throttle:directions');
 
     Route::post('masjid', [MasjidManagementController::class, 'apishow']);
     Route::post('masjid/timings', [MasjidTimingController::class, 'show'])

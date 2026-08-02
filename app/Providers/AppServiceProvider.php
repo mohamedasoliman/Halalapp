@@ -98,6 +98,22 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($request->ip());
         });
 
+        RateLimiter::for('directions', function (Request $request) {
+            $installId = trim((string) $request->header('X-Install-ID', ''));
+            $installKey = preg_match(
+                '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+                $installId,
+            ) === 1
+                ? hash('sha256', strtolower($installId))
+                : hash('sha256', (string) $request->ip());
+
+            return [
+                Limit::perMinute(12)->by('directions-install-minute:'.$installKey),
+                Limit::perHour(120)->by('directions-install-hour:'.$installKey),
+                Limit::perMinute(60)->by('directions-ip-minute:'.$request->ip()),
+            ];
+        });
+
         RateLimiter::for('masjid-timings', function (Request $request) {
             $masjidId = preg_replace(
                 '/\D+/',
