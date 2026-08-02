@@ -7,10 +7,13 @@ use App\Models\Brand;
 use App\Models\BrandCommunication;
 use App\Models\BrandOutreachBatch;
 use App\Models\PrioritisationRequest;
+use App\Models\ProductModel\Product;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use LogicException;
 
 class BrandOutreachService
@@ -157,6 +160,126 @@ class BrandOutreachService
         return $created;
     }
 
+    public function createClarificationDraft(
+        Brand $brand,
+        BrandCommunication $sourceCommunication,
+        string $eventReference,
+        string $subject,
+        string $body,
+        array $barcodes,
+        array $references = [],
+    ): BrandOutreachBatch {
+        if (! $this->hasVerifiedEmail($brand)) {
+            throw new InvalidArgumentException('The selected brand does not have a verified email contact.');
+        }
+        if ($sourceCommunication->direction !== 'inbound') {
+            throw new InvalidArgumentException('The source communication must be an inbound manufacturer message.');
+        }
+
+        $eventReference = trim($eventReference);
+        $subject = trim($subject);
+        $body = trim($body);
+        if ($eventReference === '' || mb_strlen($eventReference) > 500) {
+            throw new InvalidArgumentException('A stable clarification event reference of at most 500 characters is required.');
+        }
+        if ($subject === '' || mb_strlen($subject) > 500) {
+            throw new InvalidArgumentException('A clarification subject of at most 500 characters is required.');
+        }
+        if ($body === '' || mb_strlen($body) > 50000) {
+            throw new InvalidArgumentException('A clarification body of at most 50,000 characters is required.');
+        }
+
+        $barcodes = collect($barcodes)
+            ->map(fn ($barcode) => trim((string) $barcode))
+            ->filter()
+            ->uniqueStrict()
+            ->values();
+        if ($barcodes->isEmpty() || $barcodes->contains(fn (string $barcode) => preg_match('/^\d{8,14}$/D', $barcode) !== 1)) {
+            throw new InvalidArgumentException('At least one exact 8-14 digit barcode is required.');
+        }
+
+        $evidenceBarcodes = collect($sourceCommunication->barcodes_mentioned ?? [])
+            ->map(fn ($barcode) => trim((string) $barcode));
+        $uncovered = $barcodes->reject(fn (string $barcode) => $evidenceBarcodes->containsStrict($barcode));
+        if ($uncovered->isNotEmpty()) {
+            throw new InvalidArgumentException('The source communication does not cover exact barcode(s): '.$uncovered->implode(', '));
+        }
+
+        $productsByBarcode = Product::query()
+            ->whereIn('Barcode', $barcodes->all())
+            ->get(['product_name', 'Barcode'])
+            ->keyBy(fn (Product $product) => (string) $product->Barcode);
+        $missingProducts = $barcodes->reject(fn (string $barcode) => $productsByBarcode->has($barcode));
+        if ($missingProducts->isNotEmpty()) {
+            throw new InvalidArgumentException('No exact product row exists for barcode(s): '.$missingProducts->implode(', '));
+        }
+
+        $inReplyTo = $this->normalizeMessageId($sourceCommunication->email_message_id);
+        if ($inReplyTo === null) {
+            throw new InvalidArgumentException('The inbound source communication has no valid Message-ID for threading.');
+        }
+
+        $references = collect($references)
+            ->prepend($inReplyTo)
+            ->map(fn ($messageId) => $this->normalizeMessageId($messageId))
+            ->filter()
+            ->uniqueStrict()
+            ->values()
+            ->all();
+        $requestIds = PrioritisationRequest::query()
+            ->active()
+            ->whereIn('barcode', $barcodes->all())
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+        $products = $barcodes->map(fn (string $barcode) => [
+            'name' => (string) $productsByBarcode->get($barcode)->product_name,
+            'barcode' => $barcode,
+        ])->all();
+        $eventKey = hash('sha256', $eventReference);
+        $values = [
+            'brand_id' => $brand->id,
+            'kind' => 'clarification',
+            'follow_up_number' => 0,
+            'status' => 'draft',
+            'recipient_email' => strtolower(trim((string) $brand->email)),
+            'subject' => $subject,
+            'message_body' => $body,
+            'products' => $products,
+            'request_ids' => $requestIds,
+            'source_communication_id' => $sourceCommunication->id,
+            'event_reference' => $eventReference,
+            'in_reply_to_message_id' => $inReplyTo,
+            'reference_message_ids' => $references,
+        ];
+
+        try {
+            return DB::transaction(function () use ($eventKey, $values) {
+                $existing = BrandOutreachBatch::query()->where('event_key', $eventKey)->lockForUpdate()->first();
+                if ($existing) {
+                    $this->assertSameClarification($existing, $values);
+
+                    return $existing;
+                }
+
+                return BrandOutreachBatch::create([
+                    'reference' => $this->nextReference(Brand::findOrFail($values['brand_id'])),
+                    'event_key' => $eventKey,
+                    ...$values,
+                ]);
+            });
+        } catch (QueryException $exception) {
+            $existing = BrandOutreachBatch::query()->where('event_key', $eventKey)->first();
+            if (! $existing) {
+                throw $exception;
+            }
+            $this->assertSameClarification($existing, $values);
+
+            return $existing;
+        }
+    }
+
     public function queueDrafts(Collection $batches, ?int $limit = null): array
     {
         if (! config('outreach.enabled')) {
@@ -191,9 +314,12 @@ class BrandOutreachService
             }
 
             $batch->loadMissing('brand');
+            if ($batch->kind === 'clarification') {
+                $this->assertClarificationReadyForQueue($batch);
+            }
             if (! $this->hasVerifiedEmail($batch->brand)
                 || $batch->brand->outreach_paused_at !== null
-                || $batch->brand->response !== null) {
+                || ($batch->kind !== 'clarification' && $batch->brand->response !== null)) {
                 continue;
             }
 
@@ -256,18 +382,23 @@ class BrandOutreachService
                 'brand_id' => $batch->brand_id,
                 'direction' => 'outbound',
                 'subject' => $batch->subject,
-                'body_preview' => ucfirst(str_replace('_', ' ', $batch->kind)).' inquiry for '.count($batch->products).' product(s).',
+                'body_preview' => $batch->kind === 'clarification'
+                    ? mb_substr((string) $batch->message_body, 0, 2000)
+                    : ucfirst(str_replace('_', ' ', $batch->kind)).' inquiry for '.count($batch->products).' product(s).',
                 'barcodes_mentioned' => collect($batch->products)->pluck('barcode')->values()->all(),
-                'action_taken' => "Outreach batch {$batch->reference} sent.",
+                'action_taken' => $batch->kind === 'clarification'
+                    ? "Clarification batch {$batch->reference} sent in reply to inbound communication #{$batch->source_communication_id}."
+                    : "Outreach batch {$batch->reference} sent.",
             ]);
 
             $brand = Brand::query()->lockForUpdate()->findOrFail($batch->brand_id);
-            $followUpCount = $batch->kind === 'follow_up' ? $batch->follow_up_number : 0;
-            $brand->update([
-                'last_contacted_at' => now(),
-                'follow_up_count' => $followUpCount,
-                'next_follow_up_at' => $this->nextFollowUpAt($followUpCount),
-            ]);
+            $brandUpdates = ['last_contacted_at' => now()];
+            if ($batch->kind !== 'clarification') {
+                $followUpCount = $batch->kind === 'follow_up' ? $batch->follow_up_number : 0;
+                $brandUpdates['follow_up_count'] = $followUpCount;
+                $brandUpdates['next_follow_up_at'] = $this->nextFollowUpAt($followUpCount);
+            }
+            $brand->update($brandUpdates);
 
             foreach (PrioritisationRequest::whereIn('id', $batch->request_ids)->get() as $request) {
                 $note = "{$batch->reference} sent ".now()->toDateString().'. WAITING.';
@@ -418,5 +549,60 @@ class BrandOutreachService
         ]);
 
         return Str::lower(Str::squish(Str::ascii($brandName)));
+    }
+
+    private function normalizeMessageId(mixed $messageId): ?string
+    {
+        $messageId = strtolower(trim((string) $messageId));
+        if ($messageId === '') {
+            return null;
+        }
+
+        $messageId = '<'.trim($messageId, "<> \t\n\r\0\x0B").'>';
+
+        return preg_match('/^<[^<>\s]+@[^<>\s]+>$/D', $messageId) === 1 ? $messageId : null;
+    }
+
+    private function assertSameClarification(BrandOutreachBatch $batch, array $values): void
+    {
+        $same = (int) $batch->brand_id === (int) $values['brand_id']
+            && $batch->kind === 'clarification'
+            && strtolower(trim((string) $batch->recipient_email)) === $values['recipient_email']
+            && (string) $batch->subject === $values['subject']
+            && (string) $batch->message_body === $values['message_body']
+            && (int) $batch->source_communication_id === (int) $values['source_communication_id']
+            && (string) $batch->in_reply_to_message_id === $values['in_reply_to_message_id']
+            && ($batch->products ?? []) === $values['products']
+            && ($batch->request_ids ?? []) === $values['request_ids']
+            && ($batch->reference_message_ids ?? []) === $values['reference_message_ids'];
+
+        if (! $same) {
+            throw new LogicException('This clarification event reference already exists with different content. Use the existing batch or choose a new stable event reference.');
+        }
+    }
+
+    private function assertClarificationReadyForQueue(BrandOutreachBatch $batch): void
+    {
+        $source = BrandCommunication::query()->find($batch->source_communication_id);
+        $inReplyTo = $this->normalizeMessageId($batch->in_reply_to_message_id);
+        $sourceMessageId = $this->normalizeMessageId($source?->email_message_id);
+        $barcodes = collect($batch->products ?? [])->pluck('barcode')->map(fn ($barcode) => trim((string) $barcode));
+        $sourceBarcodes = collect($source?->barcodes_mentioned ?? [])->map(fn ($barcode) => trim((string) $barcode));
+        $references = collect($batch->reference_message_ids ?? []);
+
+        $valid = $source?->direction === 'inbound'
+            && trim((string) $source->proof_path) !== ''
+            && trim((string) $batch->event_reference) !== ''
+            && trim((string) $batch->event_key) !== ''
+            && trim((string) $batch->message_body) !== ''
+            && $barcodes->isNotEmpty()
+            && $barcodes->every(fn (string $barcode) => preg_match('/^\d{8,14}$/D', $barcode) === 1 && $sourceBarcodes->containsStrict($barcode))
+            && $inReplyTo !== null
+            && $inReplyTo === $sourceMessageId
+            && $references->containsStrict($inReplyTo);
+
+        if (! $valid) {
+            throw new LogicException("Clarification batch {$batch->reference} is missing exact inbound evidence, proof, idempotency, body, or thread metadata and cannot be queued.");
+        }
     }
 }

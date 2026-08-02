@@ -14,7 +14,7 @@ class BrandsOutreach extends Command
         {--queue : Queue approved drafts for throttled delivery}
         {--batch=* : Specific draft batch IDs to queue}
         {--all : Queue every draft matching --kind}
-        {--kind=initial : Filter drafts by initial, follow_up, or all}
+        {--kind=initial : Filter drafts by initial, follow_up, clarification, or all}
         {--limit= : Maximum number of drafts to queue}
         {--dry-run : Deprecated alias for preview-only mode}';
 
@@ -23,8 +23,8 @@ class BrandsOutreach extends Command
     public function handle(BrandOutreachService $service): int
     {
         $kind = $this->option('kind');
-        if (! in_array($kind, ['initial', 'follow_up', 'all'], true)) {
-            $this->error('--kind must be initial, follow_up, or all.');
+        if (! in_array($kind, ['initial', 'follow_up', 'clarification', 'all'], true)) {
+            $this->error('--kind must be initial, follow_up, clarification, or all.');
 
             return self::FAILURE;
         }
@@ -64,6 +64,12 @@ class BrandsOutreach extends Command
 
         if (! $this->option('all') && $requestedIds->isEmpty()) {
             $this->error('Select approved drafts with --batch=ID, or explicitly use --all.');
+
+            return self::FAILURE;
+        }
+
+        if ($requestedIds->isEmpty() && $drafts->contains(fn (BrandOutreachBatch $batch) => $batch->kind === 'clarification')) {
+            $this->error('Clarification drafts must always be selected with explicit --batch=ID options; bulk --all sending is not allowed.');
 
             return self::FAILURE;
         }

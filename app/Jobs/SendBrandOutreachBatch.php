@@ -46,6 +46,10 @@ class SendBrandOutreachBatch implements ShouldQueue
             reference: $batch->reference,
             kind: $batch->kind,
             followUpNumber: $batch->follow_up_number,
+            subjectOverride: $batch->subject,
+            body: $batch->message_body,
+            inReplyTo: $batch->in_reply_to_message_id,
+            references: $batch->reference_message_ids ?? [],
         ));
 
         $service->recordSent($batch);

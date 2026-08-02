@@ -92,6 +92,14 @@
                                                                 @foreach($batch->products as $product)
                                                                     <div>{{ $product['name'] }} <small>({{ $product['barcode'] }})</small></div>
                                                                 @endforeach
+                                                                @if($batch->kind === 'clarification')
+                                                                    <details class="mt-2">
+                                                                        <summary>Review approved subject and body</summary>
+                                                                        <div class="mt-2"><strong>Subject:</strong> {{ $batch->subject }}</div>
+                                                                        <pre class="mt-2 mb-0" style="white-space: pre-wrap">{{ $batch->message_body }}</pre>
+                                                                        <small>Replying to communication #{{ $batch->source_communication_id }}</small>
+                                                                    </details>
+                                                                @endif
                                                             </td>
                                                             <td>{{ ucfirst(str_replace('_', ' ', $batch->kind)) }}{{ $batch->follow_up_number ? ' #'.$batch->follow_up_number : '' }}</td>
                                                             <td><span class="badge badge-{{ $batch->status }}">{{ ucfirst($batch->status) }}</span></td>

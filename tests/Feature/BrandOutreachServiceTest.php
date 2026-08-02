@@ -6,8 +6,10 @@ use App\Jobs\SendBrandOutreachBatch;
 use App\Mail\BrandOutreachEmail;
 use App\Mail\UserNotificationEmail;
 use App\Models\Brand;
+use App\Models\BrandCommunication;
 use App\Models\BrandOutreachBatch;
 use App\Models\PrioritisationRequest;
+use App\Models\ProductModel\Product;
 use App\Models\RequestWatcher;
 use App\Services\BrandOutreachService;
 use App\Services\RequestNotificationService;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
+use InvalidArgumentException;
 use LogicException;
 use Mockery;
 use RuntimeException;
@@ -194,6 +197,246 @@ class BrandOutreachServiceTest extends TestCase
         ]));
     }
 
+    public function test_clarification_draft_is_idempotent_and_requires_strict_source_barcode_evidence(): void
+    {
+        $brand = Brand::create([
+            'name' => 'Partial Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+            'response' => 'partial',
+        ]);
+        Product::create([
+            'product_name' => 'Leading Zero Product',
+            'Barcode' => '0123456789012',
+            'halal_status' => 2,
+        ]);
+        $communication = BrandCommunication::create([
+            'brand_id' => $brand->id,
+            'direction' => 'inbound',
+            'email_message_id' => '<Reply.123@Example.com>',
+            'barcodes_mentioned' => ['0123456789012'],
+            'proof_path' => '/proof/partial-brand',
+        ]);
+        $service = app(BrandOutreachService::class);
+
+        $first = $service->createClarificationDraft(
+            $brand,
+            $communication,
+            'manufacturer-clarification:test:0123456789012',
+            'Re: Exact product question',
+            'Please confirm the exact ingredient source.',
+            ['0123456789012'],
+            ['<Earlier.1@Example.com>'],
+        );
+        $second = $service->createClarificationDraft(
+            $brand,
+            $communication,
+            'manufacturer-clarification:test:0123456789012',
+            'Re: Exact product question',
+            'Please confirm the exact ingredient source.',
+            ['0123456789012'],
+            ['<Earlier.1@Example.com>'],
+        );
+
+        $this->assertSame($first->id, $second->id);
+        $this->assertSame(1, BrandOutreachBatch::count());
+        $this->assertSame('clarification', $first->kind);
+        $this->assertSame('<reply.123@example.com>', $first->in_reply_to_message_id);
+        $this->assertSame(
+            ['<reply.123@example.com>', '<earlier.1@example.com>'],
+            $first->reference_message_ids,
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not cover exact barcode');
+        $service->createClarificationDraft(
+            $brand,
+            $communication,
+            'manufacturer-clarification:test:loose-leading-zero',
+            'Re: Wrong barcode',
+            'This must not be created.',
+            ['123456789012'],
+        );
+    }
+
+    public function test_partial_brand_can_queue_only_an_explicitly_approved_clarification_batch(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $brand = Brand::create([
+            'name' => 'Answered Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+            'response' => 'partial',
+        ]);
+        Product::create([
+            'product_name' => 'Question Product',
+            'Barcode' => '9400000000015',
+            'halal_status' => 2,
+        ]);
+        $communication = BrandCommunication::create([
+            'brand_id' => $brand->id,
+            'direction' => 'inbound',
+            'email_message_id' => '<partial@example.com>',
+            'barcodes_mentioned' => ['9400000000015'],
+            'proof_path' => '/proof/answered-brand',
+        ]);
+        $initial = $this->createBatch($brand, 'HK-BLOCKED-INITIAL');
+        $clarification = app(BrandOutreachService::class)->createClarificationDraft(
+            $brand,
+            $communication,
+            'manufacturer-clarification:test:queue-partial',
+            'Re: Clarification',
+            'Please clarify this exact product.',
+            ['9400000000015'],
+        );
+
+        $queued = app(BrandOutreachService::class)->queueDrafts(collect([$initial, $clarification]));
+
+        $this->assertSame([$clarification->id], $queued);
+        $this->assertSame('draft', $initial->fresh()->status);
+        $this->assertSame('queued', $clarification->fresh()->status);
+        Queue::assertPushed(SendBrandOutreachBatch::class, 1);
+    }
+
+    public function test_clarification_command_creates_preview_only_draft_and_never_sends(): void
+    {
+        Mail::fake();
+        Queue::fake();
+        $brand = Brand::create([
+            'name' => 'Command Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+            'response' => 'partial',
+        ]);
+        Product::create([
+            'product_name' => 'Command Product',
+            'Barcode' => '9400000000017',
+            'halal_status' => 2,
+        ]);
+        $communication = BrandCommunication::create([
+            'brand_id' => $brand->id,
+            'direction' => 'inbound',
+            'email_message_id' => '<command@example.com>',
+            'barcodes_mentioned' => ['9400000000017'],
+            'proof_path' => '/proof/command-brand',
+        ]);
+
+        $this->artisan('brands:clarification', [
+            'brand' => (string) $brand->id,
+            '--communication-id' => (string) $communication->id,
+            '--event' => 'manufacturer-clarification:test:command',
+            '--subject' => 'Re: Command clarification',
+            '--body' => 'Please confirm the requested detail.',
+            '--barcode' => ['9400000000017'],
+        ])->assertSuccessful();
+
+        $this->assertDatabaseHas('brand_outreach_batches', [
+            'brand_id' => $brand->id,
+            'kind' => 'clarification',
+            'status' => 'draft',
+            'source_communication_id' => $communication->id,
+        ]);
+        Queue::assertNothingPushed();
+        Mail::assertNothingSent();
+    }
+
+    public function test_clarification_cannot_queue_without_saved_inbound_proof(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $brand = Brand::create([
+            'name' => 'Proofless Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+            'response' => 'partial',
+        ]);
+        Product::create([
+            'product_name' => 'Proofless Product',
+            'Barcode' => '9400000000018',
+            'halal_status' => 2,
+        ]);
+        $communication = BrandCommunication::create([
+            'brand_id' => $brand->id,
+            'direction' => 'inbound',
+            'email_message_id' => '<proofless@example.com>',
+            'barcodes_mentioned' => ['9400000000018'],
+        ]);
+        $batch = app(BrandOutreachService::class)->createClarificationDraft(
+            $brand,
+            $communication,
+            'manufacturer-clarification:test:proof-required',
+            'Re: Proof required',
+            'This draft must remain unsent until proof is saved.',
+            ['9400000000018'],
+        );
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('missing exact inbound evidence, proof');
+        app(BrandOutreachService::class)->queueDrafts(collect([$batch]));
+    }
+
+    public function test_clarification_job_sends_custom_threaded_email_without_user_notification_or_brand_downgrade(): void
+    {
+        Mail::fake();
+        config(['outreach.enabled' => true]);
+        $brand = Brand::create([
+            'name' => 'Clarification Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+            'response' => 'partial',
+            'follow_up_count' => 2,
+            'next_follow_up_at' => now()->addDay(),
+        ]);
+        Product::create([
+            'product_name' => 'Clarification Product',
+            'Barcode' => '9400000000016',
+            'halal_status' => 2,
+        ]);
+        $request = $this->createRequest('Clarification Brand', '9400000000016', 'Clarification Product', 'contacted');
+        $request->update(['user_email' => 'customer@example.com']);
+        $communication = BrandCommunication::create([
+            'brand_id' => $brand->id,
+            'direction' => 'inbound',
+            'email_message_id' => '<clarify@example.com>',
+            'barcodes_mentioned' => ['9400000000016'],
+            'proof_path' => '/proof/clarification-brand',
+        ]);
+        $batch = app(BrandOutreachService::class)->createClarificationDraft(
+            $brand,
+            $communication,
+            'manufacturer-clarification:test:send',
+            'Re: Approved clarification',
+            'Please confirm whether the flavour carrier contains ethanol.',
+            ['9400000000016'],
+        );
+        $batch->update(['status' => 'queued']);
+
+        (new SendBrandOutreachBatch($batch->id))->handle(app(BrandOutreachService::class));
+
+        Mail::assertSent(BrandOutreachEmail::class, function (BrandOutreachEmail $mail) {
+            return $mail->subjectOverride === 'Re: Approved clarification'
+                && $mail->body === 'Please confirm whether the flavour carrier contains ethanol.'
+                && $mail->inReplyTo === '<clarify@example.com>'
+                && $mail->references === ['<clarify@example.com>'];
+        });
+        Mail::assertSent(UserNotificationEmail::class, 0);
+        $this->assertSame('sent', $batch->fresh()->status);
+        $this->assertSame(2, $brand->fresh()->follow_up_count);
+        $this->assertSame('partial', $brand->fresh()->response);
+        $this->assertSame('contacted', $request->fresh()->status);
+        $this->assertDatabaseHas('brand_communications', [
+            'brand_id' => $brand->id,
+            'direction' => 'outbound',
+            'subject' => 'Re: Approved clarification',
+        ]);
+    }
+
     public function test_successful_job_records_delivery_before_marking_requests_contacted(): void
     {
         Mail::fake();
@@ -270,6 +513,28 @@ class BrandOutreachServiceTest extends TestCase
         $this->assertSame('uncertain', $batch->fresh()->status);
         $this->assertStringContainsString('do not retry without reconciliation', $batch->fresh()->error);
         $this->assertNull($batch->fresh()->failed_at);
+    }
+
+    public function test_stuck_or_uncertain_clarification_is_never_automatically_requeued(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $brand = Brand::create([
+            'name' => 'Stuck Clarification Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+            'response' => 'partial',
+        ]);
+        $batch = $this->createBatch($brand, 'HK-STUCK-CLARIFICATION', 'sending');
+        $batch->update(['kind' => 'clarification']);
+
+        (new SendBrandOutreachBatch($batch->id))->failed(new RuntimeException('SMTP result was interrupted.'));
+        $queued = app(BrandOutreachService::class)->queueDrafts(collect([$batch->fresh()]));
+
+        $this->assertSame('uncertain', $batch->fresh()->status);
+        $this->assertSame([], $queued);
+        Queue::assertNothingPushed();
     }
 
     public function test_job_failure_callback_never_downgrades_a_sent_manufacturer_batch(): void
@@ -369,6 +634,14 @@ class BrandOutreachServiceTest extends TestCase
             $table->string('source')->nullable();
             $table->timestamps();
         });
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('product_name');
+            $table->string('Barcode', 20);
+            $table->tinyInteger('halal_status')->default(2);
+            $table->softDeletes();
+            $table->timestamps();
+        });
         Schema::create('brand_communications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('brand_id');
@@ -399,8 +672,14 @@ class BrandOutreachServiceTest extends TestCase
             $table->string('status')->default('draft');
             $table->string('recipient_email');
             $table->string('subject');
+            $table->longText('message_body')->nullable();
             $table->json('products');
             $table->json('request_ids');
+            $table->unsignedBigInteger('source_communication_id')->nullable();
+            $table->string('event_reference', 500)->nullable();
+            $table->char('event_key', 64)->nullable()->unique();
+            $table->string('in_reply_to_message_id', 998)->nullable();
+            $table->text('reference_message_ids')->nullable();
             $table->timestamp('scheduled_at')->nullable();
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('failed_at')->nullable();

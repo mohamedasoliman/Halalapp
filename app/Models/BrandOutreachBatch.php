@@ -11,6 +11,7 @@ class BrandOutreachBatch extends Model
     protected $casts = [
         'products' => 'array',
         'request_ids' => 'array',
+        'reference_message_ids' => 'array',
         'scheduled_at' => 'datetime',
         'sent_at' => 'datetime',
         'failed_at' => 'datetime',
