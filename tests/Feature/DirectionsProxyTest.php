@@ -81,8 +81,8 @@ class DirectionsProxyTest extends TestCase
             ->assertOk()
             ->assertExactJson([
                 'available' => true,
-                'distance_meters' => 3900.4,
-                'duration_seconds' => 720.2,
+                'distance_meters' => 3900,
+                'duration_seconds' => 720,
             ]);
 
         Http::assertSent(function (Request $request): bool {

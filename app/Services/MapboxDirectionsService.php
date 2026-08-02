@@ -14,7 +14,7 @@ class MapboxDirectionsService
     private const CACHE_VERSION = 'v1';
 
     /**
-     * @return array{available: true, distance_meters: float, duration_seconds: float}|null
+     * @return array{available: true, distance_meters: int, duration_seconds: int}|null
      */
     public function route(
         float $fromLat,
@@ -97,8 +97,8 @@ class MapboxDirectionsService
 
         $route = [
             'available' => true,
-            'distance_meters' => round((float) $firstRoute['distance'], 1),
-            'duration_seconds' => round((float) $firstRoute['duration'], 1),
+            'distance_meters' => (int) round((float) $firstRoute['distance']),
+            'duration_seconds' => (int) round((float) $firstRoute['duration']),
         ];
         Cache::put(
             $cacheKey,
