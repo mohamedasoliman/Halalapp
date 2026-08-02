@@ -17,6 +17,8 @@ class KiwiSaverContactMessageController extends Controller
             'email' => 'required|email:rfc|max:255',
             'heard_about' => 'required_without:how_did_you_hear|string|max:255',
             'how_did_you_hear' => 'required_without:heard_about|string|max:255',
+            'mailing_list' => 'nullable|boolean',
+            'consent' => 'required|accepted',
         ]);
 
         // Authorization is handled by api_key middleware group (X-API-Key vs APP_KEY)
