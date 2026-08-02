@@ -89,6 +89,7 @@ php artisan test
 - Present the research and outreach plan before any DB write or email send. Never send drafts, resolve verdicts, or classify halal/not halal without the required approval.
 - User information requests must use `requests:request-information`: preview first, report the exact barcode and eligible recipient count, then use `--event='...' --send` only after approval. New events use notification type `information_request`; `photo_request` is a legacy rendering alias.
 - HostGator is for DB/Laravel operations only; perform Open Food Facts and web research locally or from Hetzner.
+- After all ordinary identity sources fail, use the exact-barcode Mustakshif fallback defined in `../../AGENTS.md` before proposing a user information request. Treat it only as identity discovery, use the persistent lookup ledger to prevent repeated placeholder creation, ignore all external verdict fields, and store only validated local images.
 - Daily audit artifacts belong under `Halal Kiwi/Products/Prioritisation_Daily/{YYYY-MM-DD}/` in the Halal Kiwi Google Drive.
 
 ## Deployment Notes
