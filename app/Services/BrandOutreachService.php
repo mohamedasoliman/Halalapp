@@ -391,6 +391,16 @@ class BrandOutreachService
                     : "Outreach batch {$batch->reference} sent.",
             ]);
 
+            if ($batch->kind === 'clarification' && $batch->source_communication_id) {
+                $source = BrandCommunication::query()->lockForUpdate()->findOrFail($batch->source_communication_id);
+                $sourceNote = "Clarification batch {$batch->reference} sent; awaiting manufacturer response.";
+                $source->update([
+                    'processing_status' => 'awaiting_response',
+                    'action_taken' => trim(implode("\n", array_filter([$source->action_taken, $sourceNote]))),
+                    'processed_at' => now(),
+                ]);
+            }
+
             $brand = Brand::query()->lockForUpdate()->findOrFail($batch->brand_id);
             $brandUpdates = ['last_contacted_at' => now()];
             if ($batch->kind !== 'clarification') {

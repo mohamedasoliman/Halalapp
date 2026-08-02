@@ -430,6 +430,9 @@ class BrandOutreachServiceTest extends TestCase
         $this->assertSame(2, $brand->fresh()->follow_up_count);
         $this->assertSame('partial', $brand->fresh()->response);
         $this->assertSame('contacted', $request->fresh()->status);
+        $this->assertSame('awaiting_response', $communication->fresh()->processing_status);
+        $this->assertStringContainsString('awaiting manufacturer response', $communication->fresh()->action_taken);
+        $this->assertNotNull($communication->fresh()->processed_at);
         $this->assertDatabaseHas('brand_communications', [
             'brand_id' => $brand->id,
             'direction' => 'outbound',
