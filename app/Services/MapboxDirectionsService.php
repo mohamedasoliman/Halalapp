@@ -97,8 +97,8 @@ class MapboxDirectionsService
 
         $route = [
             'available' => true,
-            'distance_meters' => (float) $firstRoute['distance'],
-            'duration_seconds' => (float) $firstRoute['duration'],
+            'distance_meters' => round((float) $firstRoute['distance'], 1),
+            'duration_seconds' => round((float) $firstRoute['duration'], 1),
         ];
         Cache::put(
             $cacheKey,
