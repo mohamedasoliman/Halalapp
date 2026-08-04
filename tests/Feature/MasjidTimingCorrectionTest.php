@@ -228,6 +228,98 @@ class MasjidTimingCorrectionTest extends TestCase
         Http::assertSentCount(1);
     }
 
+    public function test_batch_returns_multiple_live_schedules_with_one_area_read(): void
+    {
+        DB::table('masjids')->insert([
+            'Masjid_name' => 'Avondale Islamic Centre',
+            'Address' => '122 Blockhouse Bay Road',
+            'Area_id' => '13',
+            'Area_name' => 'Auckland',
+            'Website' => '16136',
+            'Latitude' => '-36.89',
+            'Longitude' => '174.69',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $readCount = 0;
+
+        Http::fake(function () use (&$readCount) {
+            $readCount++;
+
+            return Http::response([
+                'Success' => 'true',
+                'ResultData' => [
+                    $this->awqatRecord('06:20 AM'),
+                    array_merge($this->awqatRecord('06:10 AM'), [
+                        'MasjidID' => '16136',
+                    ]),
+                ],
+            ]);
+        });
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/masjid/timings/batch', [
+                'masjids' => [
+                    ['masjid_id' => '16135', 'area_id' => '13'],
+                    ['masjid_id' => '16136', 'area_id' => '13'],
+                ],
+            ])
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('data.0.times.fajr', '06:20 AM')
+            ->assertJsonPath('data.1.times.fajr', '06:10 AM')
+            ->assertJsonCount(0, 'unavailable');
+
+        $this->assertSame(1, $readCount);
+    }
+
+    public function test_stale_reads_return_immediately_and_refresh_for_the_next_request(): void
+    {
+        config([
+            'awqat.read_cache_ttl' => 1,
+            'awqat.read_stale_ttl' => 60,
+        ]);
+        $readCount = 0;
+
+        Http::fake(function () use (&$readCount) {
+            $readCount++;
+
+            return Http::response([
+                'Success' => 'true',
+                'ResultData' => [
+                    $this->awqatRecord(
+                        $readCount === 1 ? '06:20 AM' : '06:10 AM'
+                    ),
+                ],
+            ]);
+        });
+
+        $payload = [
+            'masjid_id' => '16135',
+            'area_id' => '13',
+        ];
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/masjid/timings', $payload)
+            ->assertOk()
+            ->assertJsonPath('data.times.fajr', '06:20 AM');
+
+        $this->travel(2)->seconds();
+        $this->withoutDefer();
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/masjid/timings', $payload)
+            ->assertOk()
+            ->assertJsonPath('data.times.fajr', '06:20 AM');
+
+        $this->withHeader('X-API-Key', self::API_KEY)
+            ->postJson('/api/masjid/timings', $payload)
+            ->assertOk()
+            ->assertJsonPath('data.times.fajr', '06:10 AM');
+
+        $this->assertSame(2, $readCount);
+    }
+
     public function test_a_stale_schedule_is_rejected_before_any_write(): void
     {
         Http::fake([

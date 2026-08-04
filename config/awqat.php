@@ -17,6 +17,7 @@ return [
     'timeout' => (int) env('AWQAT_TIMEOUT', 10),
     'cache_store' => env('AWQAT_CACHE_STORE', 'file'),
     'read_cache_ttl' => (int) env('AWQAT_READ_CACHE_TTL', 300),
+    'read_stale_ttl' => (int) env('AWQAT_READ_STALE_TTL', 86400),
     'correction_cache_max_age' => (int) env(
         'AWQAT_CORRECTION_CACHE_MAX_AGE',
         120

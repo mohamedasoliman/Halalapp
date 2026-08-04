@@ -35,6 +35,8 @@ Route::middleware(['api_key', 'throttle:api'])->group(function () {
     Route::post('masjid', [MasjidManagementController::class, 'apishow']);
     Route::post('masjid/timings', [MasjidTimingController::class, 'show'])
         ->middleware('throttle:masjid-timings');
+    Route::post('masjid/timings/batch', [MasjidTimingController::class, 'batch'])
+        ->middleware('throttle:masjid-timings');
     Route::post('masjid/timings/correct', [MasjidTimingController::class, 'correct'])
         ->middleware(['mobile_version', 'throttle:masjid-timing-corrections']);
     Route::get('resturant', [ResturantManagementController::class, 'api']);

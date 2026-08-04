@@ -60,6 +60,26 @@ class AwqatPrayerTimeService
     ): array {
         $cacheKey = $this->cacheKey($areaId);
         $cache = Cache::store((string) config('awqat.cache_store', 'file'));
+
+        // Normal reads use stale-while-revalidate. Once the short freshness
+        // window passes, users still receive the last successful live
+        // schedule immediately while Laravel refreshes it after the response.
+        // Correction requests take the synchronous path below because they
+        // must compare against a sufficiently recent upstream value.
+        if (! $fresh && $maxAgeSeconds === null) {
+            $freshTtl = max(1, (int) config('awqat.read_cache_ttl', 300));
+            $staleTtl = max(
+                $freshTtl + 1,
+                (int) config('awqat.read_stale_ttl', 86400),
+            );
+
+            return $cache->flexible(
+                $cacheKey,
+                [$freshTtl, $staleTtl],
+                fn (): array => $this->fetchArea($areaId),
+            );
+        }
+
         if (! $fresh) {
             $cached = $cache->get($cacheKey);
             if ($this->usableCache($cached, $maxAgeSeconds)) {
@@ -67,6 +87,14 @@ class AwqatPrayerTimeService
             }
         }
 
+        $area = $this->fetchArea($areaId);
+        $this->storeArea($cache, $cacheKey, $area);
+
+        return $area;
+    }
+
+    private function fetchArea(string $areaId): array
+    {
         try {
             $response = Http::acceptJson()
                 ->withUserAgent('HalalKiwi-PrayerTimes/1.0')
@@ -102,12 +130,20 @@ class AwqatPrayerTimeService
             'fetched_at' => now()->timestamp,
             'rows' => $rows,
         ];
-        $ttl = max(0, (int) config('awqat.read_cache_ttl', 300));
-        if ($ttl > 0) {
-            $cache->put($cacheKey, $area, $ttl);
-        }
 
         return $area;
+    }
+
+    private function storeArea(mixed $cache, string $cacheKey, array $area): void
+    {
+        $staleTtl = max(
+            1,
+            (int) config('awqat.read_stale_ttl', 86400),
+        );
+        $cache->putMany([
+            $cacheKey => $area,
+            "illuminate:cache:flexible:created:{$cacheKey}" => now()->timestamp,
+        ], $staleTtl);
     }
 
     public function publicTimes(array $record): array
@@ -284,12 +320,16 @@ class AwqatPrayerTimeService
             if (is_array($row)
                 && (string) ($row['MasjidID'] ?? '') === (string) ($record['MasjidID'] ?? '')) {
                 $cached['rows'][$index] = $record;
+                $staleTtl = max(
+                    1,
+                    (int) config('awqat.read_stale_ttl', 86400),
+                );
                 $cache->put(
                     $cacheKey,
                     $cached,
                     max(
                         1,
-                        (int) config('awqat.read_cache_ttl', 300)
+                        $staleTtl
                             - (now()->timestamp - $cached['fetched_at']),
                     ),
                 );

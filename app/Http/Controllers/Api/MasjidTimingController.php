@@ -6,6 +6,7 @@ use App\Exceptions\AwqatMasjidNotFoundException;
 use App\Exceptions\AwqatUpstreamException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\MasjidTimingCorrectionRequest;
+use App\Http\Requests\Api\MasjidTimingsBatchRequest;
 use App\Http\Requests\Api\MasjidTimingsRequest;
 use App\Models\MasjidModel\Masjid;
 use App\Models\MasjidTimingCorrection;
@@ -16,6 +17,55 @@ use Illuminate\Support\Facades\Log;
 
 class MasjidTimingController extends Controller
 {
+    public function batch(
+        MasjidTimingsBatchRequest $request,
+        AwqatPrayerTimeService $service,
+    ): JsonResponse {
+        $requested = collect($request->validated('masjids'))
+            ->unique(fn (array $item): string => $item['area_id'].'|'.$item['masjid_id'])
+            ->values();
+        $localMasjids = Masjid::query()
+            ->whereIn('Website', $requested->pluck('masjid_id'))
+            ->get()
+            ->keyBy(fn (Masjid $masjid): string => (string) $masjid->Area_id.'|'.(string) $masjid->Website);
+
+        $timings = [];
+        $unavailable = [];
+        foreach ($requested as $item) {
+            $key = $item['area_id'].'|'.$item['masjid_id'];
+            $masjid = $localMasjids->get($key);
+            if ($masjid === null) {
+                $unavailable[] = $item;
+
+                continue;
+            }
+
+            try {
+                $record = $service->current(
+                    (string) $masjid->Area_id,
+                    (string) $masjid->Website,
+                );
+                $timings[] = [
+                    'area_id' => (string) $masjid->Area_id,
+                    'masjid_id' => (string) $masjid->Website,
+                    'times' => $service->publicTimes($record),
+                ];
+            } catch (AwqatMasjidNotFoundException|AwqatUpstreamException $exception) {
+                $unavailable[] = $item;
+                Log::warning('Awqat batch prayer-time read failed.', [
+                    'area_id' => $item['area_id'],
+                    'masjid_id' => $item['masjid_id'],
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        }
+
+        return response()->json([
+            'data' => $timings,
+            'unavailable' => $unavailable,
+        ]);
+    }
+
     public function show(
         MasjidTimingsRequest $request,
         AwqatPrayerTimeService $service,
