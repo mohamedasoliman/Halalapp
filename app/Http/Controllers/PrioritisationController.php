@@ -78,6 +78,7 @@ class PrioritisationController extends Controller
 
                 return response()->json([
                     'already_requested' => true,
+                    'request_id' => $existingRequest->id,
                     'status' => $existingRequest->status,
                     'message' => 'This product has already been requested. You will be notified when we have an update.',
                 ]);
@@ -151,12 +152,15 @@ class PrioritisationController extends Controller
                 'request_id' => $prioRequest->id,
                 'status' => $status,
             ]);
-        } catch (\Exception $e) {
-            Log::error('Prioritisation request failed: '.$e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Prioritisation request failed', [
+                'exception_type' => $e::class,
+            ]);
 
             return response()->json([
-                'message' => 'Request submitted.',
-            ]);
+                'message' => 'We could not save this request. Please try again.',
+                'code' => 'REQUEST_FAILED',
+            ], 503);
         }
     }
 

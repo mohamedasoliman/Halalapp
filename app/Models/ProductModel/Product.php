@@ -23,14 +23,18 @@ class Product extends Model
     public function scopeMatchingBarcode(Builder $query, string $barcode): Builder
     {
         $barcode = ProductBarcode::clean($barcode);
-        $key = ProductBarcode::key($barcode);
+        $canonicalBarcode = ProductBarcode::canonical($barcode);
 
-        return $query->where(function (Builder $query) use ($barcode, $key) {
-            $query->where('Barcode', $barcode);
-            if ($key !== null) {
-                $query->orWhere('barcode_key', $key);
-            }
-        });
+        if (ProductBarcode::isValidGtin($canonicalBarcode)) {
+            return $query->where(
+                'barcode_key',
+                ProductBarcode::key($canonicalBarcode),
+            );
+        }
+
+        // Preserve exact lookup support for historical placeholder or malformed
+        // values without making valid mobile scans use an unindexed OR query.
+        return $query->where('Barcode', $barcode);
     }
 
     protected $casts = [

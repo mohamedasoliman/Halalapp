@@ -75,6 +75,21 @@ class ProductHalalStatusDefaultTest extends TestCase
         ]);
     }
 
+    public function test_prioritisation_failure_is_not_reported_as_success(): void
+    {
+        Schema::drop('prioritisation_requests');
+        $request = PrioritiseRequest::create('/api/prioritise', 'POST', [
+            'barcode' => '1234567890123',
+            'product_name' => 'New Product',
+        ]);
+
+        $response = (new PrioritisationController)->store($request);
+
+        $this->assertSame(503, $response->getStatusCode());
+        $this->assertSame('REQUEST_FAILED', $response->getData(true)['code']);
+        $this->assertFalse($response->getData(true)['message'] === 'Request submitted.');
+    }
+
     public function test_product_model_defaults_to_unreviewed(): void
     {
         $product = Product::create([
