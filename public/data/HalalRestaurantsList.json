@@ -6976,6 +6976,7 @@
     "LOGOURL": "https://mezbaan.nz/assets/nav-logo.png",
     "Certified": "",
     "Tier": "Starter",
+    "membership_tier": "verified",
     "BUSINESS_STATUS": "OPERATIONAL",
     "DESCRIPTION": "You've tried the rest, now experience the flavor.",
     "SERVICE_OPTIONS": [
