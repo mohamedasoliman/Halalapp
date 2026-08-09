@@ -31,6 +31,16 @@ yarn-error.log
 /.vscode
 /.zed
 
+# Production runtime and deployment artifacts
+._*
+.env.pre-*
+*.before-*
+/deploy_backups/
+/deploy_staging/
+/hk_*.php
+/public/data/*.pre-*.json
+/public/downloads/
+
 # Local development only (not for production)
 /database/database.sqlite
 /database/migrations/2024_10_15_000001_create_admins_table.php
