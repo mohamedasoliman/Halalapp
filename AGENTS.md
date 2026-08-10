@@ -59,6 +59,8 @@ php artisan test
 - Use `/admin/outreach` to prepare and review manufacturer email batches.
 - `php artisan brands:outreach --prepare` creates research records and drafts only; it never sends.
 - Plain `php artisan brands:outreach` is preview-only. Queue only explicitly approved IDs with `--queue --batch=ID`.
+- Future approvals must name exact IDs: `php artisan brands:outreach --approve --batch=ID --not-before='YYYY-MM-DD HH:MM' --approval-reference='...'`. This stores approval without sending. `brands:release-approved` is preview-only; the scheduler uses `--release` and revalidates due approvals before queueing.
+- Changed contacts, replies, product verdicts, inactive products, or closed/changed linked requests move a due approval to `review_required`. Return it to draft and obtain fresh explicit approval; never auto-retry it.
 - Keep `OUTREACH_ENABLED=false` until the `products@halalkiwi.com` SMTP path and SPF, DKIM, and DMARC are verified.
 - Sending is throttled through the `outreach` database queue. `sending` and `uncertain` batches are visible but never retryable; reconcile them manually. Failed batches require review before returning them to draft. Do not add automatic SMTP retries.
 - Contact-form-only brands remain manual. Never email placeholder watcher addresses ending in `@halalkiwi.com`.
@@ -87,6 +89,7 @@ php artisan test
   - `prioritise` records are manufacturer-outreach work for existing products.
   - A `silent` request with a later watcher is effectively deliberate because the current API does not promote its type. Include watcher creation timestamps in daily classification.
 - Freeze one complete `Pacific/Auckland` day and retain the request/watcher cutoff throughout the run.
+- Start by previewing `php artisan brands:release-approved`; report approved, due, deferred, and `review_required` batches in chat and in the final daily summary.
 - Present the research and outreach plan before any DB write or email send. Never send drafts, resolve verdicts, or classify halal/not halal without the required approval.
 - User information requests must use `requests:request-information`: preview first, report the exact barcode and eligible recipient count, then use `--event='...' --send` only after approval. New events use notification type `information_request`; `photo_request` is a legacy rendering alias.
 - HostGator is for DB/Laravel operations only; perform Open Food Facts and web research locally or from Hetzner.

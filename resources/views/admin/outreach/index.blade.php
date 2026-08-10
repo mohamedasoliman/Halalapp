@@ -28,6 +28,9 @@
                                         'Contacts needed' => $stats['contacts_needed'],
                                         'Ready requests' => $stats['ready_requests'],
                                         'Drafts' => $stats['drafts'],
+                                        'Approved' => $stats['approved'],
+                                        'Due' => $stats['due_approved'],
+                                        'Review required' => $stats['review_required'],
                                         'Queued' => $stats['queued'],
                                         'Sending' => $stats['sending'],
                                         'Uncertain' => $stats['uncertain'],
@@ -48,20 +51,31 @@
                                         </form>
                                         <a href="{{ route('brands.index', ['research' => 'pending']) }}" class="btn btn-info">Research Missing Contacts</a>
                                         <a href="{{ route('outreach.index') }}" class="btn btn-secondary">All</a>
-                                        @foreach(['draft', 'queued', 'sending', 'uncertain', 'sent', 'failed', 'cancelled'] as $status)
-                                            <a href="{{ route('outreach.index', ['status' => $status]) }}" class="btn btn-secondary">{{ ucfirst($status) }}</a>
+                                        @foreach(['draft', 'approved', 'review_required', 'queued', 'sending', 'uncertain', 'sent', 'failed', 'cancelled'] as $status)
+                                            <a href="{{ route('outreach.index', ['status' => $status]) }}" class="btn btn-secondary">{{ ucfirst(str_replace('_', ' ', $status)) }}</a>
                                         @endforeach
                                     </div>
                                 </div>
 
-                                <form id="queue-form" action="{{ route('outreach.queue') }}" method="POST" onsubmit="return confirm('Queue the selected, reviewed manufacturer emails?')">
+                                <form id="queue-form" action="{{ route('outreach.queue') }}" method="POST">
                                     @csrf
                                 </form>
 
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5>Outreach Batches</h5>
-                                        <button type="submit" form="queue-form" class="btn btn-success" {{ $outreachEnabled ? '' : 'disabled' }}>Queue Selected Drafts</button>
+                                        <div class="d-flex align-items-end flex-wrap outreach-actions">
+                                            <div>
+                                                <label for="not-before" class="mb-1"><strong>Scheduled release ({{ $outreachTimezone }})</strong></label>
+                                                <input id="not-before" type="datetime-local" name="not_before" value="{{ old('not_before', $defaultNotBefore) }}" form="queue-form" class="form-control">
+                                            </div>
+                                            <div>
+                                                <label for="approval-reference" class="mb-1"><strong>Approval reference</strong></label>
+                                                <input id="approval-reference" type="text" name="approval_reference" value="{{ old('approval_reference') }}" form="queue-form" class="form-control" maxlength="500" placeholder="e.g. 7 Aug flow approved in chat">
+                                            </div>
+                                            <button type="submit" form="queue-form" class="btn btn-outline-success" formaction="{{ route('outreach.approve') }}" onclick="return confirm('Durably approve the selected drafts for automatic release at this time? Nothing will be sent now.')">Approve for Later</button>
+                                            <button type="submit" form="queue-form" class="btn btn-success" onclick="return confirm('Queue the selected, reviewed manufacturer emails now?')" {{ $outreachEnabled ? '' : 'disabled' }}>Queue Now</button>
+                                        </div>
                                     </div>
                                     <div class="card-block">
                                         <div class="table-responsive">
@@ -104,19 +118,21 @@
                                                             <td>{{ ucfirst(str_replace('_', ' ', $batch->kind)) }}{{ $batch->follow_up_number ? ' #'.$batch->follow_up_number : '' }}</td>
                                                             <td><span class="badge badge-{{ $batch->status }}">{{ ucfirst($batch->status) }}</span></td>
                                                             <td>
-                                                                @if($batch->sent_at) Sent {{ $batch->sent_at->format('Y-m-d H:i') }}
+                                                                @if($batch->sent_at) Sent {{ $batch->sent_at->timezone($outreachTimezone)->format('Y-m-d H:i T') }}
                                                                 @elseif($batch->scheduled_at) Scheduled {{ $batch->scheduled_at->format('Y-m-d H:i') }}
+                                                                @elseif($batch->not_before_at) Approved for {{ $batch->not_before_at->timezone($outreachTimezone)->format('Y-m-d H:i T') }}
                                                                 @else -
                                                                 @endif
+                                                                @if($batch->approval_reference)<div class="mt-1"><small>Approval: {{ $batch->approval_reference }}</small></div>@endif
                                                                 @if($batch->error)<div class="text-danger mt-1">{{ $batch->error }}</div>@endif
                                                             </td>
                                                             <td>
-                                                                @if(in_array($batch->status, ['draft', 'queued'], true))
+                                                                @if(in_array($batch->status, ['draft', 'approved', 'queued'], true))
                                                                     <form action="{{ route('outreach.cancel', $batch) }}" method="POST" onsubmit="return confirm('Cancel this outreach batch?')">
                                                                         @csrf
                                                                         <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
                                                                     </form>
-                                                                @elseif($batch->status === 'failed')
+                                                                @elseif(in_array($batch->status, ['failed', 'review_required'], true))
                                                                     <form action="{{ route('outreach.retry', $batch) }}" method="POST">
                                                                         @csrf
                                                                         <button type="submit" class="btn btn-sm btn-warning">Return to Draft</button>
@@ -147,6 +163,8 @@
     .outreach-actions { gap: 8px; }
     .badge { padding: 4px 8px; border-radius: 4px; color: #fff; }
     .badge-draft { background: #6c757d; }
+    .badge-approved { background: #6f42c1; }
+    .badge-review_required { background: #dc3545; }
     .badge-queued { background: #17a2b8; }
     .badge-sending { background: #0069d9; }
     .badge-uncertain { background: #fd7e14; }

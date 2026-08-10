@@ -14,6 +14,7 @@ use App\Models\RequestWatcher;
 use App\Services\BrandOutreachService;
 use App\Services\RequestNotificationService;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
@@ -195,6 +196,142 @@ class BrandOutreachServiceTest extends TestCase
         app(BrandOutreachService::class)->queueDrafts(collect([
             $this->createBatch($brand, 'HK-IDENTITY-1'),
         ]));
+    }
+
+    public function test_future_approval_is_durable_and_does_not_queue_immediately(): void
+    {
+        Queue::fake();
+        $this->travelTo(Carbon::parse('2026-08-10 09:00:00', 'Pacific/Auckland'));
+        [$brand, $request, $batch] = $this->createSchedulableBatch('HK-SCHEDULED-1');
+        $notBefore = now('Pacific/Auckland')->addDay();
+
+        $approved = app(BrandOutreachService::class)->approveScheduledBatches(
+            collect([$batch]),
+            $notBefore,
+            'prioritisation:2026-08-07:approved-in-chat',
+        );
+
+        $this->assertSame([$batch->id], $approved);
+        $this->assertSame('approved', $batch->fresh()->status);
+        $this->assertTrue($batch->fresh()->not_before_at->equalTo($notBefore));
+        $this->assertSame('prioritisation:2026-08-07:approved-in-chat', $batch->fresh()->approval_reference);
+        $this->assertNotNull($batch->fresh()->approved_at);
+        $this->assertSame('ready_for_outreach', $request->fresh()->status);
+        Queue::assertNothingPushed();
+    }
+
+    public function test_due_approval_revalidates_and_queues_exactly_once(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $this->travelTo(Carbon::parse('2026-08-10 09:00:00', 'Pacific/Auckland'));
+        [, , $batch] = $this->createSchedulableBatch('HK-SCHEDULED-2');
+        $service = app(BrandOutreachService::class);
+        $service->approveScheduledBatches(
+            collect([$batch]),
+            now('Pacific/Auckland')->addHour(),
+            'prioritisation:2026-08-07:approved-in-chat',
+        );
+
+        $this->travel(61)->minutes();
+        $first = $service->releaseScheduledApprovals();
+        $second = $service->releaseScheduledApprovals();
+
+        $this->assertSame([$batch->id], $first['queued']);
+        $this->assertSame([], $second['queued']);
+        $this->assertSame('queued', $batch->fresh()->status);
+        Queue::assertPushed(SendBrandOutreachBatch::class, 1);
+    }
+
+    public function test_due_approval_requires_review_when_recipient_changes(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $this->travelTo(Carbon::parse('2026-08-10 09:00:00', 'Pacific/Auckland'));
+        [$brand, , $batch] = $this->createSchedulableBatch('HK-SCHEDULED-3');
+        $service = app(BrandOutreachService::class);
+        $service->approveScheduledBatches(
+            collect([$batch]),
+            now('Pacific/Auckland')->addHour(),
+            'prioritisation:2026-08-07:approved-in-chat',
+        );
+        $brand->update(['email' => 'new-contact@example.com']);
+
+        $this->travel(61)->minutes();
+        $result = $service->releaseScheduledApprovals();
+
+        $this->assertArrayHasKey($batch->id, $result['review_required']);
+        $this->assertSame('review_required', $batch->fresh()->status);
+        $this->assertStringContainsString('recipient changed', $batch->fresh()->error);
+        Queue::assertNothingPushed();
+    }
+
+    public function test_due_approval_requires_review_after_a_manufacturer_reply(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $this->travelTo(Carbon::parse('2026-08-10 09:00:00', 'Pacific/Auckland'));
+        [$brand, , $batch] = $this->createSchedulableBatch('HK-SCHEDULED-4');
+        $service = app(BrandOutreachService::class);
+        $service->approveScheduledBatches(
+            collect([$batch]),
+            now('Pacific/Auckland')->addHour(),
+            'prioritisation:2026-08-07:approved-in-chat',
+        );
+        $this->travel(10)->minutes();
+        BrandCommunication::create([
+            'brand_id' => $brand->id,
+            'direction' => 'inbound',
+            'subject' => 'Re: product inquiry',
+        ]);
+
+        $this->travel(51)->minutes();
+        $service->releaseScheduledApprovals();
+
+        $this->assertSame('review_required', $batch->fresh()->status);
+        $this->assertStringContainsString('reply arrived', $batch->fresh()->error);
+        Queue::assertNothingPushed();
+    }
+
+    public function test_due_approval_requires_review_when_product_is_no_longer_unreviewed(): void
+    {
+        Queue::fake();
+        config(['outreach.enabled' => true]);
+        $this->travelTo(Carbon::parse('2026-08-10 09:00:00', 'Pacific/Auckland'));
+        [, , $batch] = $this->createSchedulableBatch('HK-SCHEDULED-5');
+        $service = app(BrandOutreachService::class);
+        $service->approveScheduledBatches(
+            collect([$batch]),
+            now('Pacific/Auckland')->addHour(),
+            'prioritisation:2026-08-07:approved-in-chat',
+        );
+        Product::where('Barcode', '9400000000001')->update(['halal_status' => 0]);
+
+        $this->travel(61)->minutes();
+        $service->releaseScheduledApprovals();
+
+        $this->assertSame('review_required', $batch->fresh()->status);
+        $this->assertStringContainsString('no longer active and unreviewed', $batch->fresh()->error);
+        Queue::assertNothingPushed();
+    }
+
+    public function test_scheduled_approval_command_requires_exact_batches_and_keeps_email_unsent(): void
+    {
+        Queue::fake();
+        Mail::fake();
+        $this->travelTo(Carbon::parse('2026-08-10 09:00:00', 'Pacific/Auckland'));
+        [, , $batch] = $this->createSchedulableBatch('HK-SCHEDULED-COMMAND');
+
+        $this->artisan('brands:outreach', [
+            '--approve' => true,
+            '--batch' => [(string) $batch->id],
+            '--not-before' => '2026-08-11 09:00',
+            '--approval-reference' => 'prioritisation:2026-08-07:approved-in-chat',
+        ])->assertSuccessful();
+
+        $this->assertSame('approved', $batch->fresh()->status);
+        Queue::assertNothingPushed();
+        Mail::assertNothingSent();
     }
 
     public function test_clarification_draft_is_idempotent_and_requires_strict_source_barcode_evidence(): void
@@ -602,6 +739,26 @@ class BrandOutreachServiceTest extends TestCase
         ]);
     }
 
+    private function createSchedulableBatch(string $reference): array
+    {
+        $brand = Brand::create([
+            'name' => $reference.' Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+        Product::create([
+            'product_name' => 'Test product',
+            'Barcode' => '9400000000001',
+            'status' => 1,
+            'halal_status' => 2,
+        ]);
+        $request = $this->createRequest($brand->name, '9400000000001', 'Test product', 'ready_for_outreach');
+        $batch = $this->createBatch($brand, $reference, 'draft', [$request->id]);
+
+        return [$brand, $request, $batch];
+    }
+
     private function createTables(): void
     {
         Schema::create('brands', function (Blueprint $table) {
@@ -641,6 +798,7 @@ class BrandOutreachServiceTest extends TestCase
             $table->id();
             $table->string('product_name');
             $table->string('Barcode', 20);
+            $table->tinyInteger('status')->default(1);
             $table->tinyInteger('halal_status')->default(2);
             $table->softDeletes();
             $table->timestamps();
@@ -678,6 +836,10 @@ class BrandOutreachServiceTest extends TestCase
             $table->longText('message_body')->nullable();
             $table->json('products');
             $table->json('request_ids');
+            $table->timestamp('approved_at')->nullable();
+            $table->timestamp('not_before_at')->nullable();
+            $table->string('approval_reference', 500)->nullable();
+            $table->timestamp('review_required_at')->nullable();
             $table->unsignedBigInteger('source_communication_id')->nullable();
             $table->string('event_reference', 500)->nullable();
             $table->char('event_key', 64)->nullable()->unique();

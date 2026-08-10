@@ -181,6 +181,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'admin_session
     Route::get('outreach', [BrandOutreachController::class, 'index'])->name('outreach.index');
     Route::post('outreach/prepare', [BrandOutreachController::class, 'prepare'])->name('outreach.prepare');
     Route::post('outreach/queue', [BrandOutreachController::class, 'queue'])->name('outreach.queue');
+    Route::post('outreach/approve', [BrandOutreachController::class, 'approve'])->name('outreach.approve');
     Route::post('outreach/{batch}/cancel', [BrandOutreachController::class, 'cancel'])->name('outreach.cancel');
     Route::post('outreach/{batch}/retry', [BrandOutreachController::class, 'retry'])->name('outreach.retry');
 

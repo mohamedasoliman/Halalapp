@@ -19,6 +19,9 @@ Schedule::command('brands:follow-up --prepare')
     ->withoutOverlapping();
 
 if (config('outreach.enabled')) {
+    Schedule::command('brands:release-approved --release')
+        ->everyMinute()
+        ->withoutOverlapping();
     Schedule::command('queue:work database --queue=outreach --stop-when-empty --max-time=50 --tries=1')
         ->everyMinute()
         ->withoutOverlapping();

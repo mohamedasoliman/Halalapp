@@ -8,6 +8,7 @@ use App\Models\BrandCommunication;
 use App\Models\BrandOutreachBatch;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
+use App\Support\ProductBarcode;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -92,7 +93,7 @@ class BrandOutreachService
             ->keyBy(fn (Brand $brand) => $this->normalizeBrandName($brand->name));
 
         $openRequestIds = BrandOutreachBatch::query()
-            ->whereIn('status', ['draft', 'queued', 'sending', 'uncertain'])
+            ->whereIn('status', ['draft', 'approved', 'review_required', 'queued', 'sending', 'uncertain'])
             ->get(['request_ids'])
             ->flatMap(fn (BrandOutreachBatch $batch) => $batch->request_ids ?? [])
             ->map(fn ($id) => (int) $id)
@@ -138,7 +139,7 @@ class BrandOutreachService
 
             $hasOpenFollowUp = $brand->outreachBatches()
                 ->where('kind', 'follow_up')
-                ->whereIn('status', ['draft', 'queued', 'sending', 'uncertain'])
+                ->whereIn('status', ['draft', 'approved', 'review_required', 'queued', 'sending', 'uncertain'])
                 ->exists();
             if ($hasOpenFollowUp) {
                 continue;
@@ -280,8 +281,124 @@ class BrandOutreachService
         }
     }
 
-    public function queueDrafts(Collection $batches, ?int $limit = null): array
+    public function approveScheduledBatches(Collection $batches, Carbon $notBefore, string $approvalReference): array
     {
+        $approvalReference = trim($approvalReference);
+        if ($approvalReference === '' || mb_strlen($approvalReference) > 500) {
+            throw new InvalidArgumentException('An approval reference of at most 500 characters is required.');
+        }
+        if (! $notBefore->isFuture()) {
+            throw new InvalidArgumentException('The scheduled release time must be in the future.');
+        }
+
+        return DB::transaction(function () use ($batches, $notBefore, $approvalReference) {
+            $batchIds = $batches->pluck('id')->map(fn ($id) => (int) $id)->unique()->values();
+            $locked = BrandOutreachBatch::with('brand')
+                ->whereIn('id', $batchIds)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+            if ($locked->count() !== $batchIds->count()) {
+                throw new LogicException('One or more selected outreach batches no longer exist.');
+            }
+
+            foreach ($batchIds as $batchId) {
+                $batch = $locked->get($batchId);
+                if ($batch->status === 'approved') {
+                    $sameApproval = $batch->not_before_at?->equalTo($notBefore)
+                        && hash_equals((string) $batch->approval_reference, $approvalReference);
+                    if (! $sameApproval) {
+                        throw new LogicException("Batch {$batch->reference} already has a different scheduled approval. Cancel or return it to draft before changing it.");
+                    }
+
+                    continue;
+                }
+                if ($batch->status !== 'draft') {
+                    throw new LogicException("Batch {$batch->reference} is {$batch->status}; only reviewed drafts can receive a scheduled approval.");
+                }
+                if ($reason = $this->scheduledApprovalReviewReason($batch, false)) {
+                    throw new LogicException("Batch {$batch->reference} cannot be approved: {$reason}");
+                }
+            }
+
+            foreach ($batchIds as $batchId) {
+                $batch = $locked->get($batchId);
+                if ($batch->status === 'approved') {
+                    continue;
+                }
+                $batch->update([
+                    'status' => 'approved',
+                    'recipient_email' => strtolower(trim((string) $batch->brand->email)),
+                    'approved_at' => now(),
+                    'not_before_at' => $notBefore,
+                    'approval_reference' => $approvalReference,
+                    'review_required_at' => null,
+                    'scheduled_at' => null,
+                    'failed_at' => null,
+                    'error' => null,
+                ]);
+            }
+
+            return $batchIds->all();
+        });
+    }
+
+    public function releaseScheduledApprovals(?int $limit = null): array
+    {
+        if (! config('outreach.enabled')) {
+            throw new LogicException('Manufacturer outreach is disabled. Due approvals remain held until outreach is enabled.');
+        }
+
+        $this->assertDeliveryConfiguration();
+
+        $due = BrandOutreachBatch::with('brand')
+            ->where('status', 'approved')
+            ->whereNotNull('not_before_at')
+            ->where('not_before_at', '<=', now())
+            ->orderBy('not_before_at')
+            ->orderBy('id')
+            ->get();
+        $eligible = collect();
+        $reviewRequired = [];
+
+        foreach ($due as $batch) {
+            if ($reason = $this->scheduledApprovalReviewReason($batch, true)) {
+                if ($this->markScheduledApprovalForReview($batch, $reason)) {
+                    $reviewRequired[$batch->id] = $reason;
+                }
+
+                continue;
+            }
+
+            $eligible->push($batch);
+        }
+
+        $queued = $this->queueDrafts($eligible, $limit, 'approved');
+
+        foreach ($eligible->whereNotIn('id', $queued) as $batch) {
+            $batch->refresh();
+            if ($batch->status === 'review_required') {
+                $reviewRequired[$batch->id] = (string) $batch->error;
+            }
+        }
+
+        return [
+            'due' => $due->count(),
+            'queued' => $queued,
+            'review_required' => $reviewRequired,
+            'deferred' => BrandOutreachBatch::query()
+                ->whereIn('id', $due->pluck('id'))
+                ->where('status', 'approved')
+                ->count(),
+        ];
+    }
+
+    public function queueDrafts(Collection $batches, ?int $limit = null, string $requiredStatus = 'draft'): array
+    {
+        if (! in_array($requiredStatus, ['draft', 'approved'], true)) {
+            throw new InvalidArgumentException('Only draft or approved outreach batches can be queued.');
+        }
         if (! config('outreach.enabled')) {
             throw new LogicException('Manufacturer outreach is disabled. Verify SMTP, SPF, DKIM and DMARC, then set OUTREACH_ENABLED=true.');
         }
@@ -307,13 +424,23 @@ class BrandOutreachService
         $scheduledAt = now();
         $queued = [];
 
-        foreach ($batches->where('status', 'draft') as $batch) {
+        foreach ($batches->where('status', $requiredStatus) as $batch) {
             if (count($queued) >= $capacity
                 || ! $scheduledAt->copy()->timezone($timezone)->isSameDay($localDay)) {
                 break;
             }
 
-            $batch->loadMissing('brand');
+            $batch = BrandOutreachBatch::with('brand')->find($batch->id);
+            if (! $batch || $batch->status !== $requiredStatus) {
+                continue;
+            }
+            if ($requiredStatus === 'approved') {
+                if ($reason = $this->scheduledApprovalReviewReason($batch, true)) {
+                    $this->markScheduledApprovalForReview($batch, $reason);
+
+                    continue;
+                }
+            }
             if ($batch->kind === 'clarification') {
                 $this->assertClarificationReadyForQueue($batch);
             }
@@ -323,13 +450,22 @@ class BrandOutreachService
                 continue;
             }
 
-            $batch->update([
+            $updates = [
                 'status' => 'queued',
-                'recipient_email' => $batch->brand->email,
                 'scheduled_at' => $scheduledAt,
                 'failed_at' => null,
                 'error' => null,
-            ]);
+            ];
+            if ($requiredStatus === 'draft') {
+                $updates['recipient_email'] = strtolower(trim((string) $batch->brand->email));
+            }
+            $claimed = BrandOutreachBatch::query()
+                ->whereKey($batch->id)
+                ->where('status', $requiredStatus)
+                ->update($updates);
+            if ($claimed !== 1) {
+                continue;
+            }
 
             SendBrandOutreachBatch::dispatch($batch->id)
                 ->onConnection(config('outreach.queue_connection', 'database'))
@@ -589,6 +725,113 @@ class BrandOutreachService
         if (! $same) {
             throw new LogicException('This clarification event reference already exists with different content. Use the existing batch or choose a new stable event reference.');
         }
+    }
+
+    private function scheduledApprovalReviewReason(BrandOutreachBatch $batch, bool $isRelease): ?string
+    {
+        $batch->loadMissing('brand');
+        $brand = $batch->brand;
+        if (! $brand || ! $this->hasVerifiedEmail($brand)) {
+            return 'the brand no longer has a verified email contact';
+        }
+        if ($brand->outreach_paused_at !== null) {
+            return 'manufacturer outreach is paused for this brand';
+        }
+        if (strtolower(trim((string) $batch->recipient_email)) !== strtolower(trim((string) $brand->email))) {
+            return 'the verified recipient changed after the draft was reviewed';
+        }
+        if ($batch->kind !== 'clarification' && $brand->response !== null) {
+            return 'the brand has supplied a response since this outreach was prepared';
+        }
+
+        if ($batch->kind === 'clarification') {
+            try {
+                $this->assertClarificationReadyForQueue($batch);
+            } catch (LogicException $exception) {
+                return $exception->getMessage();
+            }
+        }
+
+        if ($isRelease) {
+            if (! $batch->approved_at || ! $batch->not_before_at || trim((string) $batch->approval_reference) === '') {
+                return 'the durable approval record is incomplete';
+            }
+            if ($batch->not_before_at->isFuture()) {
+                return 'the approved release time has not arrived';
+            }
+            if ($brand->last_contacted_at?->greaterThanOrEqualTo($batch->approved_at)) {
+                return 'the brand was contacted again after this batch was approved';
+            }
+            if (BrandCommunication::query()
+                ->where('brand_id', $batch->brand_id)
+                ->where('direction', 'inbound')
+                ->when($batch->source_communication_id, fn ($query) => $query->where('id', '!=', $batch->source_communication_id))
+                ->where('created_at', '>=', $batch->approved_at)
+                ->exists()) {
+                return 'a manufacturer reply arrived after this batch was approved';
+            }
+        }
+
+        $barcodes = collect($batch->products ?? [])
+            ->pluck('barcode')
+            ->map(fn ($barcode) => trim((string) $barcode))
+            ->uniqueStrict()
+            ->values();
+        if ($barcodes->isEmpty() || $barcodes->contains(fn (string $barcode) => preg_match('/^\d{8,14}$/D', $barcode) !== 1)) {
+            return 'the batch does not contain only exact 8-14 digit product barcodes';
+        }
+
+        $eligibleProducts = Product::query()
+            ->whereIn('Barcode', $barcodes->all())
+            ->where('status', 1)
+            ->where('halal_status', 2)
+            ->pluck('Barcode')
+            ->map(fn ($barcode) => (string) $barcode)
+            ->uniqueStrict();
+        $ineligibleBarcodes = $barcodes->reject(fn (string $barcode) => $eligibleProducts->containsStrict($barcode));
+        if ($ineligibleBarcodes->isNotEmpty()) {
+            return 'product identity/status changed or is no longer active and unreviewed for barcode(s): '.$ineligibleBarcodes->implode(', ');
+        }
+
+        $requestIds = collect($batch->request_ids ?? [])->map(fn ($id) => (int) $id)->filter()->unique()->values();
+        if ($batch->kind !== 'clarification' && $requestIds->isEmpty()) {
+            return 'the batch has no linked prioritisation requests';
+        }
+        if ($requestIds->isNotEmpty()) {
+            $requests = PrioritisationRequest::query()->whereIn('id', $requestIds)->get(['id', 'barcode', 'brand_name', 'status']);
+            $activeRequestIds = $requests
+                ->whereNotIn('status', ['resolved', 'dead_end'])
+                ->filter(function (PrioritisationRequest $request) use ($barcodes, $brand) {
+                    $requestKey = ProductBarcode::key((string) $request->barcode);
+
+                    return $requestKey !== null
+                        && $this->normalizeBrandName($request->brand_name) === $this->normalizeBrandName($brand->name)
+                        && $barcodes->contains(
+                            fn (string $barcode) => ProductBarcode::key($barcode) === $requestKey,
+                        );
+                })
+                ->pluck('id')
+                ->map(fn ($id) => (int) $id)
+                ->unique();
+            $ineligibleRequestIds = $requestIds->diff($activeRequestIds);
+            if ($ineligibleRequestIds->isNotEmpty()) {
+                return 'linked prioritisation request(s) were resolved, closed, removed, or changed barcode: '.$ineligibleRequestIds->implode(', ');
+            }
+        }
+
+        return null;
+    }
+
+    private function markScheduledApprovalForReview(BrandOutreachBatch $batch, string $reason): bool
+    {
+        return BrandOutreachBatch::query()
+            ->whereKey($batch->id)
+            ->where('status', 'approved')
+            ->update([
+                'status' => 'review_required',
+                'review_required_at' => now(),
+                'error' => $reason,
+            ]) === 1;
     }
 
     private function assertClarificationReadyForQueue(BrandOutreachBatch $batch): void
