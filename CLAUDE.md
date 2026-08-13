@@ -119,6 +119,14 @@ All return JSON 422 responses on validation failure (overridden `failedValidatio
 
 ### Global Helpers
 
+### App Support Safety
+
+- The authoritative procedure is **Flow: Check App Support Emails** in `../../AGENTS.md`.
+- App support is limited to `appsupport@halalkiwi.com` and the `support_*` tables. Proposed handoffs and linked IDs are metadata only and may not mutate product, prioritisation, manufacturer, directory, or outreach records. Mailbox ingestion may classify a message as the audited internal notification only when authenticated sender/envelope, deterministic Message-ID/source-message ID, marker and reference match one stored app submission, plus UUID when the original has one.
+- `support:record-email` previews by default and never changes mailbox files or flags. The `/admin/support` queue keeps private attachments, triage history, drafts, and delivery audits; attachment downloads/forwarding remain disabled until audited safety review is implemented. Attachment intake enforces configured per-requester/global quotas and a free-disk guard; there is no automatic purge without a separately approved closed-case retention policy that preserves audit records.
+- Customer replies require explicit approval and the dedicated `support` SMTP transport authenticated as `appsupport@halalkiwi.com`; `SUPPORT_MAIL_ENABLED` defaults to false. Never fall back to manufacturer outreach credentials, never auto-retry `sending` or `uncertain` delivery attempts, and reconcile them only through the audited action after any active sending lease expires.
+- Never reply directly from webmail; use the `/admin/support` draft, approval, and delivery-audit path.
+
 Custom helpers are autoloaded from `app/Helpers/`:
 - `CustomHelper.php` - Role-related functions (`getLoginUserRoleName()`, `getRoleNameBYId()`)
 - `Helper.php` - Additional utility functions

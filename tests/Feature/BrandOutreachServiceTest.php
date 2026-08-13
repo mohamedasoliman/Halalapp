@@ -213,7 +213,10 @@ class BrandOutreachServiceTest extends TestCase
 
         $this->assertSame([$batch->id], $approved);
         $this->assertSame('approved', $batch->fresh()->status);
-        $this->assertTrue($batch->fresh()->not_before_at->equalTo($notBefore));
+        $this->assertSame(
+            '2026-08-10 21:00:00',
+            DB::table('brand_outreach_batches')->where('id', $batch->id)->value('not_before_at'),
+        );
         $this->assertSame('prioritisation:2026-08-07:approved-in-chat', $batch->fresh()->approval_reference);
         $this->assertNotNull($batch->fresh()->approved_at);
         $this->assertSame('ready_for_outreach', $request->fresh()->status);

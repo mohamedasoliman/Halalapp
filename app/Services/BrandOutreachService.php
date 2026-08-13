@@ -291,7 +291,12 @@ class BrandOutreachService
             throw new InvalidArgumentException('The scheduled release time must be in the future.');
         }
 
-        return DB::transaction(function () use ($batches, $notBefore, $approvalReference) {
+        // Database timestamps and the scheduler run in UTC. Carbon retains the
+        // input timezone when formatted for storage, so persist the equivalent
+        // UTC instant rather than the Pacific/Auckland wall-clock value.
+        $notBeforeUtc = $notBefore->copy()->utc();
+
+        return DB::transaction(function () use ($batches, $notBeforeUtc, $approvalReference) {
             $batchIds = $batches->pluck('id')->map(fn ($id) => (int) $id)->unique()->values();
             $locked = BrandOutreachBatch::with('brand')
                 ->whereIn('id', $batchIds)
@@ -306,7 +311,7 @@ class BrandOutreachService
             foreach ($batchIds as $batchId) {
                 $batch = $locked->get($batchId);
                 if ($batch->status === 'approved') {
-                    $sameApproval = $batch->not_before_at?->equalTo($notBefore)
+                    $sameApproval = $batch->not_before_at?->equalTo($notBeforeUtc)
                         && hash_equals((string) $batch->approval_reference, $approvalReference);
                     if (! $sameApproval) {
                         throw new LogicException("Batch {$batch->reference} already has a different scheduled approval. Cancel or return it to draft before changing it.");
@@ -331,7 +336,7 @@ class BrandOutreachService
                     'status' => 'approved',
                     'recipient_email' => strtolower(trim((string) $batch->brand->email)),
                     'approved_at' => now(),
-                    'not_before_at' => $notBefore,
+                    'not_before_at' => $notBeforeUtc,
                     'approval_reference' => $approvalReference,
                     'review_required_at' => null,
                     'scheduled_at' => null,

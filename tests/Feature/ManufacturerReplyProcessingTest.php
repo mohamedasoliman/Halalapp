@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Mail\UserNotificationEmail;
 use App\Models\Brand;
 use App\Models\BrandCommunication;
+use App\Models\BrandCommunicationBarcodeDisposition;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
 use App\Models\RequestNotificationDelivery;
 use App\Models\RequestWatcher;
+use App\Services\BrandCommunicationDispositionService;
 use App\Services\InboundBrandCommunicationService;
 use App\Services\ProductResolutionService;
 use App\Services\RequestNotificationService;
@@ -69,6 +71,35 @@ class ManufacturerReplyProcessingTest extends TestCase
         $this->assertSame(1, BrandCommunication::count());
         $this->assertSame('<abc.123@example.com>', $first->email_message_id);
         $this->assertSame('pending_review', $first->processing_status);
+        $this->assertDatabaseHas('brand_communication_barcode_dispositions', [
+            'brand_communication_id' => $first->id,
+            'barcode' => '9400000000001',
+            'disposition' => 'pending_review',
+        ]);
+    }
+
+    public function test_duplicate_message_id_with_a_different_scope_is_rejected(): void
+    {
+        $brand = Brand::create(['name' => 'Conflicting Reply Brand']);
+        $service = app(InboundBrandCommunicationService::class);
+        $service->record(
+            $brand,
+            '<same-message@example.com>',
+            'First scope',
+            'First delivery.',
+            ['9400000000001'],
+        );
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('different brand or exact-barcode scope');
+
+        $service->record(
+            $brand,
+            '<same-message@example.com>',
+            'Changed scope',
+            'Conflicting duplicate delivery.',
+            ['9400000000002'],
+        );
     }
 
     public function test_recipient_union_is_valid_case_insensitive_and_excludes_placeholders(): void
@@ -140,6 +171,13 @@ class ManufacturerReplyProcessingTest extends TestCase
         $this->assertStringContainsString('Proof: /proofs/evidence.txt.', $request->fresh()->notes);
         $this->assertSame('applied', $communication->fresh()->processing_status);
         $this->assertNotNull($communication->fresh()->processed_at);
+        $this->assertDatabaseHas('brand_communication_barcode_dispositions', [
+            'brand_communication_id' => $communication->id,
+            'barcode' => $product->Barcode,
+            'disposition' => 'applied',
+            'resolved_status' => 0,
+            'product_id' => $product->id,
+        ]);
         $this->assertSame(2, RequestNotificationDelivery::where('status', 'sent')->count());
         Mail::assertSent(UserNotificationEmail::class, 2);
         Mail::assertSent(UserNotificationEmail::class, function (UserNotificationEmail $mail) {
@@ -148,6 +186,96 @@ class ManufacturerReplyProcessingTest extends TestCase
             return str_contains($body, 'completed its review')
                 && ! str_contains($body, 'received confirmation');
         });
+    }
+
+    public function test_multi_barcode_reply_is_partial_until_every_barcode_has_an_outcome(): void
+    {
+        Mail::fake();
+        $brand = Brand::create(['name' => 'Multi Product Brand']);
+        $barcodes = ['9400000000020', '9400000000021'];
+        $communication = app(InboundBrandCommunicationService::class)->record(
+            $brand,
+            '<multi-product@example.com>',
+            'Two product response',
+            'The reply covers two exact products.',
+            $barcodes,
+            '/proofs/multi-product.txt',
+        );
+        foreach ($barcodes as $index => $barcode) {
+            Product::create([
+                'Barcode' => $barcode,
+                'product_name' => 'Multi product '.($index + 1),
+                'halal_status' => '2',
+            ]);
+            PrioritisationRequest::create([
+                'barcode' => $barcode,
+                'status' => 'ready_for_review',
+            ]);
+        }
+
+        app(ProductResolutionService::class)->resolve(
+            $barcodes[0],
+            '0',
+            brandCommunicationId: $communication->id,
+            notify: false,
+        );
+
+        $this->assertSame('partially_processed', $communication->fresh()->processing_status);
+        $this->assertNull($communication->fresh()->processed_at);
+        $this->assertDatabaseHas('brand_communication_barcode_dispositions', [
+            'brand_communication_id' => $communication->id,
+            'barcode' => $barcodes[1],
+            'disposition' => 'pending_review',
+        ]);
+
+        app(ProductResolutionService::class)->resolve(
+            $barcodes[1],
+            '1',
+            brandCommunicationId: $communication->id,
+            notify: false,
+        );
+
+        $this->assertSame('applied', $communication->fresh()->processing_status);
+        $this->assertNotNull($communication->fresh()->processed_at);
+        $this->assertSame(
+            2,
+            BrandCommunicationBarcodeDisposition::where('disposition', 'applied')->count(),
+        );
+    }
+
+    public function test_non_verdict_barcode_outcome_can_complete_a_mixed_reply(): void
+    {
+        $brand = Brand::create(['name' => 'Clarification Brand']);
+        $barcodes = ['9400000000030', '9400000000031'];
+        $communication = app(InboundBrandCommunicationService::class)->record(
+            $brand,
+            '<mixed-outcomes@example.com>',
+            'Mixed response',
+            'One answer and one question.',
+            $barcodes,
+            '/proofs/mixed.txt',
+        );
+        $product = Product::create([
+            'Barcode' => $barcodes[0],
+            'product_name' => 'Answered product',
+            'halal_status' => '2',
+        ]);
+
+        app(ProductResolutionService::class)->resolve(
+            $product->Barcode,
+            '0',
+            brandCommunicationId: $communication->id,
+            notify: false,
+        );
+        app(BrandCommunicationDispositionService::class)->recordNonVerdict(
+            $communication->id,
+            $barcodes[1],
+            'needs_clarification',
+            'Manufacturer must identify the flavour source.',
+        );
+
+        $this->assertSame('processed', $communication->fresh()->processing_status);
+        $this->assertNotNull($communication->fresh()->processed_at);
     }
 
     public function test_resolution_stores_only_an_explicit_public_note_on_the_product(): void
@@ -308,7 +436,10 @@ class ManufacturerReplyProcessingTest extends TestCase
         ]);
         $notifications = Mockery::mock(RequestNotificationService::class);
         $notifications->shouldReceive('prepareEvent')->once()->andThrow(new RuntimeException('Preparation failed.'));
-        $service = new ProductResolutionService($notifications);
+        $service = new ProductResolutionService(
+            $notifications,
+            app(BrandCommunicationDispositionService::class),
+        );
 
         try {
             $service->resolve($product->Barcode, '1');
@@ -321,6 +452,110 @@ class ManufacturerReplyProcessingTest extends TestCase
         $this->assertSame('Original product note.', $product->fresh()->notes);
         $this->assertSame('pending', $request->fresh()->status);
         $this->assertSame('Original request note.', $request->fresh()->notes);
+    }
+
+    public function test_resolution_failure_rolls_back_the_exact_barcode_disposition(): void
+    {
+        $brand = Brand::create(['name' => 'Disposition Rollback Brand']);
+        $communication = app(InboundBrandCommunicationService::class)->record(
+            $brand,
+            '<disposition-rollback@example.com>',
+            'Rollback reply',
+            'Exact product evidence.',
+            ['9400000000040'],
+            '/proofs/disposition-rollback.txt',
+        );
+        $product = Product::create([
+            'Barcode' => '9400000000040',
+            'product_name' => 'Disposition rollback product',
+            'halal_status' => '2',
+        ]);
+        PrioritisationRequest::create([
+            'barcode' => $product->Barcode,
+            'status' => 'ready_for_review',
+        ]);
+        $notifications = Mockery::mock(RequestNotificationService::class);
+        $notifications->shouldReceive('prepareEvent')->once()->andThrow(new RuntimeException('Preparation failed.'));
+        $service = new ProductResolutionService(
+            $notifications,
+            app(BrandCommunicationDispositionService::class),
+        );
+
+        try {
+            $service->resolve(
+                $product->Barcode,
+                '0',
+                brandCommunicationId: $communication->id,
+            );
+            $this->fail('Expected resolution transaction to fail.');
+        } catch (RuntimeException $exception) {
+            $this->assertSame('Preparation failed.', $exception->getMessage());
+        }
+
+        $this->assertSame('2', (string) $product->fresh()->halal_status);
+        $this->assertSame('pending_review', $communication->fresh()->processing_status);
+        $this->assertDatabaseHas('brand_communication_barcode_dispositions', [
+            'brand_communication_id' => $communication->id,
+            'barcode' => $product->Barcode,
+            'disposition' => 'pending_review',
+            'resolved_status' => null,
+        ]);
+    }
+
+    public function test_repeated_same_resolution_is_idempotent_but_conflicting_verdict_is_rejected(): void
+    {
+        $brand = Brand::create(['name' => 'Idempotent Disposition Brand']);
+        $communication = app(InboundBrandCommunicationService::class)->record(
+            $brand,
+            '<idempotent-disposition@example.com>',
+            'Idempotent reply',
+            'Exact product evidence.',
+            ['9400000000041'],
+            '/proofs/idempotent-disposition.txt',
+        );
+        $product = Product::create([
+            'Barcode' => '9400000000041',
+            'product_name' => 'Idempotent disposition product',
+            'halal_status' => '2',
+        ]);
+
+        $service = app(ProductResolutionService::class);
+        $service->resolve(
+            $product->Barcode,
+            '0',
+            brandCommunicationId: $communication->id,
+            notify: false,
+        );
+        $service->resolve(
+            $product->Barcode,
+            '0',
+            brandCommunicationId: $communication->id,
+            notify: false,
+        );
+
+        $actionLine = "Approved Halal resolution applied to {$product->Barcode}.";
+        $this->assertSame(1, substr_count((string) $communication->fresh()->action_taken, $actionLine));
+        $this->assertSame(1, BrandCommunicationBarcodeDisposition::count());
+
+        try {
+            $service->resolve(
+                $product->Barcode,
+                '1',
+                brandCommunicationId: $communication->id,
+                notify: false,
+            );
+            $this->fail('Expected the conflicting verdict to be rejected.');
+        } catch (\InvalidArgumentException $exception) {
+            $this->assertStringContainsString('different terminal disposition', $exception->getMessage());
+        }
+
+        $this->assertSame('0', (string) $product->fresh()->halal_status);
+        $this->assertDatabaseHas('brand_communication_barcode_dispositions', [
+            'brand_communication_id' => $communication->id,
+            'barcode' => $product->Barcode,
+            'disposition' => 'applied',
+            'resolved_status' => 0,
+        ]);
     }
 
     public function test_ambiguous_transport_failure_requires_reconciliation_before_retry(): void
@@ -432,6 +667,18 @@ class ManufacturerReplyProcessingTest extends TestCase
             $table->string('processing_status')->nullable();
             $table->timestamp('processed_at')->nullable();
             $table->timestamps();
+        });
+        Schema::create('brand_communication_barcode_dispositions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('brand_communication_id');
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->string('barcode', 20);
+            $table->string('disposition', 40)->default('pending_review');
+            $table->tinyInteger('resolved_status')->nullable();
+            $table->text('reason')->nullable();
+            $table->timestamp('decided_at')->nullable();
+            $table->timestamps();
+            $table->unique(['brand_communication_id', 'barcode']);
         });
         Schema::create('products', function (Blueprint $table) {
             $table->id();

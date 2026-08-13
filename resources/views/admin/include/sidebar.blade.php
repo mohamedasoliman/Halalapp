@@ -41,6 +41,18 @@
 			</li>
 		</ul>
 
+		@if((int) (\Illuminate\Support\Facades\Auth::guard('admin')->user()?->role_id) === 1)
+			<ul class="pcoded-item pcoded-left-item">
+				<li class="@if (str_starts_with(\Request::route()->getName() ?? '', 'support.')) active pcoded-trigger @endif">
+					<a href="{{ route('support.index') }}">
+						<span class="pcoded-micon"><i class="ti-headphone-alt" aria-hidden="true"></i></span>
+						<span class="pcoded-mtext">App Support</span>
+						<span class="pcoded-mcaret"></span>
+					</a>
+				</li>
+			</ul>
+		@endif
+
 		<ul class="pcoded-item pcoded-left-item">
 			<li class="pcoded-hasmenu @if (in_array(\Request::route()->getName(), ['prioritisation.index', 'prioritisation.show', 'brands.index', 'brands.edit', 'outreach.index'])) active pcoded-trigger @endif">
 				<a href="javascript:void(0)">

@@ -61,6 +61,19 @@ return [
             'local_domain' => env('OUTREACH_MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        // Dedicated app-support transport. It never inherits products@ outreach credentials.
+        'support' => [
+            'transport' => 'smtp',
+            'url' => env('SUPPORT_MAIL_URL'),
+            'host' => env('SUPPORT_MAIL_HOST'),
+            'port' => env('SUPPORT_MAIL_PORT', 587),
+            'encryption' => env('SUPPORT_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('SUPPORT_MAIL_USERNAME'),
+            'password' => env('SUPPORT_MAIL_PASSWORD'),
+            'timeout' => 30,
+            'local_domain' => env('SUPPORT_MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

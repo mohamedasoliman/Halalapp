@@ -22,6 +22,11 @@ class PrioritisationRequest extends Model
         return $this->hasMany(RequestWatcher::class, 'request_id');
     }
 
+    public function photos()
+    {
+        return $this->hasMany(PrioritisationRequestPhoto::class, 'request_id')->orderBy('id');
+    }
+
     public function brand()
     {
         return Brand::where('name', $this->brand_name)->first();

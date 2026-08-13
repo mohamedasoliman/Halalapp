@@ -2,69 +2,60 @@
 
 namespace App\Mail;
 
+use App\Models\SupportMessage;
+use App\Models\SupportTicket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class ContactUsEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject;
+    public function __construct(
+        public SupportTicket $ticket,
+        public SupportMessage $supportMessage,
+    ) {}
 
-    public $name;
-
-    public $email;
-
-    public $message;
-
-    public $request;
-
-    public $attachmentPath;
-
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($request, $attachmentPath)
+    public function build(): self
     {
-        $this->request = $request;
-        $this->attachmentPath = $attachmentPath;
-    }
-
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
-        $subject = Str::limit(preg_replace('/[\r\n]+/', ' ', (string) $this->request->subject), 160, '');
-        $replyName = Str::limit(preg_replace('/[\r\n]+/', ' ', (string) $this->request->name), 100, '');
-
-        $message = $this->subject('Contact Us - '.$subject)
+        $mail = $this->subject("[{$this->ticket->reference}] {$this->ticket->subject}")
             ->from(config('mail.from.address'), config('mail.from.name'))
-            ->replyTo($this->request->email, $replyName)
+            ->replyTo(
+                $this->ticket->requester_email,
+                $this->ticket->requester_name ?: 'Halal Kiwi app user',
+            )
             ->view('contact_email');
 
-        if ($this->attachmentPath) {
-            $attachmentName = pathinfo($this->attachmentPath, PATHINFO_BASENAME);
-
-            $filePath = storage_path("app/private/$this->attachmentPath");
-            if (! file_exists($filePath)) {
-                $filePath = storage_path("app/$this->attachmentPath");
+        foreach ($this->supportMessage->attachments as $attachment) {
+            if ($attachment->security_status !== 'safe') {
+                continue;
             }
-
-            if (file_exists($filePath)) {
-                $message->attach($filePath, [
-                    'as' => $attachmentName,
-                ]);
-            } else {
-                Log::error("Attachment not found: $this->attachmentPath");
+            $path = storage_path('app/private/'.$attachment->path);
+            if (is_file($path)) {
+                $mail->attach($path, ['as' => $attachment->original_name, 'mime' => $attachment->mime_type]);
             }
         }
 
-        return $message;
+        return $mail;
+    }
+
+    public function headers(): Headers
+    {
+        return new Headers(
+            messageId: self::notificationMessageIdFor($this->supportMessage->id),
+            text: [
+                'X-Halal-Kiwi-Support-Reference' => $this->ticket->reference,
+                'X-Halal-Kiwi-Support-Message-ID' => (string) $this->supportMessage->id,
+                'X-Halal-Kiwi-Support-Submission' => (string) $this->supportMessage->client_submission_uuid,
+                'X-Halal-Kiwi-Support-Notification' => 'internal',
+            ],
+        );
+    }
+
+    public static function notificationMessageIdFor(int $supportMessageId): string
+    {
+        return "support-notification-{$supportMessageId}@halalkiwi.com";
     }
 }

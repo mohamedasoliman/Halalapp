@@ -57,9 +57,42 @@
                                                     <tr><th>Submitted</th><td>{{ $request->created_at?->format('Y-m-d H:i') }}</td></tr>
                                                 </table>
 
-                                                @if($request->photo_path)
-                                                    <h6 class="mt-3">User Photo</h6>
-                                                    <img src="{{ Storage::url($request->photo_path) }}" alt="Product photo" style="max-width:300px; border-radius:8px;">
+                                                @php
+                                                    $requestPhotos = $request->photos;
+                                                    if ($requestPhotos->isEmpty() && $request->photo_path) {
+                                                        $requestPhotos = collect([(object) [
+                                                            'path' => $request->photo_path,
+                                                            'original_name' => null,
+                                                            'created_at' => $request->created_at,
+                                                        ]]);
+                                                    }
+                                                @endphp
+                                                @if($requestPhotos->isNotEmpty())
+                                                    <h6 class="mt-3">User Photos ({{ $requestPhotos->count() }})</h6>
+                                                    <div class="row">
+                                                        @foreach($requestPhotos as $photo)
+                                                            @php
+                                                                $photoUrl = isset($photo->id)
+                                                                    ? route('prioritisation.photo', [$request->id, $photo->id])
+                                                                    : Storage::url($photo->path);
+                                                            @endphp
+                                                            <div class="col-sm-6 col-lg-4 mb-3">
+                                                                <a href="{{ $photoUrl }}" target="_blank" rel="noopener">
+                                                                    <img
+                                                                        src="{{ $photoUrl }}"
+                                                                        alt="{{ $photo->original_name ?: 'Submitted product photo' }}"
+                                                                        style="width:100%; max-height:240px; object-fit:contain; border-radius:8px; border:1px solid #ddd;"
+                                                                    >
+                                                                </a>
+                                                                <small class="d-block text-muted mt-1">
+                                                                    {{ $photo->original_name ?: basename($photo->path) }}
+                                                                    @if($photo->created_at)
+                                                                        · {{ $photo->created_at->format('Y-m-d H:i') }}
+                                                                    @endif
+                                                                </small>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
                                                 @endif
 
                                                 @if($product)

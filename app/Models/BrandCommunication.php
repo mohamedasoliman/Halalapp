@@ -19,4 +19,9 @@ class BrandCommunication extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function barcodeDispositions()
+    {
+        return $this->hasMany(BrandCommunicationBarcodeDisposition::class);
+    }
 }

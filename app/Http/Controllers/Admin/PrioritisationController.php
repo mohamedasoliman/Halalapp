@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PrioritisationRequest;
+use App\Models\PrioritisationRequestPhoto;
 use App\Models\ProductModel\Product;
 use App\Services\ProductResolutionService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 
 class PrioritisationController extends Controller
@@ -45,11 +47,27 @@ class PrioritisationController extends Controller
 
     public function show($id)
     {
-        $request = PrioritisationRequest::with('watchers')->findOrFail($id);
+        $request = PrioritisationRequest::with(['watchers', 'photos'])->findOrFail($id);
         $brand = $request->brand();
         $product = Product::matchingBarcode((string) $request->barcode)->first();
 
         return view('admin.prioritisation.show', compact('request', 'brand', 'product'));
+    }
+
+    public function showPhoto($id, $photoId)
+    {
+        $photo = PrioritisationRequestPhoto::query()
+            ->where('request_id', $id)
+            ->findOrFail($photoId);
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($photo->path), 404);
+
+        return $disk->response(
+            $photo->path,
+            $photo->original_name ?: basename($photo->path),
+            ['X-Content-Type-Options' => 'nosniff'],
+            'inline',
+        );
     }
 
     public function updateStatus(Request $request, $id)

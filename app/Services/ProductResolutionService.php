@@ -13,7 +13,10 @@ use InvalidArgumentException;
 
 class ProductResolutionService
 {
-    public function __construct(private readonly RequestNotificationService $notifications) {}
+    public function __construct(
+        private readonly RequestNotificationService $notifications,
+        private readonly BrandCommunicationDispositionService $dispositions,
+    ) {}
 
     public function resolve(
         string $barcode,
@@ -99,12 +102,20 @@ class ProductResolutionService
             }
 
             if ($communication) {
+                $this->dispositions->recordApplied(
+                    $communication,
+                    $barcode,
+                    (int) $status,
+                    (int) $product->id,
+                    filled($notes) ? trim($notes) : null,
+                );
+                $actionLine = "Approved {$statusLabel} resolution applied to {$barcode}.";
+                $existingActions = collect(preg_split('/\R/', (string) $communication->action_taken))
+                    ->map(fn ($line) => trim((string) $line));
                 $communication->update([
-                    'processing_status' => 'applied',
-                    'processed_at' => now(),
                     'action_taken' => trim(implode("\n", array_filter([
                         $communication->action_taken,
-                        "Approved {$statusLabel} resolution applied to {$barcode}.",
+                        $existingActions->containsStrict($actionLine) ? null : $actionLine,
                     ]))),
                 ]);
             }

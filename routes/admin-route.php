@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PrioritisationController;
 use App\Http\Controllers\Admin\ProductController\ProductController;
 use App\Http\Controllers\Admin\RestaurantTierController;
 use App\Http\Controllers\Admin\ResturantControllers\ResturantManagementController;
+use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\Users\UsersController;
 use App\Http\Controllers\Admin\Users\UsersTableController;
 use App\Http\Controllers\JsondataController;
@@ -170,9 +171,22 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'admin_session
     Route::post('scan-ads/update', [NotificationManagerController::class, 'updateScanAds'])->name('scan.ads.update');
     Route::delete('scan-ads/{index}', [NotificationManagerController::class, 'deleteScanAd'])->name('scan.ads.delete');
 
+    // App Support Routes (isolated from product prioritisation and manufacturer outreach)
+    Route::middleware('check_role:1')->group(function () {
+        Route::get('support', [SupportTicketController::class, 'index'])->name('support.index');
+        Route::get('support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
+        Route::patch('support/{ticket}/triage', [SupportTicketController::class, 'triage'])->name('support.triage');
+        Route::post('support/{ticket}/reply-drafts', [SupportTicketController::class, 'saveDraft'])->name('support.reply-drafts.store');
+        Route::post('support/{ticket}/reply-drafts/{message}/send', [SupportTicketController::class, 'sendDraft'])->name('support.reply-drafts.send');
+        Route::post('support/{ticket}/reply-drafts/{message}/discard', [SupportTicketController::class, 'discardDraft'])->name('support.reply-drafts.discard');
+        Route::post('support/{ticket}/deliveries/{delivery}/reconcile', [SupportTicketController::class, 'reconcileDelivery'])->name('support.deliveries.reconcile');
+        Route::get('support/{ticket}/attachments/{attachment}', [SupportTicketController::class, 'attachment'])->name('support.attachments.show');
+    });
+
     // Prioritisation Routes
     Route::get('prioritisation', [PrioritisationController::class, 'index'])->name('prioritisation.index');
     Route::post('prioritisation/research', [PrioritisationController::class, 'researchUnknown'])->name('prioritisation.research');
+    Route::get('prioritisation/{id}/photos/{photoId}', [PrioritisationController::class, 'showPhoto'])->name('prioritisation.photo');
     Route::get('prioritisation/{id}', [PrioritisationController::class, 'show'])->name('prioritisation.show');
     Route::post('prioritisation/{id}/status', [PrioritisationController::class, 'updateStatus'])->name('prioritisation.status');
     Route::post('prioritisation/{id}/resolve', [PrioritisationController::class, 'resolve'])->name('prioritisation.resolve');

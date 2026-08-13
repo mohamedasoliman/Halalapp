@@ -68,12 +68,12 @@ php artisan test
 ## Manufacturer Reply Processing
 
 - The authoritative procedure is **Flow: Check Manufacturer Emails** in `../../AGENTS.md`; read it before accessing the products mailbox or resolving requests.
-- Use Message-ID / `brand_communications.email_message_id` for idempotency. Do not use the mailbox Seen flag as proof that a reply was processed.
+- Use Message-ID / `brand_communications.email_message_id` for capture idempotency. Do not use the mailbox Seen flag as proof that a reply was processed. A logged multi-barcode reply remains unfinished while any `brand_communication_barcode_dispositions` row is `pending_review` or `review_required`; include `partially_processed` communications in the next review.
 - Prefer the `[HK-...]` outreach reference to map replies to `brand_outreach_batches`; otherwise require exact barcodes and verified brand/thread evidence.
 - Save the original email and attachments before changing a verdict. Log every substantive inbound reply in `brand_communications`.
 - Present per-barcode recommendations and obtain explicit approval before changing `halal_status`, updating brand response scope, sending follow-ups, or notifying users.
 - Linked-user lookup must union `prioritisation_requests.user_email` with `request_watchers.user_email`, validate/deduplicate addresses, and exclude `@halalkiwi.com` placeholders.
-- Record approved inbound evidence with `brands:record-reply`, then resolve exact barcodes with `requests:resolve --communication-id=...`; this shared path preserves notes, requires proof for inbound evidence, includes direct and watcher emails, and records retry-safe delivery state.
+- Record approved inbound evidence with `brands:record-reply`; it creates one processing row per exact barcode. Resolve verdicts with `requests:resolve --communication-id=...`, which marks only that barcode applied. Record approved non-verdict outcomes with `brands:record-disposition COMMUNICATION_ID BARCODE DISPOSITION --reason='...'`, where `DISPOSITION` is exactly `kept_unreviewed`, `needs_clarification`, or `no_action`. The communication may be complete only after every scoped barcode is terminal; never set its aggregate status directly.
 - Prepare approved reply-thread questions with `brands:clarification --communication-id=... --event='...' --subject='...' --body-file='...' --barcode=...`. This creates an idempotent draft only. After the draft is reviewed, queue that exact ID with `brands:outreach --kind=clarification --queue --batch=ID`. Clarifications may be sent to brands marked `partial`, require strict exact-barcode inbound evidence and saved proof, preserve Message-ID thread headers, and can never be bulk-sent with `--all`.
 - If missing user-supplied packaging, ingredients, or barcode photos block exact matching, preview with `requests:request-information {barcode}`. After explicit approval only, send with a unique stable `--event` and `--send`. This is the required shared template path for both manufacturer-reply and prioritisation flows; do not send ad-hoc user emails.
 - Retry failed/pending recipients with `requests:resolve --retry-event='...'`; sent recipients are not resent.
@@ -87,7 +87,8 @@ php artisan test
 - Keep product discovery separate from manufacturer outreach:
   - Plain `silent` and `new_product` records are identity-research work. High-confidence identities may only be proposed as active, unreviewed products (`halal_status = 2`).
   - `prioritise` records are manufacturer-outreach work for existing products.
-  - A `silent` request with a later watcher is effectively deliberate because the current API does not promote its type. Include watcher creation timestamps in daily classification.
+  - The API transactionally merges submissions by canonical barcode. Later photos are cumulative, recipients become watchers, and deliberate submissions promote an existing `silent` request to `new_product` or, when the exact product exists, `prioritise`.
+  - The schema migration applies that correction to legacy watched `silent` rows as well: product matches become `prioritise`; unmatched rows become pending `new_product` discovery.
 - Freeze one complete `Pacific/Auckland` day and retain the request/watcher cutoff throughout the run.
 - Start by previewing `php artisan brands:release-approved`; report approved, due, deferred, and `review_required` batches in chat and in the final daily summary.
 - Present the research and outreach plan before any DB write or email send. Never send drafts, resolve verdicts, or classify halal/not halal without the required approval.
@@ -96,10 +97,21 @@ php artisan test
 - After all ordinary identity sources fail, use the exact-barcode Mustakshif fallback defined in `../../AGENTS.md` before proposing a user information request. Treat it only as identity discovery, use the persistent lookup ledger to prevent repeated placeholder creation, ignore all external verdict fields, and store only validated local images.
 - Daily audit artifacts belong under `Halal Kiwi/Products/Prioritisation_Daily/{YYYY-MM-DD}/` in the Halal Kiwi Google Drive.
 
+## App Support Safety
+
+- The authoritative procedure is **Flow: Check App Support Emails** in `../../AGENTS.md`; read it before reviewing or recording `appsupport@halalkiwi.com` messages.
+- This subsystem is limited to the exact appsupport mailbox and the `support_*` tables. Proposed handoffs and linked IDs/barcodes are metadata only; support capture and triage must never mutate products, prioritisation requests, brands, manufacturer communications, outreach batches, restaurants, or masjids.
+- `/api/contact-us` durably captures a ticket before attempting its internal mailbox notification. Submission UUID and payload fingerprint protect retries; mailbox ingestion uses Message-ID and exact thread headers, never Seen state or fuzzy sender matching. Classify a message as the audited internal notification only when authenticated sender/envelope, deterministic Message-ID/source-message ID, marker and reference match one stored app submission, plus UUID when the original has one.
+- `support:record-email` is preview-only unless `--record` is supplied, requires a reviewed `--since` cutover for operational imports, and must never change mailbox files or flags. Attachments are private; downloads and notification-email forwarding stay disabled until an audited safety-review process exists. Intake must enforce configured per-requester/global daily quotas and the free-disk guard. Do not add automatic deletion; a future closed-case retention purge requires separate approval and must preserve audit records.
+- Admin replies are drafts until separately approved. They may send only through the dedicated `support` SMTP configuration authenticated as `appsupport@halalkiwi.com`, and `SUPPORT_MAIL_ENABLED` defaults to false. Never reuse the manufacturer outreach transport.
+- Never reply from webmail; use the `/admin/support` draft, approval, and delivery-audit path.
+- Treat `sending` and `uncertain` support deliveries as potentially accepted and never auto-retry them. Reconcile them only through the audited admin action with evidence, and never reconcile an active `sending` lease. Closing a ticket requires a reason and no unresolved customer reply draft/delivery.
+
 ## Deployment Notes
 
 - Deploy script: `./deploy.sh`
 - Preserve production `.env`
+- For the first deployment of the per-barcode disposition and active-request uniqueness migrations, take a verified backup, enable a brief intake maintenance window, and pause outreach workers. Do not migrate while a batch is `sending`; inspect `sending`/`uncertain` state and active duplicate groups before running migrations, then verify disposition/request backfills before resuming.
 - Keep storage/public upload paths intact
 - See `DEPLOYMENT.md` for rollback/troubleshooting
 

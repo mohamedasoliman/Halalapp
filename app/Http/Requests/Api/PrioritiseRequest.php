@@ -24,6 +24,8 @@ class PrioritiseRequest extends FormRequest
             'user_email' => 'nullable|email:rfc|max:255',
             'user_name' => 'nullable|string|max:255',
             'photo' => 'nullable|file|max:5120|mimes:jpg,jpeg,png',
+            'photos' => 'nullable|array|max:6',
+            'photos.*' => 'file|max:5120|mimes:jpg,jpeg,png',
             'type' => 'nullable|in:prioritise,new_product,silent',
         ];
     }
