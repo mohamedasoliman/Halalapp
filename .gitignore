@@ -5,6 +5,7 @@
 /public/hot
 /public/storage
 /public/data/images/
+/public/upload/product_images/
 /public/upload/resturant/
 /storage/*.key
 /vendor
