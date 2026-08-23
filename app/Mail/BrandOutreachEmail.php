@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Support\BrandOutreachMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Headers;
@@ -27,7 +28,9 @@ class BrandOutreachEmail extends Mailable
     {
         $prefix = $this->kind === 'follow_up' ? 'Follow-up: ' : '';
         $subject = $this->subjectOverride ?: "{$prefix}Halal Suitability Inquiry [{$this->reference}] - {$this->brandName}";
-        $view = $this->kind === 'clarification' ? 'brand_clarification_email' : 'brand_outreach_email';
+        $view = BrandOutreachMessage::usesCustomBody($this->kind, $this->body)
+            ? 'brand_clarification_email'
+            : 'brand_outreach_email';
 
         return $this->subject($subject)
             ->from(config('outreach.from_address'), config('outreach.from_name'))

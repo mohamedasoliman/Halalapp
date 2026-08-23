@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Admin;
 use App\Jobs\SendBrandOutreachBatch;
 use App\Mail\BrandOutreachEmail;
 use App\Mail\UserNotificationEmail;
@@ -16,6 +17,7 @@ use App\Services\RequestNotificationService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
@@ -577,6 +579,7 @@ class BrandOutreachServiceTest extends TestCase
             'brand_id' => $brand->id,
             'direction' => 'outbound',
             'subject' => 'Re: Approved clarification',
+            'body_preview' => 'Please confirm whether the flavour carrier contains ethanol.',
         ]);
     }
 
@@ -608,6 +611,7 @@ class BrandOutreachServiceTest extends TestCase
             'brand_id' => $brand->id,
             'direction' => 'outbound',
             'subject' => $batch->subject,
+            'body_preview' => 'Initial inquiry for 1 product(s).',
         ]);
     }
 
@@ -710,6 +714,116 @@ class BrandOutreachServiceTest extends TestCase
         $this->assertStringContainsString('another regional team, licensee, or manufacturer', $body);
     }
 
+    public function test_initial_outreach_with_custom_body_renders_exact_escaped_content(): void
+    {
+        $customBody = "Kia ora,\n\n<script>alert(1)</script>\n{{ dangerous }}";
+        $email = new BrandOutreachEmail(
+            'Exact Body Brand',
+            [['name' => 'Exact product', 'barcode' => '9400000000019']],
+            'HK-EXACT-CONTENT',
+            body: $customBody,
+        );
+
+        $body = $email->render();
+
+        $this->assertStringContainsString('Kia ora,<br>', $body);
+        $this->assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;<br>', $body);
+        $this->assertStringContainsString('{{ dangerous }}', $body);
+        $this->assertStringNotContainsString('<script>alert(1)</script>', $body);
+        $this->assertStringNotContainsString('Exact product', $body);
+        $this->assertStringNotContainsString('9400000000019', $body);
+        $this->assertStringNotContainsString('For each product, I would appreciate confirmation', $body);
+    }
+
+    public function test_null_empty_and_whitespace_initial_bodies_use_standard_template(): void
+    {
+        foreach ([null, '', " \n\t"] as $index => $blankBody) {
+            $email = new BrandOutreachEmail(
+                'Standard Brand',
+                [['name' => 'Standard product', 'barcode' => '9400000000020']],
+                "HK-STANDARD-CONTENT-{$index}",
+                body: $blankBody,
+            );
+
+            $body = $email->render();
+
+            $this->assertStringContainsString('Standard product', $body);
+            $this->assertStringContainsString('9400000000020', $body);
+            $this->assertStringContainsString('For each product, I would appreciate confirmation', $body);
+        }
+    }
+
+    public function test_follow_up_body_cannot_replace_standard_follow_up_template(): void
+    {
+        $followUp = new BrandOutreachEmail(
+            'Follow-up Brand',
+            [['name' => 'Follow-up product', 'barcode' => '9400000000021']],
+            'HK-FOLLOW-UP-CONTENT',
+            kind: 'follow_up',
+            followUpNumber: 1,
+            body: 'This custom text must not replace a follow-up template.',
+        );
+
+        $followUpBody = $followUp->render();
+
+        $this->assertStringContainsString('following up on our earlier halal suitability enquiry', $followUpBody);
+        $this->assertStringNotContainsString('This custom text must not replace a follow-up template.', $followUpBody);
+    }
+
+    public function test_sent_custom_initial_body_is_preserved_in_communication_audit(): void
+    {
+        Mail::fake();
+        config(['outreach.enabled' => true]);
+        $brand = Brand::create([
+            'name' => 'Audited Body Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+        $customBody = "Kia ora,\n\nPlease confirm <source> & controls.";
+        $batch = $this->createBatch($brand, 'HK-AUDITED-BODY', 'queued');
+        $batch->update(['message_body' => $customBody]);
+
+        (new SendBrandOutreachBatch($batch->id))->handle(app(BrandOutreachService::class));
+
+        $communication = BrandCommunication::where('direction', 'outbound')->sole();
+        $this->assertSame($customBody, $communication->body_preview);
+        $this->assertSame($batch->subject, $communication->subject);
+        $this->assertSame('sent', $batch->fresh()->status);
+    }
+
+    public function test_admin_outreach_page_displays_custom_initial_body_safely(): void
+    {
+        $admin = Admin::create([
+            'name' => 'Outreach Administrator',
+            'email' => 'outreach-admin@example.com',
+            'password' => Hash::make('ExamplePassword123'),
+            'role_id' => 1,
+            'status' => 1,
+        ]);
+        $brand = Brand::create([
+            'name' => 'Review Body Brand',
+            'email' => 'quality@example.com',
+            'contact_type' => 'email',
+            'contact_research_status' => 'verified',
+        ]);
+        $customBatch = $this->createBatch($brand, 'HK-ADMIN-CUSTOM');
+        $customBatch->update([
+            'subject' => 'Exact <manufacturer> subject',
+            'message_body' => 'Please confirm <source> & controls.',
+        ]);
+        $this->createBatch($brand, 'HK-ADMIN-STANDARD');
+
+        $response = $this->actingAs($admin, 'admin')->get(route('outreach.index'));
+
+        $response->assertOk()
+            ->assertSee('Custom initial body — this exact text will be sent')
+            ->assertSee('Exact &lt;manufacturer&gt; subject', false)
+            ->assertSee('Please confirm &lt;source&gt; &amp; controls.', false)
+            ->assertDontSee('Please confirm <source> & controls.', false);
+        $this->assertSame(1, substr_count($response->getContent(), 'Custom initial body — this exact text will be sent'));
+    }
+
     private function createRequest(
         string $brand,
         string $barcode,
@@ -764,6 +878,16 @@ class BrandOutreachServiceTest extends TestCase
 
     private function createTables(): void
     {
+        Schema::create('admins', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->unsignedBigInteger('role_id')->default(1);
+            $table->boolean('status')->default(true);
+            $table->rememberToken();
+            $table->timestamps();
+        });
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();

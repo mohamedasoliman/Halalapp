@@ -106,12 +106,14 @@
                                                                 @foreach($batch->products as $product)
                                                                     <div>{{ $product['name'] }} <small>({{ $product['barcode'] }})</small></div>
                                                                 @endforeach
-                                                                @if($batch->kind === 'clarification')
+                                                                @if(\App\Support\BrandOutreachMessage::usesCustomBody($batch->kind, $batch->message_body))
                                                                     <details class="mt-2">
-                                                                        <summary>Review approved subject and body</summary>
+                                                                        <summary>{{ $batch->kind === 'initial' ? 'Custom initial body — this exact text will be sent' : 'Review approved subject and body' }}</summary>
                                                                         <div class="mt-2"><strong>Subject:</strong> {{ $batch->subject }}</div>
                                                                         <pre class="mt-2 mb-0" style="white-space: pre-wrap">{{ $batch->message_body }}</pre>
-                                                                        <small>Replying to communication #{{ $batch->source_communication_id }}</small>
+                                                                        @if($batch->kind === 'clarification')
+                                                                            <small>Replying to communication #{{ $batch->source_communication_id }}</small>
+                                                                        @endif
                                                                     </details>
                                                                 @endif
                                                             </td>

@@ -8,6 +8,7 @@ use App\Models\BrandCommunication;
 use App\Models\BrandOutreachBatch;
 use App\Models\PrioritisationRequest;
 use App\Models\ProductModel\Product;
+use App\Support\BrandOutreachMessage;
 use App\Support\ProductBarcode;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Carbon;
@@ -523,7 +524,7 @@ class BrandOutreachService
                 'brand_id' => $batch->brand_id,
                 'direction' => 'outbound',
                 'subject' => $batch->subject,
-                'body_preview' => $batch->kind === 'clarification'
+                'body_preview' => BrandOutreachMessage::usesCustomBody($batch->kind, $batch->message_body)
                     ? mb_substr((string) $batch->message_body, 0, 2000)
                     : ucfirst(str_replace('_', ' ', $batch->kind)).' inquiry for '.count($batch->products).' product(s).',
                 'barcodes_mentioned' => collect($batch->products)->pluck('barcode')->values()->all(),
