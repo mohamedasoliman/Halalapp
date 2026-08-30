@@ -47,7 +47,12 @@ class PrioritisationController extends Controller
 
     public function show($id)
     {
-        $request = PrioritisationRequest::with(['watchers', 'photos'])->findOrFail($id);
+        $request = PrioritisationRequest::with([
+            'watchers',
+            'photos',
+            'informationReplies.attachments.photo',
+            'informationReplies.delivery',
+        ])->findOrFail($id);
         $brand = $request->brand();
         $product = Product::matchingBarcode((string) $request->barcode)->first();
 

@@ -12,6 +12,7 @@ class InboundBrandCommunicationService
 {
     public function __construct(
         private readonly BrandCommunicationDispositionService $dispositions,
+        private readonly ProductsMailboxMessageIdGuard $messageIds,
     ) {}
 
     public function record(
@@ -22,11 +23,6 @@ class InboundBrandCommunicationService
         array $barcodes,
         ?string $proofPath = null,
     ): BrandCommunication {
-        $normalizedMessageId = strtolower(trim($messageId));
-        if ($normalizedMessageId === '') {
-            throw new InvalidArgumentException('A manufacturer reply Message-ID is required.');
-        }
-
         $barcodes = collect($barcodes)
             ->map(fn ($barcode) => trim((string) $barcode))
             ->filter()
@@ -36,52 +32,66 @@ class InboundBrandCommunicationService
             throw new InvalidArgumentException('Manufacturer reply barcodes must be exact 8-14 digit values.');
         }
 
-        $attributes = ['email_message_id' => $normalizedMessageId];
-        $values = [
-            'brand_id' => $brand->id,
-            'direction' => 'inbound',
-            'subject' => $subject,
-            'body_preview' => $bodySummary,
-            'barcodes_mentioned' => $barcodes->all(),
-            'proof_path' => $proofPath,
-            'processing_status' => 'pending_review',
-        ];
+        return $this->messageIds->withClaimLock(
+            $messageId,
+            ProductsMailboxMessageIdGuard::FLOW_MANUFACTURER,
+            function (string $normalizedMessageId) use (
+                $brand,
+                $subject,
+                $bodySummary,
+                $barcodes,
+                $proofPath,
+            ) {
+                $attributes = ['email_message_id' => $normalizedMessageId];
+                $values = [
+                    'brand_id' => $brand->id,
+                    'direction' => 'inbound',
+                    'subject' => $subject,
+                    'body_preview' => $bodySummary,
+                    'barcodes_mentioned' => $barcodes->all(),
+                    'proof_path' => $proofPath,
+                    'processing_status' => 'pending_review',
+                ];
 
-        try {
-            return DB::transaction(function () use ($attributes, $values, $barcodes) {
-                $existing = BrandCommunication::query()
-                    ->where($attributes)
-                    ->lockForUpdate()
-                    ->first();
-                if ($existing) {
-                    $this->assertCompatibleDuplicate($existing, $values);
-                    $this->fillMissingEvidence($existing, $values);
-                    $this->dispositions->seedBarcodeRows($existing, $barcodes->all());
+                try {
+                    return DB::transaction(function () use ($attributes, $values, $barcodes) {
+                        $existing = BrandCommunication::query()
+                            ->whereIn('email_message_id', $this->messageIdAliases($attributes['email_message_id']))
+                            ->lockForUpdate()
+                            ->first();
+                        if ($existing) {
+                            $this->assertCompatibleDuplicate($existing, $values);
+                            $this->fillMissingEvidence($existing, $values);
+                            $this->dispositions->seedBarcodeRows($existing, $barcodes->all());
 
-                    return $existing->fresh();
+                            return $existing->fresh();
+                        }
+
+                        $communication = BrandCommunication::create([...$attributes, ...$values]);
+                        $this->dispositions->seedBarcodeRows($communication, $barcodes->all());
+
+                        return $communication;
+                    });
+                } catch (QueryException $exception) {
+                    $existing = BrandCommunication::query()
+                        ->whereIn('email_message_id', $this->messageIdAliases($attributes['email_message_id']))
+                        ->first();
+                    if ($existing) {
+                        $this->assertCompatibleDuplicate($existing, $values);
+
+                        return DB::transaction(function () use ($existing, $values, $barcodes) {
+                            $locked = BrandCommunication::query()->lockForUpdate()->findOrFail($existing->id);
+                            $this->fillMissingEvidence($locked, $values);
+                            $this->dispositions->seedBarcodeRows($locked, $barcodes->all());
+
+                            return $locked->fresh();
+                        });
+                    }
+
+                    throw $exception;
                 }
-
-                $communication = BrandCommunication::create([...$attributes, ...$values]);
-                $this->dispositions->seedBarcodeRows($communication, $barcodes->all());
-
-                return $communication;
-            });
-        } catch (QueryException $exception) {
-            $existing = BrandCommunication::where($attributes)->first();
-            if ($existing) {
-                $this->assertCompatibleDuplicate($existing, $values);
-
-                return DB::transaction(function () use ($existing, $values, $barcodes) {
-                    $locked = BrandCommunication::query()->lockForUpdate()->findOrFail($existing->id);
-                    $this->fillMissingEvidence($locked, $values);
-                    $this->dispositions->seedBarcodeRows($locked, $barcodes->all());
-
-                    return $locked->fresh();
-                });
-            }
-
-            throw $exception;
-        }
+            },
+        );
     }
 
     private function assertCompatibleDuplicate(BrandCommunication $existing, array $values): void
@@ -115,5 +125,14 @@ class InboundBrandCommunicationService
         if ($updates !== []) {
             $existing->update($updates);
         }
+    }
+
+    /** @return array<int, string> */
+    private function messageIdAliases(string $normalizedMessageId): array
+    {
+        return array_values(array_unique([
+            $normalizedMessageId,
+            trim($normalizedMessageId, '<>'),
+        ]));
     }
 }

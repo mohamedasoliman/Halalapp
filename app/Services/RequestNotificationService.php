@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Mail\UserNotificationEmail;
 use App\Models\RequestNotificationDelivery;
+use App\Support\UserInformationReplyReference;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 use Throwable;
 
@@ -81,13 +83,65 @@ class RequestNotificationService
             );
         }
 
-        return $this->prepareEvent(
+        $deliveries = $this->prepareEvent(
             $eventReference,
             $requests,
             UserNotificationEmail::TYPE_INFORMATION_REQUEST,
             $productName,
             $barcode,
         );
+
+        $replyReference = UserInformationReplyReference::forRequests(
+            $requests->pluck('id')->all(),
+            $barcode,
+        );
+        foreach ($deliveries as $delivery) {
+            // Do not invent a threading identity for a legacy message that was
+            // already handed to SMTP without these headers. Pending/failed
+            // rows are still pre-send and may safely receive the new identity.
+            if (! in_array($delivery->status, ['pending', 'failed'], true)
+                && (blank($delivery->reply_reference)
+                    || blank($delivery->outbound_message_id)
+                    || blank($delivery->outbound_message_id_hash))) {
+                continue;
+            }
+            $outboundMessageId = UserInformationReplyReference::normalizeMessageId(
+                UserInformationReplyReference::outboundMessageId(
+                    (int) $delivery->id,
+                    (string) $delivery->event_key,
+                ),
+            );
+            $outboundMessageIdHash = hash('sha256', $outboundMessageId);
+            foreach ([
+                'reply_reference' => $replyReference,
+                'outbound_message_id' => $outboundMessageId,
+                'outbound_message_id_hash' => $outboundMessageIdHash,
+            ] as $field => $expected) {
+                if (filled($delivery->{$field}) && ! hash_equals((string) $delivery->{$field}, $expected)) {
+                    throw new InvalidArgumentException(
+                        'The existing information-request threading identity conflicts with its deterministic value.'
+                    );
+                }
+            }
+            $updates = [];
+            if (Schema::hasColumn('request_notification_deliveries', 'reply_reference')
+                && blank($delivery->reply_reference)) {
+                $updates['reply_reference'] = $replyReference;
+            }
+            if (Schema::hasColumn('request_notification_deliveries', 'outbound_message_id')
+                && blank($delivery->outbound_message_id)) {
+                $updates['outbound_message_id'] = $outboundMessageId;
+            }
+            if (Schema::hasColumn('request_notification_deliveries', 'outbound_message_id_hash')
+                && blank($delivery->outbound_message_id_hash)) {
+                $updates['outbound_message_id_hash'] = $outboundMessageIdHash;
+            }
+            if ($updates !== []) {
+                $delivery->update($updates);
+            }
+        }
+
+        return $deliveries;
     }
 
     public function deliverEvent(string $eventReference): array

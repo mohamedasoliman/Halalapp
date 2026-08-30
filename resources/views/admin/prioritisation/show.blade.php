@@ -55,6 +55,8 @@
                                                     </tr>
                                                     <tr><th>Notes</th><td>{{ $request->notes ?? '-' }}</td></tr>
                                                     <tr><th>Submitted</th><td>{{ $request->created_at?->format('Y-m-d H:i') }}</td></tr>
+                                                    <tr><th>Information Replies</th><td>{{ $request->information_reply_count ?? 0 }}</td></tr>
+                                                    <tr><th>Information Received</th><td>{{ $request->information_received_at?->format('Y-m-d H:i') ?? '-' }}</td></tr>
                                                 </table>
 
                                                 @php
@@ -93,6 +95,125 @@
                                                             </div>
                                                         @endforeach
                                                     </div>
+                                                @endif
+
+                                                @if($request->informationReplies->isNotEmpty())
+                                                    <h6 class="mt-4">User Information Reply Review ({{ $request->informationReplies->count() }})</h6>
+                                                    @foreach($request->informationReplies->sortByDesc('received_at') as $informationReply)
+                                                        @php
+                                                            $replyBadgeClass = match($informationReply->processing_status) {
+                                                                'processed' => 'badge-success',
+                                                                'needs_clarification' => 'badge-warning',
+                                                                'no_action' => 'badge-secondary',
+                                                                'manual_review' => 'badge-danger',
+                                                                default => 'badge-info',
+                                                            };
+                                                        @endphp
+                                                        <div class="card mb-3 information-reply-card">
+                                                            <div class="card-block">
+                                                                <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                                                                    <div>
+                                                                        <strong>{{ $informationReply->from_name ?: $informationReply->from_address }}</strong>
+                                                                        @if($informationReply->from_name)
+                                                                            <small class="text-muted">&lt;{{ $informationReply->from_address }}&gt;</small>
+                                                                        @endif
+                                                                        <br>
+                                                                        <small class="text-muted">
+                                                                            {{ $informationReply->received_at?->format('Y-m-d H:i') ?? 'Unknown received time' }}
+                                                                            @if($informationReply->delivery?->recipient_email)
+                                                                                · matched recipient {{ $informationReply->delivery->recipient_email }}
+                                                                                · delivery status {{ $informationReply->delivery->status }}
+                                                                            @endif
+                                                                        </small>
+                                                                    </div>
+                                                                    <span class="badge {{ $replyBadgeClass }}">
+                                                                        {{ str_replace('_', ' ', ucfirst($informationReply->processing_status)) }}
+                                                                    </span>
+                                                                </div>
+
+                                                                <table class="table table-sm table-bordered mb-3">
+                                                                    <tr>
+                                                                        <th style="width:24%">Subject</th>
+                                                                        <td>{{ $informationReply->subject }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Message-ID</th>
+                                                                        <td><code class="information-reply-identifier">{{ $informationReply->message_id }}</code></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Match</th>
+                                                                        <td>
+                                                                            {{ $informationReply->match_method ? str_replace('_', ' ', $informationReply->match_method) : 'Unmatched' }}
+                                                                            @if($informationReply->match_confidence)
+                                                                                <span class="text-muted">({{ $informationReply->match_confidence }})</span>
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                    @if($informationReply->delivery?->reply_reference)
+                                                                        <tr>
+                                                                            <th>Reference</th>
+                                                                            <td><code>{{ $informationReply->delivery->reply_reference }}</code></td>
+                                                                        </tr>
+                                                                    @endif
+                                                                    <tr>
+                                                                        <th>Review Notes</th>
+                                                                        <td>{{ $informationReply->review_notes ?: 'Pending review' }}</td>
+                                                                    </tr>
+                                                                </table>
+
+                                                                <details class="mb-3">
+                                                                    <summary>View reply body</summary>
+                                                                    <div class="information-reply-body mt-2">{{ $informationReply->body }}</div>
+                                                                </details>
+
+                                                                @if($informationReply->attachments->isNotEmpty())
+                                                                    <h6>Attachments ({{ $informationReply->attachments->count() }})</h6>
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-sm table-bordered mb-0">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Name</th>
+                                                                                    <th>Detected Type</th>
+                                                                                    <th>Validation</th>
+                                                                                    <th>Photo</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach($informationReply->attachments as $attachment)
+                                                                                    <tr>
+                                                                                        <td>{{ $attachment->original_name }}</td>
+                                                                                        <td>
+                                                                                            {{ $attachment->detected_mime_type ?: 'Unknown' }}
+                                                                                            @if($attachment->width && $attachment->height)
+                                                                                                <small class="text-muted d-block">{{ $attachment->width }} × {{ $attachment->height }}</small>
+                                                                                            @endif
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            {{ str_replace('_', ' ', ucfirst($attachment->security_status)) }}
+                                                                                            @if($attachment->rejection_reason)
+                                                                                                <small class="text-danger d-block">{{ $attachment->rejection_reason }}</small>
+                                                                                            @endif
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if($attachment->photo)
+                                                                                                <a
+                                                                                                    href="{{ route('prioritisation.photo', [$request->id, $attachment->photo->id]) }}"
+                                                                                                    target="_blank"
+                                                                                                    rel="noopener"
+                                                                                                >View promoted photo</a>
+                                                                                            @else
+                                                                                                <span class="text-muted">Not promoted</span>
+                                                                                            @endif
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
                                                 @endif
 
                                                 @if($product)
@@ -248,5 +369,17 @@
     .badge-dark { background: #2c3e50; color: #fff; }
     .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
     .btn-block { width: 100%; }
+    .information-reply-card { border: 1px solid #dfe5eb; box-shadow: none; }
+    .information-reply-identifier { overflow-wrap: anywhere; white-space: normal; }
+    .information-reply-body {
+        background: #f7f9fb;
+        border: 1px solid #e3e8ee;
+        border-radius: 4px;
+        max-height: 320px;
+        overflow: auto;
+        padding: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
 </style>
 @endpush

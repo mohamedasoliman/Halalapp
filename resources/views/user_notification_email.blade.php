@@ -6,6 +6,10 @@ Thank you for your request regarding {{ $productName }} ({{ $barcode }}).
 We have contacted the manufacturer for confirmation and will update the app as soon as we hear back.
 @elseif(in_array($notificationType, ['information_request', 'photo_request'], true))
 Thank you for your request regarding {{ $productName }} ({{ $barcode }}).
+@if($replyReference)
+<br><br>
+Please keep this reference in your reply: [{{ $replyReference }}]
+@endif
 <br><br>
 We need a little more information before we can identify and review the exact product. Please reply to this email with clear photos of:
 <br><br>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RequestNotificationDelivery extends Model
 {
@@ -18,4 +19,9 @@ class RequestNotificationDelivery extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function informationReplies(): HasMany
+    {
+        return $this->hasMany(UserInformationReply::class, 'request_notification_delivery_id');
+    }
 }

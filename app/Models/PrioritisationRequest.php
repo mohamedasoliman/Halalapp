@@ -13,6 +13,8 @@ class PrioritisationRequest extends Model
     protected $casts = [
         'resolved_status' => 'integer',
         'resolution_communication_id' => 'integer',
+        'information_received_at' => 'datetime',
+        'information_reply_count' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -25,6 +27,11 @@ class PrioritisationRequest extends Model
     public function photos()
     {
         return $this->hasMany(PrioritisationRequestPhoto::class, 'request_id')->orderBy('id');
+    }
+
+    public function informationReplies()
+    {
+        return $this->hasMany(UserInformationReply::class, 'request_id')->orderBy('id');
     }
 
     public function brand()
